@@ -1,7 +1,7 @@
 langchain>=0.3
 langchain-ollama>=0.2
 langchain-community>=0.3
-duckduckgo-search>=6
+ddgs
 requests>=2.31
 beautifulsoup4>=4.12
 lxml>=5.0

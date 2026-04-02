@@ -7,7 +7,11 @@ Usage:
 """
 
 import logging
+import os
 import sys
+
+# Must be set before langchain_community.document_loaders is imported
+os.environ.setdefault("USER_AGENT", "BakeSquad/1.0")
 
 from langchain_ollama import ChatOllama
 

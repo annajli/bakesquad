@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional
@@ -35,9 +34,9 @@ from bakesquad.search.prompts import (
 )
 
 try:
-    from duckduckgo_search import DDGS
+    from ddgs import DDGS
 except ImportError as e:
-    raise ImportError("Install duckduckgo-search: pip install duckduckgo-search>=6") from e
+    raise ImportError("Install ddgs: pip install ddgs") from e
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +45,6 @@ _USER_AGENT = (
     "AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/124.0.0.0 Safari/537.36"
 )
-# WebBaseLoader reads USER_AGENT from the environment
-os.environ.setdefault("USER_AGENT", _USER_AGENT)
 
 
 class IngestionPipeline:
