@@ -1,26 +1,31 @@
+"""
+Search + ingestion pipeline (steps 1–6).
+
+DEVIATION from CONTEXT.md: CONTEXT.md specifies LangChain as the agent framework.
+Replaced with direct llm_client.chat() calls and plain-string prompts (search/prompts.py).
+Reason: removing LangChain cuts ~1-2 s per LLM call, critical for the 60 s budget.
+
+DEVIATION from CONTEXT.md: WebBaseLoader removed. Fetch uses requests+BeautifulSoup only.
+Reason: WebBaseLoader requires langchain_community which we're removing; requests+BS4
+is simpler, faster to import, and gives us more control over extraction.
+"""
+
 from __future__ import annotations
 
-import json
 import logging
-import re
-import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Literal, Optional
 from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
-from langchain_community.document_loaders import WebBaseLoader
-from langchain_ollama import ChatOllama
 
 from bakesquad.config import (
-    DEFAULT_OLLAMA_MODEL,
     DOMAIN_CAP,
     FETCH_TIMEOUT_SECONDS,
-    LLM_TEMPERATURE,
     MAX_FETCH_WORKERS,
+    MAX_PAGES_PER_RUN,
     MAX_RESULTS_PER_QUERY,
-    MAX_SEARCH_WORKERS,
     MIN_CANDIDATE_THRESHOLD,
     MIN_PAGE_CONTENT_CHARS,
     QUERIES_PER_RUN,
@@ -28,16 +33,12 @@ from bakesquad.config import (
     SNIPPET_SCORE_CHUNK_SIZE,
     SUBSTACK_PAYWALL_CUTOFF,
 )
+from bakesquad.llm_client import chat, extract_json
 from bakesquad.models import FetchedPage, QueryPlan, SearchSnippet
 from bakesquad.search.prompts import (
-    QUERY_PLAN,
-    RECENCY_MONTH,
-    RECENCY_OFF,
-    RECENCY_YEAR,
-    RELAXED_QUERIES,
-    SNIPPET_RELEVANCE,
-    TRUSTED_SOURCES_OFF,
-    TRUSTED_SOURCES_ON,
+    query_plan_prompt,
+    relaxed_queries_prompt,
+    snippet_relevance_prompt,
 )
 
 try:
@@ -53,45 +54,52 @@ _USER_AGENT = (
     "Chrome/124.0.0.0 Safari/537.36"
 )
 
-# URL path segments that reliably indicate non-recipe pages regardless of domain.
-# Kept narrow to avoid false positives — recipe blogs use /category/ for browsing pages,
-# not for the recipes themselves; social media group/community paths return gated content.
+# URL path segments that reliably indicate non-recipe pages.
 _SKIP_URL_SEGMENTS = frozenset({
-    "/groups/",       # Facebook groups, Reddit communities — gated or discussion, not recipes
-    "/r/",            # Reddit subreddit paths
-    "/tag/",          # Blog tag archive pages
-    "/category/",     # Blog category archive pages
-    "/author/",       # Author bio pages
-    "/about/",        # About pages
-    "/contact/",      # Contact pages
+    "/groups/",
+    "/r/",
+    "/tag/",
+    "/category/",
+    "/author/",
+    "/about/",
+    "/contact/",
 })
 
-# Title patterns that indicate a roundup/listicle rather than a single recipe.
-# Only triggered when the title also contains "recipe" to avoid false positives
-# (e.g. "Best Banana Bread" without "recipes" could still be a single recipe page).
+# Title patterns indicating a roundup rather than a single recipe.
 _ROUNDUP_STARTERS = (
     "best ", "top ", "10 ", "15 ", "20 ", "25 ", "30 ",
     "the best ", "the top ",
 )
+
+# Common recipe plugin ingredient container class names for BS4 extraction.
+_INGREDIENT_CLASSES = [
+    "wprm-recipe-ingredients-container",
+    "wprm-recipe-ingredient",
+    "tasty-recipe-ingredients",
+    "recipe-ingredients",
+    "ingredients",
+    "ingredient-list",
+    "recipe__ingredient",
+    "structured-ingredients__list",
+    "ingredient",
+]
 
 
 class IngestionPipeline:
     """
     6-step search and ingestion pipeline:
 
-      1. Query plan       — single LLM call extracts category, constraints, preferences, queries
+      1. Query plan       — single LLM call: category, constraints, 2 search queries
       2. Parallel search  — DuckDuckGo queries run concurrently, deduplicated by URL
-      3. Snippet scoring  — heuristic pre-filter, then batched LLM relevance scoring
+      3. Snippet scoring  — heuristic pre-filter, then one batched LLM relevance call
       4. Domain cap       — flat cap per domain; user trusted sources win tiebreaks
       5. Adaptive retry   — if < MIN_CANDIDATE_THRESHOLD survive, retry with relaxed queries
-      6. Page fetch       — WebBaseLoader with requests+BS4 fallback, parallelised;
-                            thin pages (< MIN_PAGE_CONTENT_CHARS) dropped post-fetch
+      6. Page fetch       — requests+BS4, parallelised; thin pages dropped post-fetch
     """
 
     def __init__(
         self,
         *,
-        llm=None,
         trusted_sources: Optional[list[str]] = None,
         num_query_variants: int = QUERIES_PER_RUN,
         min_candidates: int = MIN_CANDIDATE_THRESHOLD,
@@ -99,16 +107,13 @@ class IngestionPipeline:
         relevance_cutoff: float = RELEVANCE_SCORE_CUTOFF,
         max_fetch_workers: int = MAX_FETCH_WORKERS,
     ):
-        self.llm = llm or ChatOllama(model=DEFAULT_OLLAMA_MODEL, temperature=LLM_TEMPERATURE)
-        # User-configured trusted sources — tiebreaker in domain cap sort and
-        # triggers site:-targeted query variants. No developer-defined list applied.
         self.trusted_sources: set[str] = set(trusted_sources or [])
         self.num_query_variants = num_query_variants
         self.min_candidates = min_candidates
         self.domain_cap = domain_cap
         self.relevance_cutoff = relevance_cutoff
         self.max_fetch_workers = max_fetch_workers
-        self.last_query_plan: Optional[QueryPlan] = None  # set after each run
+        self.last_query_plan: Optional[QueryPlan] = None
 
     # -------------------------------------------------------------------------
     # Public interface
@@ -121,7 +126,7 @@ class IngestionPipeline:
     ) -> list[FetchedPage]:
         """Execute the full pipeline. Returns fetched pages ready for the LLM parser."""
         plan = self._build_query_plan(query, recency)
-        candidates = self._search_and_filter(query, plan.queries)
+        candidates = self._search_and_filter(query, plan.queries, recency)
         return self._fetch_pages(candidates)
 
     def run_search_only(
@@ -129,9 +134,9 @@ class IngestionPipeline:
         query: str,
         recency: Literal["year", "month", None] = None,
     ) -> list[SearchSnippet]:
-        """Steps 1–4 only — no fetch. Useful for inspecting candidate selection."""
+        """Steps 1–4 only — no fetch. For inspection/testing."""
         plan = self._build_query_plan(query, recency)
-        return self._search_and_filter(query, plan.queries)
+        return self._search_and_filter(query, plan.queries, recency)
 
     # -------------------------------------------------------------------------
     # Step 1: Query plan (category + constraints + queries in one LLM call)
@@ -140,46 +145,35 @@ class IngestionPipeline:
     def _build_query_plan(
         self, query: str, recency: Literal["year", "month", None]
     ) -> QueryPlan:
-        recency_instruction = {
-            "year": RECENCY_YEAR,
-            "month": RECENCY_MONTH,
-        }.get(recency, RECENCY_OFF)
-
-        if self.trusted_sources:
-            n_site = min(len(self.trusted_sources), 2)
-            trusted_instruction = TRUSTED_SOURCES_ON.format(
-                n_site=n_site,
-                trusted_domains=", ".join(sorted(self.trusted_sources)),
-            )
-        else:
-            trusted_instruction = TRUSTED_SOURCES_OFF
-
-        chain = QUERY_PLAN | self.llm
-        result = chain.invoke({
-            "query": query,
-            "n": self.num_query_variants,
-            "recency_instruction": recency_instruction,
-            "trusted_sources_instruction": trusted_instruction,
-        })
-        text = _clean_llm_text(result)
-
+        system, user = query_plan_prompt(
+            query=query,
+            recency=recency,
+            trusted_sources=sorted(self.trusted_sources),
+        )
+        raw = chat(system, user, max_tokens=512)
         try:
-            data = json.loads(_extract_json(text))
+            data = extract_json(raw)
+            if isinstance(data, list):
+                raise ValueError("Expected dict, got list")
+            queries = data.get("queries", []) or [query]
+            # Enforce 2-query cap
+            queries = queries[:2]
+            if len(queries) < 1:
+                queries = [query]
             plan = QueryPlan(
                 category=data.get("category", "other"),
                 hard_constraints=data.get("hard_constraints", []),
                 soft_preferences=data.get("soft_preferences", []),
-                queries=data.get("queries", []) or [query],
+                queries=queries,
             )
-        except (json.JSONDecodeError, ValueError):
-            logger.warning("Query plan JSON parse failed; falling back to original query.")
+        except Exception:
+            logger.warning("Query plan parse failed; falling back to original query.")
             plan = QueryPlan(
                 category="other",
                 hard_constraints=[],
                 soft_preferences=[],
                 queries=[query],
             )
-
         self.last_query_plan = plan
         logger.info(
             "Step 1: category=%s | constraints=%s | %d queries",
@@ -192,26 +186,23 @@ class IngestionPipeline:
     # -------------------------------------------------------------------------
 
     def _search_all(self, queries: list[str]) -> list[SearchSnippet]:
+        """
+        DEVIATION from CONTEXT.md: searches run sequentially, not in parallel threads.
+        Root cause: ddgs v9 uses primp (Rust HTTP client) which deadlocks when invoked
+        from multiple Python threads simultaneously on Windows. Sequential execution with
+        2 queries takes ~2-3 s total, well within the 8 s search budget, so parallelism
+        provides no meaningful benefit here.
+        """
         seen: dict[str, SearchSnippet] = {}
-        lock = threading.Lock()
 
-        def _search_one(q: str) -> list[tuple[str, dict]]:
-            rows = []
+        for q in queries:
             try:
                 with DDGS() as ddgs:
-                    for r in ddgs.text(q, max_results=MAX_RESULTS_PER_QUERY):
-                        if r.get("href"):
-                            rows.append((q, r))
-            except Exception as e:
-                logger.warning("DDG search failed for '%s': %s", q, e)
-            return rows
-
-        with ThreadPoolExecutor(max_workers=MAX_SEARCH_WORKERS) as executor:
-            for rows in executor.map(_search_one, queries):
-                for q, r in rows:
-                    url = r["href"]
-                    key = _normalise_url(url)
-                    with lock:
+                    for r in ddgs.text(q, max_results=MAX_RESULTS_PER_QUERY, timeout=8):
+                        if not r.get("href"):
+                            continue
+                        url = r["href"]
+                        key = _normalise_url(url)
                         if key not in seen:
                             seen[key] = SearchSnippet(
                                 url=url,
@@ -219,13 +210,15 @@ class IngestionPipeline:
                                 excerpt=r.get("body", ""),
                                 query_source=q,
                             )
+            except Exception as e:
+                logger.warning("DDG search failed for %r: %s", q, e)
 
         snippets = list(seen.values())
         logger.info("Step 2: %d unique snippets from %d queries", len(snippets), len(queries))
         return snippets
 
     # -------------------------------------------------------------------------
-    # Step 3: Snippet relevance pre-check
+    # Step 3: Snippet relevance pre-check (batched — never one call per snippet)
     # -------------------------------------------------------------------------
 
     def _score_snippets(self, snippets: list[SearchSnippet], query: str) -> list[SearchSnippet]:
@@ -248,7 +241,7 @@ class IngestionPipeline:
                     s.relevance_score = 0.0
                     s.skip_reason = "paywall"
 
-        # Batch LLM scoring for everything not yet decided
+        # Batched LLM scoring — all undecided snippets in one prompt
         to_score = [s for s in snippets if s.relevance_score is None]
         for i in range(0, len(to_score), SNIPPET_SCORE_CHUNK_SIZE):
             self._score_chunk(to_score[i : i + SNIPPET_SCORE_CHUNK_SIZE], query)
@@ -256,16 +249,18 @@ class IngestionPipeline:
         passing = []
         for s in snippets:
             if s.relevance_score is None:
-                s.relevance_score = 0.5  # safe default; shouldn't reach here
+                s.relevance_score = 0.5
             if s.relevance_score < self.relevance_cutoff:
                 if not s.skip_reason:
                     s.skip_reason = "low_score"
             else:
                 passing.append(s)
 
-        heuristic_dropped = sum(1 for s in snippets if s.skip_reason in {"non_recipe_url", "likely_roundup", "paywall"})
+        heuristic_dropped = sum(
+            1 for s in snippets if s.skip_reason in {"non_recipe_url", "likely_roundup", "paywall"}
+        )
         logger.info(
-            "Step 3: %d/%d passed (%d dropped by heuristic pre-filter)",
+            "Step 3: %d/%d passed (%d heuristic-dropped)",
             len(passing), len(snippets), heuristic_dropped,
         )
         return passing
@@ -275,18 +270,18 @@ class IngestionPipeline:
             f"{i}. [{s.domain}] {s.title} — {s.excerpt[:200]}"
             for i, s in enumerate(snippets)
         )
-        chain = SNIPPET_RELEVANCE | self.llm
-        result = chain.invoke({"query": query, "snippet_list": snippet_list})
-        text = _clean_llm_text(result)
+        system, user = snippet_relevance_prompt(query, snippet_list)
         try:
-            items = json.loads(_extract_json(text)).get("scores", [])
+            raw = chat(system, user, max_tokens=1024)
+            data = extract_json(raw)
+            items = data.get("scores", []) if isinstance(data, dict) else []
             for item in items:
                 idx = item.get("index")
                 score = item.get("score")
                 if idx is not None and score is not None and 0 <= idx < len(snippets):
                     snippets[idx].relevance_score = float(score)
-        except (json.JSONDecodeError, ValueError, TypeError):
-            logger.warning("Snippet scoring JSON parse failed; defaulting chunk to 0.5.")
+        except Exception:
+            logger.warning("Snippet scoring failed; defaulting chunk to 0.5.")
             for s in snippets:
                 if s.relevance_score is None:
                     s.relevance_score = 0.5
@@ -296,7 +291,6 @@ class IngestionPipeline:
     # -------------------------------------------------------------------------
 
     def _apply_domain_cap(self, snippets: list[SearchSnippet]) -> list[SearchSnippet]:
-        # Primary sort: relevance score. Tiebreak: user-configured trusted sources rank higher.
         snippets = sorted(
             snippets,
             key=lambda s: (s.relevance_score or 0.0, s.domain in self.trusted_sources),
@@ -311,7 +305,6 @@ class IngestionPipeline:
                 domain_counts[s.domain] = count + 1
             else:
                 s.skip_reason = "domain_cap"
-
         logger.info("Step 4: %d snippets after domain cap", len(result))
         return result
 
@@ -319,11 +312,16 @@ class IngestionPipeline:
     # Steps 2–5: Search loop with one adaptive retry
     # -------------------------------------------------------------------------
 
-    def _search_and_filter(self, query: str, queries: list[str]) -> list[SearchSnippet]:
+    def _search_and_filter(
+        self,
+        query: str,
+        queries: list[str],
+        recency: Literal["year", "month", None] = None,
+    ) -> list[SearchSnippet]:
         candidates: list[SearchSnippet] = []
         for attempt in range(2):
             if attempt == 1:
-                logger.info("Step 5: Only %d candidates — retrying with relaxed queries.", len(candidates))
+                logger.info("Step 5: only %d candidates — retrying with relaxed queries.", len(candidates))
                 queries = self._relax_queries(queries, query)
 
             raw = self._search_all(queries)
@@ -332,27 +330,26 @@ class IngestionPipeline:
 
             if len(candidates) >= self.min_candidates:
                 break
-
         return candidates
 
     def _relax_queries(self, original_queries: list[str], base_query: str) -> list[str]:
-        chain = RELAXED_QUERIES | self.llm
-        result = chain.invoke({
-            "query": base_query,
-            "previous_queries": "\n".join(original_queries),
-        })
-        text = _clean_llm_text(result)
+        system, user = relaxed_queries_prompt(base_query, "\n".join(original_queries))
         try:
-            return json.loads(_extract_json(text)).get("queries", []) or [base_query]
-        except (json.JSONDecodeError, ValueError):
+            raw = chat(system, user, max_tokens=256)
+            data = extract_json(raw)
+            queries = data.get("queries", []) if isinstance(data, dict) else []
+            return queries[:2] or [base_query]
+        except Exception:
             logger.warning("Relaxed query generation failed; falling back to base query.")
             return [base_query]
 
     # -------------------------------------------------------------------------
-    # Step 6: Full page fetch (with thin-page drop)
+    # Step 6: Full page fetch — parallel, 5 s timeout, thin-page drop
     # -------------------------------------------------------------------------
 
     def _fetch_pages(self, snippets: list[SearchSnippet]) -> list[FetchedPage]:
+        # Cap to MAX_PAGES_PER_RUN candidates before fetching
+        snippets = snippets[:MAX_PAGES_PER_RUN]
         pages: list[FetchedPage] = []
         with ThreadPoolExecutor(max_workers=self.max_fetch_workers) as executor:
             futures = {executor.submit(self._fetch_one, s): s for s in snippets}
@@ -364,28 +361,10 @@ class IngestionPipeline:
                     logger.debug("Dropped thin page (%d chars): %s", len(page.raw_text), page.url)
                     continue
                 pages.append(page)
-        logger.info("Step 6: %d pages fetched", len(pages))
+        logger.info("Step 6: %d/%d pages fetched successfully", len(pages), len(snippets))
         return pages
 
     def _fetch_one(self, snippet: SearchSnippet) -> FetchedPage:
-        # Try WebBaseLoader first
-        try:
-            loader = WebBaseLoader(snippet.url)
-            docs = loader.load()
-            raw_text = "\n".join(d.page_content for d in docs).strip()
-            if raw_text:
-                logger.debug("WebBaseLoader OK: %s (%d chars)", snippet.url, len(raw_text))
-                return FetchedPage(
-                    url=snippet.url,
-                    title=snippet.title,
-                    raw_text=raw_text,
-                    fetch_method="webbaseloader",
-                    snippet=snippet,
-                )
-        except Exception as e:
-            logger.debug("WebBaseLoader failed for %s: %s", snippet.url, e)
-
-        # Fallback: requests + BeautifulSoup
         try:
             resp = requests.get(
                 snippet.url,
@@ -394,69 +373,104 @@ class IngestionPipeline:
             )
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "lxml")
-            for tag in soup(["script", "style", "nav", "footer", "header", "aside"]):
+
+            # Remove noise before extracting text
+            for tag in soup(["script", "style", "nav", "footer", "header", "aside", "iframe"]):
                 tag.decompose()
+
             raw_text = soup.get_text(separator="\n", strip=True)
             title = snippet.title or (soup.title.string.strip() if soup.title else "")
-            logger.debug("requests+BS4 OK: %s (%d chars)", snippet.url, len(raw_text))
+
+            # Pre-extract ingredients section for LLM (avoids sending full page)
+            ingredients_excerpt = _extract_ingredients_section(soup, title)
+
+            logger.debug("Fetched %s (%d chars)", snippet.url, len(raw_text))
             return FetchedPage(
                 url=snippet.url,
                 title=title,
                 raw_text=raw_text,
+                ingredients_excerpt=ingredients_excerpt,
                 fetch_method="requests_bs4",
                 snippet=snippet,
             )
         except Exception as e:
-            logger.warning("All fetch methods failed for %s: %s", snippet.url, e)
+            logger.warning("Fetch failed for %s: %s", snippet.url, e)
             return FetchedPage(
                 url=snippet.url,
                 title=snippet.title,
                 raw_text="",
+                ingredients_excerpt="",
                 fetch_method="requests_bs4",
                 fetch_error=str(e),
                 snippet=snippet,
             )
 
 
-# -------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Helpers
-# -------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+
+def _extract_ingredients_section(soup: BeautifulSoup, title: str) -> str:
+    """
+    Pre-extract just the ingredients list from a parsed page.
+    Spec: 'Before sending HTML to the LLM, use BeautifulSoup to pre-extract only
+    the ingredients section and title.'
+    Sends ~300–800 chars to the LLM instead of 10,000+ chars of full page text.
+    """
+    # Strategy 1: common recipe plugin class names
+    for cls in _INGREDIENT_CLASSES:
+        el = soup.find(class_=lambda c: c is not None and cls in (" ".join(c) if isinstance(c, list) else c).lower())
+        if el:
+            text = el.get_text(separator="\n", strip=True)
+            if len(text) > 50:
+                return f"Title: {title}\n\nIngredients:\n{text[:2000]}"
+
+    # Strategy 2: find heading containing "ingredient" then grab the next list
+    for heading in soup.find_all(["h1", "h2", "h3", "h4"]):
+        if "ingredient" in heading.get_text().lower():
+            parts = []
+            for sibling in heading.next_siblings:
+                tag_name = getattr(sibling, "name", None)
+                if tag_name in ("ul", "ol", "div"):
+                    parts.append(sibling.get_text(separator="\n", strip=True))
+                    break
+                elif tag_name in ("h1", "h2", "h3"):
+                    break
+            if parts:
+                return f"Title: {title}\n\nIngredients:\n" + "\n".join(parts[:1])[:2000]
+
+    # Fallback: regex scan of lines for quantity patterns in stripped text
+    all_text = soup.get_text(separator="\n", strip=True)
+    lines = all_text.split("\n")
+    ingr_start = -1
+    for i, line in enumerate(lines):
+        low = line.lower().strip()
+        if low in ("ingredients", "ingredients:") or (
+            "ingredient" in low and len(low) < 40
+        ):
+            ingr_start = i
+            break
+    if ingr_start >= 0:
+        section = "\n".join(lines[ingr_start : ingr_start + 60])
+        return f"Title: {title}\n\n{section[:2000]}"
+
+    # Last resort: first 2500 chars of full text
+    return f"Title: {title}\n\n{all_text[:2500]}"
+
 
 def _heuristic_skip(s: SearchSnippet) -> str | None:
-    """
-    Fast pre-filter before LLM scoring. Returns a skip reason string, or None to proceed.
-    Kept intentionally narrow — only patterns that reliably indicate non-recipe content.
-    """
-    # URL path segments that indicate archive/community/meta pages
+    """Fast pre-filter before LLM scoring. Returns skip reason or None."""
     if any(seg in s.url for seg in _SKIP_URL_SEGMENTS):
         return "non_recipe_url"
-
-    # Roundup/listicle detection: numbered starter + "recipe" anywhere in title
     title_lower = s.title.lower()
     if "recipe" in title_lower and any(title_lower.startswith(w) for w in _ROUNDUP_STARTERS):
         return "likely_roundup"
-
     return None
 
 
 def _normalise_url(url: str) -> str:
-    """Lowercase scheme+host, strip path trailing slash and query params — for deduplication."""
+    """Lowercase scheme+host, strip trailing slash + query params — for deduplication."""
     parsed = urlparse(url)
     host = parsed.netloc.lower().removeprefix("www.")
     path = parsed.path.rstrip("/")
     return f"{parsed.scheme.lower()}://{host}{path}"
-
-
-def _extract_json(text: str) -> str:
-    """Pull the outermost {...} block out of a string."""
-    start = text.find("{")
-    end = text.rfind("}") + 1
-    if start == -1 or end == 0:
-        raise ValueError("No JSON object found in LLM response.")
-    return text[start:end]
-
-
-def _clean_llm_text(result) -> str:
-    """Extract text content from an LLM result and strip qwen3 <think> blocks."""
-    text = result.content if hasattr(result, "content") else str(result)
-    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()

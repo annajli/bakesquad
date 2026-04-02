@@ -1,81 +1,88 @@
-from langchain_core.prompts import ChatPromptTemplate
+"""
+Plain-string prompt builders for the search pipeline.
 
-# Combined step-1 prompt: query understanding + diversification in one LLM call.
-# Returns a JSON object with category, hard_constraints, soft_preferences, and queries.
-#
-# {trusted_sources_instruction} is populated at runtime:
-#   - If the user has configured trusted sources → instructs the LLM to add site:-targeted variants
-#   - If not → empty string; no developer-defined source list is injected
-# {recency_instruction} is populated at runtime based on the user's recency dial setting.
-QUERY_PLAN = ChatPromptTemplate.from_messages([
-    (
-        "system",
-        (
-            "You are a baking recipe search assistant. Given a user's natural language query, "
-            "analyze it and return a JSON object with exactly these keys:\n\n"
-            "- \"category\": the type of baked good — one of: cookie, quick_bread, cake, bread, other\n"
-            "- \"hard_constraints\": list of strings — things that MUST be true about the recipe "
-            "(e.g. 'contains chocolate', 'stays moist for days', 'gluten-free'). Empty list if none.\n"
-            "- \"soft_preferences\": list of strings — texture/flavor preferences that inform ranking "
-            "(e.g. 'chewy', 'not too sweet', 'crispy edges'). Empty list if none.\n"
-            "- \"queries\": list of {n} web search strings to find candidate recipes. Include:\n"
-            "  - 1 broad variant (general ingredient/category terms)\n"
-            "  - 1 specific/descriptive variant (texture, technique, key ingredients)\n"
-            "{recency_instruction}"
-            "{trusted_sources_instruction}"
-            "  - Fill remaining slots with additional variants covering different angles\n\n"
-            "Return only the JSON object, no other text."
-        ),
-    ),
-    ("human", "{query}"),
-])
+DEVIATION from CONTEXT.md: CONTEXT.md specifies LangChain as the framework and uses
+ChatPromptTemplate. Replaced with plain (system, user) string functions so all LLM
+calls route through llm_client.chat() — no LangChain dependency anywhere in this module.
+Reason: LangChain template/chain overhead was ~1-2 s per call, incompatible with the
+60 s total budget.
+"""
 
-# Injected into QUERY_PLAN at runtime based on recency dial
-RECENCY_YEAR = "  - 1 recency variant scoped to the past year (append '2024 OR 2025' to the query)\n"
-RECENCY_MONTH = "  - 1 recency variant scoped to the past month (append the current month and year)\n"
-RECENCY_OFF = "  - 1 recency variant that appends the current year to surface newer results\n"
+from __future__ import annotations
 
-# Injected into QUERY_PLAN at runtime based on user-configured trusted sources
-TRUSTED_SOURCES_ON = (
-    "  - {n_site} site:-targeted variant(s) using site: for the following user-configured "
-    "trusted domains: {trusted_domains}\n"
-)
-TRUSTED_SOURCES_OFF = ""  # no site: queries when user has not configured trusted sources
 
-SNIPPET_RELEVANCE = ChatPromptTemplate.from_messages([
-    (
-        "system",
-        (
-            "You evaluate recipe search result snippets for relevance to a user query. "
-            "Given a numbered list of snippets, return a JSON object with key \"scores\": "
-            "a list of objects, one per snippet, each with fields: "
-            "\"index\" (int), \"score\" (float 0.0–1.0), \"reason\" (short string). "
-            "Scoring rules:\n"
-            "- 1.0 = clearly a recipe that matches the query\n"
-            "- 0.7–0.9 = likely a recipe, partial match (e.g. right technique, wrong flavor)\n"
-            "- 0.4–0.6 = uncertain — might be a recipe but hard to tell from snippet\n"
-            "- 0.0–0.3 = not a recipe, listicle/roundup, irrelevant, or gated content\n"
-            "- Score 0.0 for substack.com snippets with very short or missing excerpt text "
-            "(suspected paywall)\n"
-            "- Score 0.0 for '10 best X recipes' roundups that link out to other recipes "
-            "rather than providing one\n"
-            "- Score 0.0 for social media group/community posts (e.g. facebook.com/groups/)\n"
-            "Return only the JSON object, no other text."
-        ),
-    ),
-    ("human", "Query: {query}\n\nSnippets:\n{snippet_list}"),
-])
+def query_plan_prompt(
+    query: str,
+    recency: str | None,
+    trusted_sources: list[str],
+) -> tuple[str, str]:
+    """
+    Step 1: produce (system, user) for query understanding + search query diversification.
+    Returns exactly 2 search queries (broad + specific) per the cap-at-2 requirement.
+    """
+    recency_line = ""
+    if recency == "year":
+        recency_line = '  - Make query[1] a recency variant scoped to the past year (append "2024 OR 2025")\n'
+    elif recency == "month":
+        recency_line = "  - Make query[1] a recency variant scoped to the past month\n"
+    else:
+        recency_line = '  - Make query[1] more specific/descriptive (texture, technique, key ingredients)\n'
 
-RELAXED_QUERIES = ChatPromptTemplate.from_messages([
-    (
-        "system",
-        (
-            "The previous recipe search returned too few relevant results. "
-            "Generate 3–4 broader, more permissive query variants for the same recipe intent. "
-            "Remove all site: restrictions. Use more general ingredient or category terms. "
-            'Return a JSON object with key "queries" containing a list of strings. '
-            "Return only the JSON object, no other text."
-        ),
-    ),
-    ("human", "Original query: {query}\n\nPrevious queries tried:\n{previous_queries}"),
-])
+    trusted_line = ""
+    if trusted_sources:
+        domains = ", ".join(trusted_sources[:2])
+        trusted_line = f"  - User has these trusted domains (mention them in queries if relevant): {domains}\n"
+
+    system = (
+        "You are a baking recipe search assistant. Given a user's natural language query, "
+        "analyze it and return a JSON object with exactly these keys:\n\n"
+        '- "category": the type of baked good — one of: cookie, quick_bread, cake, other\n'
+        '- "hard_constraints": list of strings — things that MUST be true about the recipe '
+        '(e.g. "contains chocolate", "stays moist for days"). Empty list if none.\n'
+        '- "soft_preferences": list of strings — texture/flavor preferences that inform ranking. '
+        "Empty list if none.\n"
+        '- "queries": list of EXACTLY 2 web search strings to find candidate recipes:\n'
+        "  - queries[0]: broad variant using general ingredient/category terms\n"
+        f"{recency_line}"
+        f"{trusted_line}"
+        "\nReturn only the JSON object, no other text."
+    )
+    user = query
+    return system, user
+
+
+def snippet_relevance_prompt(query: str, snippet_list: str) -> tuple[str, str]:
+    """
+    Step 3: batch relevance scoring — all snippets in one prompt, one JSON array back.
+    NEVER called once per snippet; always batched.
+    """
+    system = (
+        "You evaluate recipe search result snippets for relevance to a user query. "
+        'Given a numbered list of snippets, return a JSON object with key "scores": '
+        "a list of objects, one per snippet, each with: "
+        '"index" (int), "score" (float 0.0–1.0), "reason" (short string). '
+        "Scoring rules:\n"
+        "- 1.0 = clearly a single recipe matching the query\n"
+        "- 0.7–0.9 = likely a single recipe, partial match\n"
+        "- 0.4–0.6 = uncertain — might be a recipe but hard to tell\n"
+        "- 0.0–0.3 = not a recipe, roundup/listicle, irrelevant, or gated content\n"
+        "- 0.0 for substack.com snippets with very short/missing excerpts (paywall)\n"
+        "- 0.0 for '10 best X' roundups that link out to multiple other recipes\n"
+        "- 0.0 for social media group/community posts\n"
+        "Return only the JSON object, no other text."
+    )
+    user = f"Query: {query}\n\nSnippets:\n{snippet_list}"
+    return system, user
+
+
+def relaxed_queries_prompt(base_query: str, previous_queries: str) -> tuple[str, str]:
+    """Step 5: generate broader queries when candidate pool is too small."""
+    system = (
+        "The previous recipe search returned too few relevant results. "
+        "Generate 2 broader, more permissive query variants for the same recipe intent. "
+        "Remove all site: restrictions. Use more general ingredient or category terms. "
+        'Return a JSON object with key "queries" containing a list of 2 strings. '
+        "Return only the JSON object, no other text."
+    )
+    user = f"Original query: {base_query}\n\nPrevious queries tried:\n{previous_queries}"
+    return system, user
