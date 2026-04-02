@@ -33,6 +33,14 @@ class FetchedPage(BaseModel):
 
 # --- Structured output models for LLM calls ---
 
+class QueryPlan(BaseModel):
+    """Output of step 1 — query understanding + diversification in a single LLM call."""
+    category: str                    # "cookie" | "quick_bread" | "cake" | "bread" | "other"
+    hard_constraints: list[str]      # must be true ("has chocolate", "stays moist for days")
+    soft_preferences: list[str]      # inform weighting ("not too sweet", "crispy edges")
+    queries: list[str]               # diversified search query variants
+
+
 class QueryVariants(BaseModel):
     queries: list[str]
 

@@ -3,8 +3,9 @@ from __future__ import annotations
 import json
 import logging
 import re
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Optional
+from typing import Literal, Optional
 from urllib.parse import urlparse
 
 import requests
@@ -19,14 +20,20 @@ from bakesquad.config import (
     LLM_TEMPERATURE,
     MAX_FETCH_WORKERS,
     MAX_RESULTS_PER_QUERY,
+    MAX_SEARCH_WORKERS,
     MIN_CANDIDATE_THRESHOLD,
+    MIN_PAGE_CONTENT_CHARS,
     QUERIES_PER_RUN,
     RELEVANCE_SCORE_CUTOFF,
+    SNIPPET_SCORE_CHUNK_SIZE,
     SUBSTACK_PAYWALL_CUTOFF,
 )
-from bakesquad.models import FetchedPage, SearchSnippet
+from bakesquad.models import FetchedPage, QueryPlan, SearchSnippet
 from bakesquad.search.prompts import (
-    QUERY_DIVERSIFICATION,
+    QUERY_PLAN,
+    RECENCY_MONTH,
+    RECENCY_OFF,
+    RECENCY_YEAR,
     RELAXED_QUERIES,
     SNIPPET_RELEVANCE,
     TRUSTED_SOURCES_OFF,
@@ -46,17 +53,39 @@ _USER_AGENT = (
     "Chrome/124.0.0.0 Safari/537.36"
 )
 
+# URL path segments that reliably indicate non-recipe pages regardless of domain.
+# Kept narrow to avoid false positives — recipe blogs use /category/ for browsing pages,
+# not for the recipes themselves; social media group/community paths return gated content.
+_SKIP_URL_SEGMENTS = frozenset({
+    "/groups/",       # Facebook groups, Reddit communities — gated or discussion, not recipes
+    "/r/",            # Reddit subreddit paths
+    "/tag/",          # Blog tag archive pages
+    "/category/",     # Blog category archive pages
+    "/author/",       # Author bio pages
+    "/about/",        # About pages
+    "/contact/",      # Contact pages
+})
+
+# Title patterns that indicate a roundup/listicle rather than a single recipe.
+# Only triggered when the title also contains "recipe" to avoid false positives
+# (e.g. "Best Banana Bread" without "recipes" could still be a single recipe page).
+_ROUNDUP_STARTERS = (
+    "best ", "top ", "10 ", "15 ", "20 ", "25 ", "30 ",
+    "the best ", "the top ",
+)
+
 
 class IngestionPipeline:
     """
     6-step search and ingestion pipeline:
 
-      1. Query diversification  — LLM generates N query variants
-      2. Multi-query search     — DuckDuckGo, deduplicated by URL
-      3. Snippet relevance      — LLM scores each snippet 0–1; Substack paywall heuristic
-      4. Domain cap             — flat cap of DOMAIN_CAP results per domain
-      5. Adaptive retry         — if < MIN_CANDIDATE_THRESHOLD survive, retry with relaxed queries
-      6. Full page fetch        — WebBaseLoader with requests+BS4 fallback, parallelised
+      1. Query plan       — single LLM call extracts category, constraints, preferences, queries
+      2. Parallel search  — DuckDuckGo queries run concurrently, deduplicated by URL
+      3. Snippet scoring  — heuristic pre-filter, then batched LLM relevance scoring
+      4. Domain cap       — flat cap per domain; user trusted sources win tiebreaks
+      5. Adaptive retry   — if < MIN_CANDIDATE_THRESHOLD survive, retry with relaxed queries
+      6. Page fetch       — WebBaseLoader with requests+BS4 fallback, parallelised;
+                            thin pages (< MIN_PAGE_CONTENT_CHARS) dropped post-fetch
     """
 
     def __init__(
@@ -71,35 +100,51 @@ class IngestionPipeline:
         max_fetch_workers: int = MAX_FETCH_WORKERS,
     ):
         self.llm = llm or ChatOllama(model=DEFAULT_OLLAMA_MODEL, temperature=LLM_TEMPERATURE)
-        # User-configured trusted sources — used as tiebreaker in domain cap sort, and
-        # to generate site:-targeted query variants. No developer-defined list is applied.
+        # User-configured trusted sources — tiebreaker in domain cap sort and
+        # triggers site:-targeted query variants. No developer-defined list applied.
         self.trusted_sources: set[str] = set(trusted_sources or [])
         self.num_query_variants = num_query_variants
         self.min_candidates = min_candidates
         self.domain_cap = domain_cap
         self.relevance_cutoff = relevance_cutoff
         self.max_fetch_workers = max_fetch_workers
+        self.last_query_plan: Optional[QueryPlan] = None  # set after each run
 
     # -------------------------------------------------------------------------
     # Public interface
     # -------------------------------------------------------------------------
 
-    def run(self, query: str) -> list[FetchedPage]:
+    def run(
+        self,
+        query: str,
+        recency: Literal["year", "month", None] = None,
+    ) -> list[FetchedPage]:
         """Execute the full pipeline. Returns fetched pages ready for the LLM parser."""
-        queries = self._diversify_queries(query)
-        candidates = self._search_and_filter(query, queries)
+        plan = self._build_query_plan(query, recency)
+        candidates = self._search_and_filter(query, plan.queries)
         return self._fetch_pages(candidates)
 
-    def run_search_only(self, query: str) -> list[SearchSnippet]:
+    def run_search_only(
+        self,
+        query: str,
+        recency: Literal["year", "month", None] = None,
+    ) -> list[SearchSnippet]:
         """Steps 1–4 only — no fetch. Useful for inspecting candidate selection."""
-        queries = self._diversify_queries(query)
-        return self._search_and_filter(query, queries)
+        plan = self._build_query_plan(query, recency)
+        return self._search_and_filter(query, plan.queries)
 
     # -------------------------------------------------------------------------
-    # Step 1: Query diversification
+    # Step 1: Query plan (category + constraints + queries in one LLM call)
     # -------------------------------------------------------------------------
 
-    def _diversify_queries(self, query: str) -> list[str]:
+    def _build_query_plan(
+        self, query: str, recency: Literal["year", "month", None]
+    ) -> QueryPlan:
+        recency_instruction = {
+            "year": RECENCY_YEAR,
+            "month": RECENCY_MONTH,
+        }.get(recency, RECENCY_OFF)
+
         if self.trusted_sources:
             n_site = min(len(self.trusted_sources), 2)
             trusted_instruction = TRUSTED_SOURCES_ON.format(
@@ -109,38 +154,64 @@ class IngestionPipeline:
         else:
             trusted_instruction = TRUSTED_SOURCES_OFF
 
-        chain = QUERY_DIVERSIFICATION | self.llm
+        chain = QUERY_PLAN | self.llm
         result = chain.invoke({
             "query": query,
             "n": self.num_query_variants,
+            "recency_instruction": recency_instruction,
             "trusted_sources_instruction": trusted_instruction,
         })
         text = _clean_llm_text(result)
-        try:
-            queries = json.loads(_extract_json(text)).get("queries", [])
-        except (json.JSONDecodeError, ValueError):
-            logger.warning("Query diversification JSON parse failed; using original query.")
-            queries = []
 
-        queries = queries or [query]
-        logger.info("Step 1: %d query variants generated", len(queries))
-        return queries
+        try:
+            data = json.loads(_extract_json(text))
+            plan = QueryPlan(
+                category=data.get("category", "other"),
+                hard_constraints=data.get("hard_constraints", []),
+                soft_preferences=data.get("soft_preferences", []),
+                queries=data.get("queries", []) or [query],
+            )
+        except (json.JSONDecodeError, ValueError):
+            logger.warning("Query plan JSON parse failed; falling back to original query.")
+            plan = QueryPlan(
+                category="other",
+                hard_constraints=[],
+                soft_preferences=[],
+                queries=[query],
+            )
+
+        self.last_query_plan = plan
+        logger.info(
+            "Step 1: category=%s | constraints=%s | %d queries",
+            plan.category, plan.hard_constraints, len(plan.queries),
+        )
+        return plan
 
     # -------------------------------------------------------------------------
-    # Step 2: Multi-query search
+    # Step 2: Parallel multi-query search
     # -------------------------------------------------------------------------
 
     def _search_all(self, queries: list[str]) -> list[SearchSnippet]:
-        seen: dict[str, SearchSnippet] = {}  # normalised URL → first-seen snippet
-        with DDGS() as ddgs:
-            for q in queries:
-                try:
-                    results = ddgs.text(q, max_results=MAX_RESULTS_PER_QUERY)
-                    for r in results:
-                        url = r.get("href", "")
-                        if not url:
-                            continue
-                        key = _normalise_url(url)
+        seen: dict[str, SearchSnippet] = {}
+        lock = threading.Lock()
+
+        def _search_one(q: str) -> list[tuple[str, dict]]:
+            rows = []
+            try:
+                with DDGS() as ddgs:
+                    for r in ddgs.text(q, max_results=MAX_RESULTS_PER_QUERY):
+                        if r.get("href"):
+                            rows.append((q, r))
+            except Exception as e:
+                logger.warning("DDG search failed for '%s': %s", q, e)
+            return rows
+
+        with ThreadPoolExecutor(max_workers=MAX_SEARCH_WORKERS) as executor:
+            for rows in executor.map(_search_one, queries):
+                for q, r in rows:
+                    url = r["href"]
+                    key = _normalise_url(url)
+                    with lock:
                         if key not in seen:
                             seen[key] = SearchSnippet(
                                 url=url,
@@ -148,8 +219,6 @@ class IngestionPipeline:
                                 excerpt=r.get("body", ""),
                                 query_source=q,
                             )
-                except Exception as e:
-                    logger.warning("DDG search failed for query '%s': %s", q, e)
 
         snippets = list(seen.values())
         logger.info("Step 2: %d unique snippets from %d queries", len(snippets), len(queries))
@@ -163,28 +232,42 @@ class IngestionPipeline:
         if not snippets:
             return []
 
-        # Substack paywall heuristic — no LLM needed
+        # Heuristic pre-filter — no LLM needed for obvious cases
         for s in snippets:
-            if "substack.com" in s.domain and len(s.excerpt) < SUBSTACK_PAYWALL_CUTOFF:
+            if s.relevance_score is not None:
+                continue
+            reason = _heuristic_skip(s)
+            if reason:
                 s.relevance_score = 0.0
-                s.skip_reason = "paywall"
+                s.skip_reason = reason
 
+        # Substack paywall heuristic
+        for s in snippets:
+            if s.relevance_score is None and "substack.com" in s.domain:
+                if len(s.excerpt) < SUBSTACK_PAYWALL_CUTOFF:
+                    s.relevance_score = 0.0
+                    s.skip_reason = "paywall"
+
+        # Batch LLM scoring for everything not yet decided
         to_score = [s for s in snippets if s.relevance_score is None]
-        chunk_size = 15
-        for i in range(0, len(to_score), chunk_size):
-            self._score_chunk(to_score[i : i + chunk_size], query)
+        for i in range(0, len(to_score), SNIPPET_SCORE_CHUNK_SIZE):
+            self._score_chunk(to_score[i : i + SNIPPET_SCORE_CHUNK_SIZE], query)
 
         passing = []
         for s in snippets:
             if s.relevance_score is None:
-                s.relevance_score = 0.5  # shouldn't happen, but safe default
+                s.relevance_score = 0.5  # safe default; shouldn't reach here
             if s.relevance_score < self.relevance_cutoff:
                 if not s.skip_reason:
                     s.skip_reason = "low_score"
             else:
                 passing.append(s)
 
-        logger.info("Step 3: %d/%d snippets passed relevance pre-check", len(passing), len(snippets))
+        heuristic_dropped = sum(1 for s in snippets if s.skip_reason in {"non_recipe_url", "likely_roundup", "paywall"})
+        logger.info(
+            "Step 3: %d/%d passed (%d dropped by heuristic pre-filter)",
+            len(passing), len(snippets), heuristic_dropped,
+        )
         return passing
 
     def _score_chunk(self, snippets: list[SearchSnippet], query: str) -> None:
@@ -266,7 +349,7 @@ class IngestionPipeline:
             return [base_query]
 
     # -------------------------------------------------------------------------
-    # Step 6: Full page fetch
+    # Step 6: Full page fetch (with thin-page drop)
     # -------------------------------------------------------------------------
 
     def _fetch_pages(self, snippets: list[SearchSnippet]) -> list[FetchedPage]:
@@ -274,7 +357,13 @@ class IngestionPipeline:
         with ThreadPoolExecutor(max_workers=self.max_fetch_workers) as executor:
             futures = {executor.submit(self._fetch_one, s): s for s in snippets}
             for future in as_completed(futures):
-                pages.append(future.result())
+                page = future.result()
+                if page.fetch_error:
+                    continue
+                if len(page.raw_text) < MIN_PAGE_CONTENT_CHARS:
+                    logger.debug("Dropped thin page (%d chars): %s", len(page.raw_text), page.url)
+                    continue
+                pages.append(page)
         logger.info("Step 6: %d pages fetched", len(pages))
         return pages
 
@@ -333,8 +422,25 @@ class IngestionPipeline:
 # Helpers
 # -------------------------------------------------------------------------
 
+def _heuristic_skip(s: SearchSnippet) -> str | None:
+    """
+    Fast pre-filter before LLM scoring. Returns a skip reason string, or None to proceed.
+    Kept intentionally narrow — only patterns that reliably indicate non-recipe content.
+    """
+    # URL path segments that indicate archive/community/meta pages
+    if any(seg in s.url for seg in _SKIP_URL_SEGMENTS):
+        return "non_recipe_url"
+
+    # Roundup/listicle detection: numbered starter + "recipe" anywhere in title
+    title_lower = s.title.lower()
+    if "recipe" in title_lower and any(title_lower.startswith(w) for w in _ROUNDUP_STARTERS):
+        return "likely_roundup"
+
+    return None
+
+
 def _normalise_url(url: str) -> str:
-    """Lowercase scheme+host, strip trailing slash — used for deduplication."""
+    """Lowercase scheme+host, strip path trailing slash and query params — for deduplication."""
     parsed = urlparse(url)
     host = parsed.netloc.lower().removeprefix("www.")
     path = parsed.path.rstrip("/")
