@@ -37,6 +37,12 @@ def query_plan_prompt(
         "You are a baking recipe search assistant. Given a user's natural language query, "
         "analyze it and return a JSON object with exactly these keys:\n\n"
         '- "category": the type of baked good — one of: cookie, quick_bread, cake, other\n'
+        '- "flour_type": the primary flour the recipe likely uses — one of:\n'
+        '    "ap" (all-purpose, default), "almond", "oat", "coconut", "rice", "gf_blend" (1:1 GF blend), "other"\n'
+        '  Use "ap" unless the query explicitly mentions a non-AP flour.\n'
+        '- "modifiers": list of applicable dietary/technique tags from:\n'
+        '    ["gluten_free", "vegan", "dairy_free", "paleo", "keto", "nut_free"]\n'
+        '  Empty list if none apply. "gluten_free" implies flour_type is not "ap".\n'
         '- "hard_constraints": list of strings — things that MUST be true about the recipe '
         '(e.g. "contains chocolate", "stays moist for days"). Empty list if none.\n'
         '- "soft_preferences": list of strings — texture/flavor preferences that inform ranking. '

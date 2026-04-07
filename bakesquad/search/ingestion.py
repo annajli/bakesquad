@@ -162,6 +162,8 @@ class IngestionPipeline:
                 queries = [query]
             plan = QueryPlan(
                 category=data.get("category", "other"),
+                flour_type=data.get("flour_type", "ap") or "ap",
+                modifiers=data.get("modifiers", []) or [],
                 hard_constraints=data.get("hard_constraints", []),
                 soft_preferences=data.get("soft_preferences", []),
                 queries=queries,
@@ -170,6 +172,8 @@ class IngestionPipeline:
             logger.warning("Query plan parse failed; falling back to original query.")
             plan = QueryPlan(
                 category="other",
+                flour_type="ap",
+                modifiers=[],
                 hard_constraints=[],
                 soft_preferences=[],
                 queries=[query],

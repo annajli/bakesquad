@@ -29,7 +29,7 @@ from bakesquad.models import (
     RatioResult,
     ScoredRecipe,
 )
-from bakesquad.ratio_engine import RATIO_RANGES
+from bakesquad.ratio_engine import get_ranges
 
 logger = logging.getLogger(__name__)
 
@@ -78,11 +78,13 @@ def score_recipe(
     """Compute all criterion scores and composite score. No LLM."""
     weights = derive_weights(plan, user_prefs)
     category = ratios.category
+    flour_type = ratios.flour_type or "ap"
+    modifiers = ratios.modifiers or []
     criteria: list[CriterionScore] = []
     violations: list[str] = []
 
     # --- Moisture retention (variable) ---
-    moisture = _score_moisture(ratios, category)
+    moisture = _score_moisture(ratios, category, flour_type)
     criteria.append(CriterionScore(
         name="Moisture Retention",
         score=moisture,
@@ -91,7 +93,7 @@ def score_recipe(
     ))
 
     # --- Structure / leavening (variable, but leavening floor is fixed) ---
-    structure = _score_structure(ratios, category)
+    structure = _score_structure(ratios, category, flour_type)
     criteria.append(CriterionScore(
         name="Structure & Leavening",
         score=structure,
@@ -100,13 +102,29 @@ def score_recipe(
     ))
 
     # --- Sugar balance (variable) ---
-    balance = _score_balance(ratios, category)
+    balance = _score_balance(ratios, category, flour_type)
     criteria.append(CriterionScore(
         name="Sugar Balance",
         score=balance,
         weight=weights["balance"],
         details=_balance_detail(ratios, category),
     ))
+
+    # --- Binding agent criterion (GF only, fixed weight) ---
+    # Gluten-free recipes require a binding agent (xanthan gum, psyllium, flax)
+    # to replace the structural role of gluten. Missing one predicts a crumbly result.
+    if "gluten_free" in modifiers or flour_type in ("almond", "oat", "coconut", "rice", "gf_blend"):
+        binding_score = 100.0 if ratios.has_binding_agent else 20.0
+        criteria.append(CriterionScore(
+            name="GF Binding Agent",
+            score=binding_score,
+            weight=0.20,
+            details="xanthan/psyllium/flax detected" if ratios.has_binding_agent else "no binding agent detected",
+        ))
+        if not ratios.has_binding_agent:
+            # Note: some almond/oat flour recipes rely on eggs for binding — don't hard-penalize
+            # if binding_score < 50 but also not a hard constraint violation.
+            pass
 
     # --- Hard constraint: chocolate (fixed) ---
     if "chocolate" in " ".join(plan.hard_constraints).lower() or "chocolate" in " ".join(plan.soft_preferences).lower():
@@ -228,9 +246,10 @@ def add_explanations(scored: list[ScoredRecipe]) -> None:
 # Per-criterion scoring functions (deterministic, no LLM)
 # ---------------------------------------------------------------------------
 
-def _score_moisture(ratios: RatioResult, category: str) -> float:
+def _score_moisture(ratios: RatioResult, category: str, flour_type: str = "ap") -> float:
     """Moisture retention score 0–100. Fat type + liquid/flour + sugar/flour."""
     score = 0.0
+    ranges = get_ranges(category, flour_type)
 
     # Fat type (0–35 pts)
     fat_type = ratios.fat_type or "none"
@@ -243,26 +262,30 @@ def _score_moisture(ratios: RatioResult, category: str) -> float:
     # "none" = 0
 
     if category in ("quick_bread", "cake"):
-        # Liquid-to-flour ratio (0–35 pts) — optimal range peaks at ~1.1
+        # Liquid-to-flour ratio (0–35 pts) — optimal is the midpoint of the valid range
         lf = ratios.liquid_to_flour
         if lf is not None:
-            if 0.9 <= lf <= 1.4:
-                # Gaussian-ish peak at 1.1
-                dist = abs(lf - 1.10) / 0.30
-                score += 35 * max(0.0, 1.0 - dist)
-            elif 0.6 <= lf < 0.9:
-                score += 35 * (lf - 0.6) / 0.3
-            elif lf > 1.4:
-                score += max(0.0, 35 - (lf - 1.4) * 30)
+            lo_lf, hi_lf = ranges.get("liquid_to_flour", (0.85, 1.50))
+            mid = (lo_lf + hi_lf) / 2
+            half_width = (hi_lf - lo_lf) / 2
+            if lo_lf <= lf <= hi_lf:
+                # Full credit at midpoint, tapering to ~50% at edges
+                dist = abs(lf - mid) / half_width
+                score += 35 * (1.0 - 0.5 * dist)
+            elif lf < lo_lf:
+                score += max(0.0, 35 * (lf / lo_lf) * 0.6)
+            else:
+                score += max(0.0, 35 - (lf - hi_lf) * 20)
 
         # Sugar hygroscopicity (0–15 pts) — sugar attracts and retains moisture
         sf = ratios.sugar_to_flour
         if sf is not None:
-            if 0.40 <= sf <= 0.90:
+            lo_sf, hi_sf = ranges.get("sugar_to_flour", (0.35, 0.90))
+            if lo_sf <= sf <= hi_sf:
                 score += 15
-            elif 0.20 <= sf < 0.40:
-                score += 8
-            elif sf > 0.90:
+            elif sf < lo_sf:
+                score += 8 * (sf / lo_sf)
+            else:
                 score += 11   # More sugar, still ok for moisture
 
         # Banana bonus (0–15 pts) — banana puree is hygroscopic + moisture-dense
@@ -287,16 +310,17 @@ def _score_moisture(ratios: RatioResult, category: str) -> float:
 
         # Fat/flour balance
         bf = ratios.butter_to_flour or ratios.fat_to_flour
-        if bf is not None and 0.45 <= bf <= 0.70:
+        lo_fat, hi_fat = ranges.get("fat_to_flour", ranges.get("butter_to_flour", (0.40, 0.75)))
+        if bf is not None and lo_fat <= bf <= hi_fat:
             score += 20
 
     return round(min(100.0, score), 1)
 
 
-def _score_structure(ratios: RatioResult, category: str) -> float:
+def _score_structure(ratios: RatioResult, category: str, flour_type: str = "ap") -> float:
     """Structure/leavening score 0–100. Leavening in range + fat balance."""
     score = 0.0
-    ranges = RATIO_RANGES.get(category, RATIO_RANGES.get("quick_bread", {}))
+    ranges = get_ranges(category, flour_type)
 
     # Leavening ratio (0–60 pts)
     lf = ratios.leavening_to_flour
@@ -325,14 +349,13 @@ def _score_structure(ratios: RatioResult, category: str) -> float:
     return round(min(100.0, score), 1)
 
 
-def _score_balance(ratios: RatioResult, category: str) -> float:
-    """Sugar balance score 0–100. Sugar/flour in expected range for category."""
-    score = 0.0
+def _score_balance(ratios: RatioResult, category: str, flour_type: str = "ap") -> float:
+    """Sugar balance score 0–100. Sugar/flour in expected range for (category, flour_type)."""
     sf = ratios.sugar_to_flour
     if sf is None:
         return 50.0   # No sugar data — neutral score
 
-    ranges = RATIO_RANGES.get(category, {})
+    ranges = get_ranges(category, flour_type)
     lo, hi = ranges.get("sugar_to_flour", (0.35, 1.10))
 
     if lo <= sf <= hi:

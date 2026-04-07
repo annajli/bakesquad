@@ -133,3 +133,377 @@
   Total: 354.6s  (budget 180s)  [OVER BUDGET]
   Backend: ollama (qwen3.5)
 ==============================================================
+
+(cs6501) PS C:\Users\annaj\bakesquad> python main.py "healthy gluten-free banana bread with chocolate chips"
+WARNING  bakesquad.search.ingestion  Query plan parse failed; falling back to original query.
+WARNING  bakesquad.parser  Parse failed for https://cupcakesandkalechips.com/gluten-free-oatmeal-banana-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://www.fitmittenkitchen.com/almond-flour-paleo-banana-bread-chocolate-chips/: No valid JSON in LLM response: 
+WARNING  bakesquad.scorer  Explanation generation failed: No valid JSON in LLM response: 
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'healthy gluten-free banana bread with chocolate chips'
+
+[Step 1: Query Understanding]
+  Category:    other
+  Constraints: -
+  Preferences: -
+  Queries generated:
+    - healthy gluten-free banana bread with chocolate chips
+  ok  12.6s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  7 candidates selected
+    [1.00] ambitiouskitchen.com  Nourishing Almond FlourBananaBread(glutenfree!)
+    [1.00] fitmittenkitchen.com  The Best Almond FlourBananaBread• Fit Mitten Kitchen
+    [0.90] breezybakes.com  GlutenFreeHoney OrangeChocolateChipBananaBread
+    [0.90] cupcakesandkalechips.com  No-FailGlutenFreeOatmealBananaBread| Cupcakes & KaleChips
+    [0.70] gimmedelicious.com  The Best Ever Super MoistGlutenFreeBananaBread
+    [0.70] thishealthykitchen.com  VeganChocolateChipBananaBread[OilFreeOption]-ThisHealthy..
+  ok  94.0s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  3/4 pages fetched successfully
+  ok  1.8s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 3 pages)
+  1 recipes parsed  (2 failed)
+  ok  107.5s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  1 ratio results  (0 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  1 recipes scored
+  Generating explanations (1 batched LLM call)...
+  ok  27.1s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: other
+
+  #1  Nourishing Almond Flour Banana Bread (gluten free!)
+      https://www.ambitiouskitchen.com/almond-flour-banana-bread/
+      [banana] [chocolate]
+      Composite  #######.............  36/100
+
+        Moisture Retention       ########............  40  (w=0.45)
+        Structure & Leavening    ############........  60  (w=0.30)
+        Sugar Balance            ....................  0  (w=0.25)
+
+      Ratios:
+        liquid/flour:    1.733  !!
+        fat/flour:       0.000  !!
+        sugar/flour:     0.000  !!
+        leavening/flour: 0.0216 ok
+        fat source:      none
+
+      Why this score:
+        Score explanation unavailable.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 243.0s  (budget 180s)  [OVER BUDGET]
+  Backend: ollama (qwen3.5)
+==============================================================
+
+(cs6501) PS C:\Users\annaj\bakesquad> python main.py "gluten-free moist red velvet cake"
+WARNING  bakesquad.parser  Parse failed for https://thedefineddish.com/grain-free-red-velvet-cake/: Expected dict
+WARNING  bakesquad.parser  Parse failed for https://glutenfreeonashoestring.com/classic-gluten-free-red-velvet-cake/: No valid JSON in LLM response: 
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'gluten-free moist red velvet cake'
+
+[Step 1: Query Understanding]
+  Category:    cake
+  Constraints: gluten-free, red velvet flavor, moist texture
+  Preferences: -
+  Queries generated:
+    - gluten-free red velvet cake recipe
+    - moist gluten-free red velvet cake recipe tender crumb
+  ok  26.5s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  11 candidates selected
+    [1.00] glutenfreeonashoestring.com  Gluten Free Red Velvet Cake
+    [1.00] meaningfuleats.com  Gluten-Free Red Velvet Cake (BEST EVER!) - Meaningful Eats
+    [1.00] thedefineddish.com  Grain-Free Red Velvet Cake - The Defined Dish
+    [1.00] glutenfreecuppatea.co.uk  Gluten Free Red Velvet Cake Recipe (dairy free and low FOD
+    [1.00] kingarthurbaking.com  Gluten-Free Red Velvet Cake Recipe | King Arthur Baking
+    [1.00] eatwithclarity.com  Gluten Free Red Velvet Cake - Eat With Clarity
+  ok  51.7s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  1.4s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  2 recipes parsed  (2 failed)
+  ok  500.4s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  2 ratio results  (0 from cache)
+  ok  0.0s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  2 recipes scored
+  Generating explanations (1 batched LLM call)...
+  ok  33.4s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: cake
+  Must have: gluten-free, red velvet flavor, moist texture
+
+  #1  Gluten Free Red Velvet Cake
+      https://glutenfreecuppatea.co.uk/2017/08/24/gluten-free-red-velvet-cake-recipe-dairy-free-low-fodmap/
+      [butter-based] [chocolate]
+      Composite  #########...........  46/100
+
+        Moisture Retention       ##########..........  50  (w=0.85)
+        Structure & Leavening    ############........  60  (w=0.20)
+        Sugar Balance            ....................  0  (w=0.15)
+
+      Ratios:
+        liquid/flour:    1.167  ok
+        fat/flour:       1.722  !!
+        sugar/flour:     3.472  !!
+        leavening/flour: 0.0238 ok
+        fat source:      butter
+
+      Why this score:
+        This recipe suffers a critical Sugar Balance violation
+        (0/100), where the 3.47 sugar-to-flour ratio predicts a
+        cloyingly sweet product with a fragile crumb prone to
+        collapsing under its own weight. Although the butter provides
+        rich flavor, it solidifies upon cooling unlike oil, limiting
+        long-term moisture retention and contributing to the moderate
+        Moisture Retention score.
+
+  ----------------------------------------------------------
+
+  #2  Gluten-Free Red Velvet Cake (BEST EVER!)
+      https://meaningfuleats.com/gluten-free-red-velvet-cake/
+      [chocolate]
+      Composite  ######..............  28/100
+
+        Moisture Retention       #######.............  33  (w=0.85)
+        Structure & Leavening    ######..............  30  (w=0.20)
+        Sugar Balance            ....................  0  (w=0.15)
+
+      Ratios:
+        liquid/flour:    3.859  !!
+        fat/flour:       1.400  !!
+        sugar/flour:     4.458  !!
+        leavening/flour: 0.0500 !!
+        fat source:      mixed
+
+      Why this score:
+        Severe constraint violations in Sugar Balance (0/100) and an
+        extreme 3.86 liquid-to-flour ratio drive this low score,
+        predicting a batter too thin to maintain structural integrity
+        during baking. The excessive liquid and sugar will overwhelm
+        the gluten-free flour blend, resulting in a dense, gummy
+        texture rather than a light cake, as reflected in the poor
+        Structure & Leavening score.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 613.5s  (budget 180s)  [OVER BUDGET]
+  Backend: ollama (qwen3.5)
+==============================================================
+
+
+======================================================================================================================================
+NOTE: AFTER ADDING GLUTEN-FREE CHANGES
+
+(cs6501) PS C:\Users\annaj\bakesquad> python main.py "gluten-free moist red velvet cake"
+WARNING  bakesquad.ratio_engine  Suspiciously low flour (0g) for https://sandykirbyquandt.com/2014/02/11/gluten-free-red-velvet-cake-receipe/ — likely parse error, skipping ratios.
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'gluten-free moist red velvet cake'
+
+[Step 1: Query Understanding]
+  Category:    cake
+  Constraints: gluten-free ingredients
+  Preferences: moist texture
+  Queries generated:
+    - gluten free red velvet cake recipe
+    - moist gluten free red velvet cake recipe gf blend flour
+  ok  56.1s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  15 candidates selected
+    [1.00] justastasty.com  Gluten Free Red Velvet Cake - Just As Tasty
+    [1.00] sandykirbyquandt.com  Gluten-free Red Velvet Cake Recipe | Sandy Kirby Quandt
+    [1.00] chefjanetk.com  Super Moist Gluten-Free Red Velvet Cake | Chef Janet
+    [1.00] thefoodieeats.com  Gluten-Free Red Velvet Cake: The Texture of Luxury.
+    [1.00] eatwithclarity.com  Gluten Free Red Velvet Cake - Eat With Clarity
+    [1.00] glutenfreerecipebox.com  Double-Frosted Gluten Free Red Velvet Cake Recipe
+  ok  89.4s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  0.6s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  4 recipes parsed  (0 failed)
+  ok  153.0s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  4 ratio results  (0 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  4 recipes scored
+  Generating explanations (1 batched LLM call)...
+  ok  51.1s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: cake
+  Must have: gluten-free ingredients
+  Preferences: moist texture
+
+  #1  Super Moist Gluten-Free Red Velvet Cake
+      https://chefjanetk.com/gluten-free-red-velvet-cake/
+      [chocolate]
+      Composite  ##########..........  50/100
+
+        Moisture Retention       #########...........  47  (w=0.85)
+        Structure & Leavening    ############........  60  (w=0.20)
+        Sugar Balance            ####################  98  (w=0.15)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    0.500  !!
+        fat/flour:       1.362  !!
+        sugar/flour:     1.333  !!
+        leavening/flour: 0.0314 ok
+        fat source:      mixed
+        flour type:      gf_blend
+        modifiers:       gluten_free, nut_free
+
+      Why this score:
+        The low liquid-to-flour ratio of 0.50 predicts a dense, dry
+        crumb despite the high fat content providing initial richness.
+        While the sugar chemistry is balanced, the GF Binding Agent
+        score of 20/100 marks a critical constraint violation that
+        will likely cause the cake to crumble excessively when sliced.
+        Consequently, the cake will struggle to hold together compared
+        to formulations with adequate gums.
+
+  ----------------------------------------------------------
+
+  #2  Gluten-Free Red Velvet Cake: The Texture of Luxury.
+      https://thefoodieeats.com/gluten-free-red-velvet-cake/
+      [chocolate]
+      Composite  #########...........  46/100
+
+        Moisture Retention       ############........  62  (w=0.85)
+        Structure & Leavening    ######..............  32  (w=0.20)
+        Sugar Balance            ##..................  12  (w=0.15)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.652  !!
+        fat/flour:       2.156  !!
+        sugar/flour:     2.437  !!
+        leavening/flour: 0.0553 !!
+        fat source:      mixed
+        flour type:      gf_blend
+        modifiers:       gluten_free, nut_free
+
+      Why this score:
+        High fat and liquid ratios suggest a moist mouthfeel, but the
+        low Structure score predicts the cake will collapse under its
+        own weight. The Sugar Balance score of 12/100 is a prominent
+        constraint violation, indicating the recipe is chemically
+        unstable or cloyingly sweet. This imbalance will likely result
+        in a gummy texture rather than a light crumb.
+
+  ----------------------------------------------------------
+
+  #3  Gluten Free Red Velvet Cake
+      https://www.justastasty.com/red-velvet-pound-cake/
+      [butter-based] [chocolate]
+      Composite  ########............  40/100
+
+        Moisture Retention       #########...........  46  (w=0.85)
+        Structure & Leavening    ############........  60  (w=0.20)
+        Sugar Balance            ....................  0  (w=0.15)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.941  !!
+        fat/flour:       2.030  !!
+        sugar/flour:     2.833  !!
+        leavening/flour: 0.0302 ok
+        fat source:      butter
+        flour type:      gf_blend
+        modifiers:       gluten_free, nut_free
+
+      Why this score:
+        An extreme sugar-to-flour ratio of 2.83 triggered a 0/100
+        Sugar Balance constraint violation, promising a destabilized
+        structure that may weep syrup. Additionally, the butter-based
+        fat will retain less moisture over multiple days compared to
+        oil, compounding the mediocre Moisture Retention score. This
+        combination ensures a sweet but structurally failed eating
+        experience.
+
+  ----------------------------------------------------------
+
+  #4  Gluten-free Red Velvet Cake Recipe
+      https://sandykirbyquandt.com/2014/02/11/gluten-free-red-velvet-cake-receipe/
+      [butter-based] [chocolate]
+      Composite  ###.................  16/100
+
+        Moisture Retention       ##..................  12  (w=0.85)
+        Structure & Leavening    ....................  0  (w=0.20)
+        Sugar Balance            ##########..........  50  (w=0.15)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        fat source:      butter
+        flour type:      gf_blend
+        modifiers:       gluten_free
+
+      Why this score:
+        A Structure & Leavening score of 0/100 is a critical
+        constraint violation, predicting a dense, unrisen brick rather
+        than a tender cake. The abysmal Moisture Retention score of
+        12/100 confirms the formula lacks the hydration necessary for
+        a palatable eating experience. Without structural integrity,
+        the high fat content will simply grease the pan rather than
+        tenderize the crumb.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 350.3s  (budget 180s)  [OVER BUDGET]
+  Backend: ollama (qwen3.5)
+==============================================================

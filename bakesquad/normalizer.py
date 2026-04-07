@@ -20,7 +20,7 @@ from bakesquad.models import NormalizedIngredient, RecipeIngredient
 # (volume → mass conversion; used after converting all units to cups first)
 # ---------------------------------------------------------------------------
 _GRAMS_PER_CUP: dict[str, float] = {
-    # Flours
+    # Flours — AP and wheat
     "all-purpose flour": 120.0,
     "all purpose flour": 120.0,
     "ap flour": 120.0,
@@ -28,9 +28,40 @@ _GRAMS_PER_CUP: dict[str, float] = {
     "cake flour": 100.0,
     "whole wheat flour": 120.0,
     "whole-wheat flour": 120.0,
-    "almond flour": 96.0,
-    "oat flour": 92.0,
     "flour": 120.0,
+    # Alternative / GF flours (King Arthur + manufacturer specs)
+    "almond flour": 96.0,
+    "almond meal": 96.0,
+    "oat flour": 92.0,
+    "coconut flour": 128.0,         # extremely absorbent; recipes use far less of it
+    "rice flour": 158.0,
+    "white rice flour": 158.0,
+    "brown rice flour": 163.0,
+    "tapioca starch": 120.0,
+    "tapioca flour": 120.0,
+    "arrowroot starch": 128.0,
+    "arrowroot flour": 128.0,
+    "arrowroot": 128.0,
+    "potato starch": 160.0,
+    "cornstarch": 120.0,
+    "corn starch": 120.0,
+    "gluten-free flour": 120.0,     # generic; approximate
+    "gluten free flour": 120.0,
+    "gluten-free flour blend": 120.0,
+    "gf flour blend": 120.0,
+    "1:1 gluten-free flour": 120.0,
+    "1-to-1 gluten-free flour": 120.0,
+    "gluten-free 1-to-1 baking flour": 120.0,
+    # Binding agents (measured in tsp; grams/cup for volume → mass conversion)
+    "xanthan gum": 144.0,           # ~3g/tsp × 48 tsp/cup
+    "psyllium husk": 192.0,         # ~4g/tsp × 48
+    "psyllium husk powder": 192.0,
+    "psyllium": 192.0,
+    "flax meal": 150.0,             # ~3.1g/tsp × 48
+    "ground flaxseed": 150.0,
+    "ground flax": 150.0,
+    "chia seeds": 160.0,
+    "chia seed": 160.0,
 
     # Sugars
     "granulated sugar": 200.0,
@@ -307,6 +338,14 @@ def classify_ingredient(name: str) -> str:
         return "cocoa"
     if any(w in n for w in ("chocolate chip", "chocolate chunk", "chopped chocolate")):
         return "chocolate"
+
+    # GF binding agents (xanthan gum, psyllium husk, flax/chia eggs)
+    if any(w in n for w in ("xanthan", "psyllium", "flax meal", "flaxseed", "ground flax",
+                             "chia seed", "chia")):
+        return "binding_agent"
+    # "flax egg" is a common GF egg substitute; classify with binding agents
+    if "flax egg" in n:
+        return "binding_agent"
 
     return "other"
 

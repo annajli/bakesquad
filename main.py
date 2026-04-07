@@ -98,8 +98,8 @@ def _bar(score: float) -> str:
     return "#" * filled + "." * (BAR_WIDTH - filled)
 
 
-def _range_flag(value: float, category: str, ratio_name: str) -> str:
-    return "ok" if ratio_in_range(ratio_name, value, category) else "!!"
+def _range_flag(value: float, category: str, ratio_name: str, flour_type: str = "ap") -> str:
+    return "ok" if ratio_in_range(ratio_name, value, category, flour_type) else "!!"
 
 
 def _print_header(backend: str, model: str, query: str, recency: Optional[str]) -> None:
@@ -165,18 +165,25 @@ def _print_results(scored: list[ScoredRecipe], plan: QueryPlan) -> None:
         print()
         print("      Ratios:")
         r = s.ratios
+        ft = r.flour_type or "ap"
         if r.liquid_to_flour is not None:
-            print(f"        liquid/flour:    {r.liquid_to_flour:.3f}  {_range_flag(r.liquid_to_flour, r.category, 'liquid_to_flour')}")
+            print(f"        liquid/flour:    {r.liquid_to_flour:.3f}  {_range_flag(r.liquid_to_flour, r.category, 'liquid_to_flour', ft)}")
         if r.fat_to_flour is not None:
-            print(f"        fat/flour:       {r.fat_to_flour:.3f}  {_range_flag(r.fat_to_flour, r.category, 'fat_to_flour')}")
+            print(f"        fat/flour:       {r.fat_to_flour:.3f}  {_range_flag(r.fat_to_flour, r.category, 'fat_to_flour', ft)}")
         if r.sugar_to_flour is not None:
-            print(f"        sugar/flour:     {r.sugar_to_flour:.3f}  {_range_flag(r.sugar_to_flour, r.category, 'sugar_to_flour')}")
+            print(f"        sugar/flour:     {r.sugar_to_flour:.3f}  {_range_flag(r.sugar_to_flour, r.category, 'sugar_to_flour', ft)}")
         if r.leavening_to_flour is not None:
-            print(f"        leavening/flour: {r.leavening_to_flour:.4f} {_range_flag(r.leavening_to_flour, r.category, 'leavening_to_flour')}")
+            print(f"        leavening/flour: {r.leavening_to_flour:.4f} {_range_flag(r.leavening_to_flour, r.category, 'leavening_to_flour', ft)}")
         if r.fat_type:
             print(f"        fat source:      {r.fat_type}")
+        if r.flour_type and r.flour_type != "ap":
+            print(f"        flour type:      {r.flour_type}")
+        if r.modifiers:
+            print(f"        modifiers:       {', '.join(r.modifiers)}")
+        if r.has_binding_agent:
+            print(f"        binding agent:   yes")
         if r.brown_to_white_sugar is not None:
-            print(f"        brown/white:     {r.brown_to_white_sugar:.2f}  {_range_flag(r.brown_to_white_sugar, r.category, 'brown_to_white_sugar')}")
+            print(f"        brown/white:     {r.brown_to_white_sugar:.2f}  {_range_flag(r.brown_to_white_sugar, r.category, 'brown_to_white_sugar', ft)}")
         if r.from_cache:
             print(f"        [ratios from cache]")
 

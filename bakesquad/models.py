@@ -43,6 +43,8 @@ class FetchedPage(BaseModel):
 class QueryPlan(BaseModel):
     """Output of step 1 — query understanding + diversification in a single LLM call."""
     category: Literal["cookie", "quick_bread", "cake", "other"]
+    flour_type: str = "ap"           # primary flour: ap, almond, oat, coconut, rice, gf_blend, other
+    modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free", "vegan", "paleo"]
     hard_constraints: list[str]      # must be true ("has chocolate", "stays moist for days")
     soft_preferences: list[str]      # inform weighting ("not too sweet", "crispy edges")
     queries: list[str]               # diversified search query variants (exactly 2)
@@ -73,6 +75,8 @@ class ParsedRecipe(BaseModel):
     title: str
     url: str
     category: Literal["cookie", "quick_bread", "cake", "other"]
+    flour_type: str = "ap"           # primary flour detected from ingredients
+    modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free", "vegan"]
     ingredients: list[RecipeIngredient]
     yield_description: str = ""      # "1 loaf", "24 cookies"
     instruction_count: int = 0       # proxy for recipe specificity
@@ -93,6 +97,8 @@ class NormalizedIngredient(BaseModel):
 class RatioResult(BaseModel):
     url: str
     category: Literal["cookie", "quick_bread", "cake", "other"]
+    flour_type: str = "ap"           # primary flour type (propagated from ParsedRecipe)
+    modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free"]
 
     # Quick bread / cake ratios
     liquid_to_flour: Optional[float] = None
@@ -109,6 +115,7 @@ class RatioResult(BaseModel):
     leavening_type: Optional[Literal["soda", "powder", "both", "none"]] = None
 
     has_chocolate: bool = False
+    has_binding_agent: bool = False  # True if xanthan gum, psyllium, etc. detected
     flour_grams: float = 0.0         # raw flour weight for reference
     from_cache: bool = False
 

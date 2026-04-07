@@ -30,6 +30,13 @@ _SYSTEM_PROMPT = (
     "extract the structured recipe data and return ONLY a JSON object with these fields:\n\n"
     '- "title": recipe name (string)\n'
     '- "category": one of "cookie", "quick_bread", "cake", "other"\n'
+    '- "flour_type": primary flour used — one of: "ap", "almond", "oat", "coconut", "rice", "gf_blend", "other"\n'
+    '  Detect from ingredients: almond flour→"almond", oat flour→"oat", coconut flour→"coconut",\n'
+    '  rice flour→"rice", any "1:1 gluten-free" or "gluten-free blend"→"gf_blend", default→"ap"\n'
+    '- "modifiers": list of applicable tags — choose from:\n'
+    '  ["gluten_free", "vegan", "dairy_free", "paleo", "keto", "nut_free"]\n'
+    '  Detect from ingredients: no butter/milk/eggs→consider vegan, no wheat flour→gluten_free, etc.\n'
+    '  Empty list if none apply.\n'
     '- "ingredients": array of objects, each with:\n'
     '    - "name": ingredient name in lowercase (no quantities, no brand names)\n'
     '    - "quantity": numeric amount (float, 0 if unknown)\n'
@@ -46,7 +53,7 @@ _SYSTEM_PROMPT = (
     "- For 'butter' measured in sticks: unit='sticks'\n"
     "- For 'butter' measured in cups/tbsp: use cups/tbsp\n"
     "- Normalize ingredient names: 'unsalted butter' → 'butter', 'AP flour' → 'all-purpose flour'\n"
-    "- Include ALL ingredients, even salt, vanilla, etc.\n"
+    "- Include ALL ingredients, even salt, vanilla, xanthan gum, psyllium husk, etc.\n"
     "Return ONLY the JSON object. No explanation, no markdown fences."
 )
 
@@ -91,6 +98,8 @@ def parse_recipe(page: FetchedPage) -> Optional[ParsedRecipe]:
             title=str(data.get("title", page.title or "Unknown Recipe")),
             url=page.url,
             category=data.get("category", "other"),
+            flour_type=data.get("flour_type", "ap") or "ap",
+            modifiers=data.get("modifiers", []) or [],
             ingredients=ingredients,
             yield_description=str(data.get("yield_description", "")),
             instruction_count=int(data.get("instruction_count", 0) or 0),
