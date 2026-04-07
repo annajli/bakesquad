@@ -698,3 +698,110 @@ WARNING  bakesquad.parser  Parse failed for https://www.daisily.co/articles/zucc
   ok  54.6s  (budget 15s)
 
   No recipes parsed. Try a different query.
+
+
+
+  (cs6501) PS C:\Users\annaj\bakesquad> python main.py "moist zucchini bread with chocolate chips"
+WARNING  bakesquad.search.ingestion  Query plan parse failed (No valid JSON in LLM response: ). Raw LLM response: ''
+WARNING  bakesquad.search.ingestion  Snippet scoring failed; defaulting chunk to 0.5.
+WARNING  bakesquad.parser  Parse failed for https://www.bunsinmyoven.com/chocolate-zucchini-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://butternutbakeryblog.com/chocolate-chip-zucchini-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.scorer  Explanation generation failed: No valid JSON in LLM response: 
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'moist zucchini bread with chocolate chips'
+
+[Step 1: Query Understanding]
+  Category:    other
+  Constraints: -
+  Preferences: -
+  Queries generated:
+    - moist zucchini bread with chocolate chips
+  ok  9.8s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  8 candidates selected
+    [0.50] butternutbakeryblog.com  MOIST Chocolate Chip Zucchini Bread | Butternut Bakery
+    [0.50] chefsavvy.com  The BEST Chocolate Chip Zucchini Bread - Chef Savvy
+    [0.50] bunsinmyoven.com  Super Moist Chocolate Zucchini Bread with Chocolate Chips!
+    [0.50] tasteofhome.com  Chocolate Chip Zucchini Bread Recipe: How To Make It
+    [0.50] recipestokeep.com  Moist Zucchini Bread with Chocolate Chips in 1 Bowl (
+    [0.50] tasteitrecipes.com  Chocolate Chip Zucchini Bread Recipe - Moist & Easy
+  ok  13.7s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  1.1s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  2 recipes parsed  (2 failed)
+  ok  101.9s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  2 ratio results  (0 from cache)
+  ok  0.0s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  2 recipes scored
+  Generating explanations (1 batched LLM call)...
+  ok  18.8s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: other
+
+  #1  The BEST Chocolate Chip Zucchini Bread
+      https://chefsavvy.com/chocolate-chip-zucchini-bread/
+      [oil-based] [chocolate]
+      Composite  ################....  79/100
+
+        Moisture Retention       #############.......  66  (w=0.45)
+        Structure & Leavening    ####################  100  (w=0.30)
+        Sugar Balance            ###############.....  77  (w=0.25)
+
+      Ratios:
+        liquid/flour:    0.889  ok
+        fat/flour:       0.606  ok
+        sugar/flour:     1.111  !!
+        leavening/flour: 0.0270 ok
+        fat source:      oil
+        modifiers:       nut_free
+
+      Why this score:
+        Score explanation unavailable.
+
+  ----------------------------------------------------------
+
+  #2  Chocolate Chip Zucchini Bread
+      https://www.tasteofhome.com/recipes/zucchini-chip-loaves/
+      [oil-based] [chocolate]
+      Composite  ###############.....  73/100
+
+        Moisture Retention       ###########.........  54  (w=0.45)
+        Structure & Leavening    ####################  100  (w=0.30)
+        Sugar Balance            ###############.....  77  (w=0.25)
+
+      Ratios:
+        liquid/flour:    0.312  !!
+        fat/flour:       0.606  ok
+        sugar/flour:     1.111  !!
+        leavening/flour: 0.0214 ok
+        fat source:      oil
+        modifiers:       dairy_free, nut_free
+
+      Why this score:
+        Score explanation unavailable.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 145.3s  (budget 180s)  [OK]
+  Backend: ollama (qwen3.5)
+==============================================================
