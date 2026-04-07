@@ -1,0 +1,135 @@
+(cs6501) PS C:\Users\annaj\bakesquad> python main.py "brown butter raspberry chocolate chunk cookies"
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'brown butter raspberry chocolate chunk cookies'
+
+[Step 1: Query Understanding]
+  Category:    cookie
+  Constraints: contains brown butter, contains raspberry, contains chocolate chunks
+  Preferences: nutty flavor, chewy texture
+  Queries generated:
+    - brown butter raspberry chocolate chunk cookie recipe
+    - chewy brown butter raspberry chocolate chunk cookies browned butter technique
+  ok  54.1s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  13 candidates selected
+    [1.00] halfbakedharvest.com  Brown Butter Raspberry Chocolate Chip Cookies. - Half Bake
+    [1.00] recipeinternational.com  Ultimate Brown Butter Raspberry Chocolate Chip Cookies
+    [1.00] sweetmyplate.com  Brown Butter Raspberry Chocolate Chip Cookies - sweetmypla
+    [1.00] pinchpulse.com  Brown Butter Raspberry Chocolate Chip Cookies You’ll Love
+    [1.00] dorarecipes.com  Brown Butter Raspberry Chocolate Chip Cookies
+    [1.00] oventoasted.com  Brown Butter Raspberry Chocolate Chip Cookies. - OvenToast
+  ok  80.6s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  3/4 pages fetched successfully
+  ok  1.2s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 3 pages)
+  3 recipes parsed  (0 failed)
+  ok  164.1s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  3 ratio results  (0 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  3 recipes scored
+  Generating explanations (1 batched LLM call)...
+  ok  54.5s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: cookie
+  Must have: contains brown butter, contains raspberry, contains chocolate chunks
+  Preferences: nutty flavor, chewy texture
+
+  #1  Brown Butter Raspberry Chocolate Chip Cookies
+      https://www.halfbakedharvest.com/raspberry-chocolate-chip-cookies/
+      [butter-based] [chocolate]
+      Composite  ###############.....  73/100
+
+        Moisture Retention       ########............  42  (w=0.45)
+        Structure & Leavening    ##################..  88  (w=0.50)
+        Sugar Balance            ####################  100  (w=0.25)
+
+      Ratios:
+        fat/flour:       0.841  ok
+        sugar/flour:     0.741  ok
+        leavening/flour: 0.0211 ok
+        fat source:      butter
+        brown/white:     2.00  ok
+
+      Why this score:
+        This recipe achieves excellent structure and perfect sugar
+        balance, ensuring a well-caramelized crust without excessive
+        sweetness. However, the reliance on butter alone results in a
+        low moisture retention score, predicting a cookie that may
+        stale faster than oil-based counterparts over multiple days.
+
+  ----------------------------------------------------------
+
+  #2  Brown Butter Raspberry Chocolate Chip Cookies
+      https://sweetmyplate.com/brown-butter-raspberry-chocolate-chip-cookies/
+      [butter-based] [chocolate]
+      Composite  ###############.....  73/100
+
+        Moisture Retention       ########............  42  (w=0.45)
+        Structure & Leavening    ##################..  88  (w=0.50)
+        Sugar Balance            ####################  100  (w=0.25)
+
+      Ratios:
+        fat/flour:       0.841  ok
+        sugar/flour:     0.741  ok
+        leavening/flour: 0.0211 ok
+        fat source:      butter
+        brown/white:     2.00  ok
+
+      Why this score:
+        Identical ratios to the previous entry yield the same high
+        structural integrity and ideal sweetness profile, supporting a
+        consistent chew. However, the moisture retention remains
+        critically low at 42/100, suggesting the butter-based formula
+        will lose softness rapidly compared to recipes utilizing
+        hybrid fats.
+
+  ----------------------------------------------------------
+
+  #3  Brown Butter Raspberry Chocolate Chip Cookies
+      https://pinchpulse.com/brown-butter-raspberry-chocolate-chip-cookies/
+      [butter-based] [chocolate]
+      Composite  #############.......  67/100
+
+        Moisture Retention       ########............  42  (w=0.45)
+        Structure & Leavening    ###############.....  74  (w=0.50)
+        Sugar Balance            ####################  100  (w=0.25)
+
+      Ratios:
+        fat/flour:       0.946  ok
+        sugar/flour:     1.042  ok
+        leavening/flour: 0.0238 ok
+        fat source:      butter
+        brown/white:     1.50  ok
+
+      Why this score:
+        Although the sugar balance is perfect, the elevated
+        sugar-to-flour ratio of 1.04 compromises structural integrity,
+        leading to a lower leavening score and potential excessive
+        spread. Like the previous recipes, the butter-only fat content
+        limits moisture retention, predicting a crispier cookie that
+        stales faster than desired.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 354.6s  (budget 180s)  [OVER BUDGET]
+  Backend: ollama (qwen3.5)
+==============================================================

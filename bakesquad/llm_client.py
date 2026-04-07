@@ -24,7 +24,7 @@ from typing import Any
 BACKEND: str = os.environ.get("MODEL_BACKEND", "ollama").lower()
 
 _MODELS: dict[str, str] = {
-    "ollama": os.environ.get("OLLAMA_MODEL", "qwen3:8b"),
+    "ollama": os.environ.get("OLLAMA_MODEL", "qwen3.5"),
     "groq": os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant"),
     "claude": "claude-sonnet-4-20250514",
 }
@@ -55,10 +55,19 @@ def _init_client() -> Any:
         from openai import OpenAI
 
         if BACKEND == "ollama":
-            _client = OpenAI(
-                base_url="http://localhost:11434/v1",
-                api_key="ollama",
-            )
+            ollama_api_key = os.environ.get("OLLAMA_API_KEY")
+            if ollama_api_key:
+                # Ollama Cloud — requires account key from ollama.com/settings/keys
+                _client = OpenAI(
+                    base_url="https://ollama.com/v1",
+                    api_key=ollama_api_key,
+                )
+            else:
+                # Local Ollama — no real auth needed
+                _client = OpenAI(
+                    base_url="http://localhost:11434/v1",
+                    api_key="ollama",
+                )
         else:
             api_key = os.environ.get("GROQ_API_KEY")
             if not api_key:
