@@ -37,12 +37,17 @@ def query_plan_prompt(
         "You are a baking recipe search assistant. Given a user's natural language query, "
         "analyze it and return a JSON object with exactly these keys:\n\n"
         '- "category": the type of baked good — one of: cookie, quick_bread, cake, other\n'
+        '  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread\n'
+        '  cookie includes: drop cookies, bar cookies, brownies, shortbread\n'
+        '  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n'
+        '  other: anything that does not fit the above\n'
         '- "flour_type": the primary flour the recipe likely uses — one of:\n'
         '    "ap" (all-purpose, default), "almond", "oat", "coconut", "rice", "gf_blend" (1:1 GF blend), "other"\n'
-        '  Use "ap" unless the query explicitly mentions a non-AP flour.\n'
+        '  Use "ap" unless the query explicitly mentions a non-AP flour or is gluten-free.\n'
+        '  If gluten-free and no specific flour mentioned, use "gf_blend".\n'
         '- "modifiers": list of applicable dietary/technique tags from:\n'
         '    ["gluten_free", "vegan", "dairy_free", "paleo", "keto", "nut_free"]\n'
-        '  Empty list if none apply. "gluten_free" implies flour_type is not "ap".\n'
+        '  Empty list if none apply.\n'
         '- "hard_constraints": list of strings — things that MUST be true about the recipe '
         '(e.g. "contains chocolate", "stays moist for days"). Empty list if none.\n'
         '- "soft_preferences": list of strings — texture/flavor preferences that inform ranking. '
@@ -51,7 +56,28 @@ def query_plan_prompt(
         "  - queries[0]: broad variant using general ingredient/category terms\n"
         f"{recency_line}"
         f"{trusted_line}"
-        "\nReturn only the JSON object, no other text."
+        "\nExamples:\n\n"
+        'Input: "banana bread"\n'
+        '{"category":"quick_bread","flour_type":"ap","modifiers":[],'
+        '"hard_constraints":[],"soft_preferences":[],'
+        '"queries":["banana bread recipe","moist classic banana bread recipe"]}\n\n'
+        'Input: "zucchini bread with chocolate chips"\n'
+        '{"category":"quick_bread","flour_type":"ap","modifiers":[],'
+        '"hard_constraints":["contains chocolate"],"soft_preferences":[],'
+        '"queries":["zucchini bread chocolate chip recipe","moist chocolate chip zucchini bread recipe"]}\n\n'
+        'Input: "gluten-free almond flour banana bread"\n'
+        '{"category":"quick_bread","flour_type":"almond","modifiers":["gluten_free"],'
+        '"hard_constraints":[],"soft_preferences":[],'
+        '"queries":["almond flour banana bread recipe","gluten free almond flour banana bread moist"]}\n\n'
+        'Input: "chewy brown butter chocolate chip cookies"\n'
+        '{"category":"cookie","flour_type":"ap","modifiers":[],'
+        '"hard_constraints":["contains chocolate"],"soft_preferences":["chewy texture","brown butter flavor"],'
+        '"queries":["brown butter chocolate chip cookie recipe","chewy brown butter chocolate chip cookies recipe"]}\n\n'
+        'Input: "moist red velvet cake"\n'
+        '{"category":"cake","flour_type":"ap","modifiers":[],'
+        '"hard_constraints":["red velvet flavor","moist texture"],"soft_preferences":[],'
+        '"queries":["red velvet cake recipe","moist classic red velvet cake recipe from scratch"]}\n\n'
+        "Return only the JSON object, no other text."
     )
     user = query
     return system, user

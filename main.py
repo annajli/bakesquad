@@ -211,6 +211,27 @@ def _print_results(scored: list[ScoredRecipe], plan: QueryPlan) -> None:
         print()
 
 
+def _print_unscored_candidates(pages: list) -> None:
+    """Fallback display when parsing fails — show fetched pages ranked by search relevance."""
+    print()
+    print("=" * 62)
+    print("  SEARCH CANDIDATES  (parse failed — unscored)")
+    print("=" * 62)
+    print()
+    for i, page in enumerate(pages, 1):
+        score = page.snippet.relevance_score
+        score_str = f"  [relevance {score:.2f}]" if score is not None else ""
+        print(f"  #{i}  {page.title}")
+        print(f"       {page.url}{score_str}")
+        if page.snippet.excerpt:
+            excerpt = page.snippet.excerpt[:120].replace("\n", " ")
+            print(f"       {excerpt}...")
+        print()
+    print("  Tip: these pages exist but their ingredients could not be extracted.")
+    print("  Try rephrasing your query or checking the URLs directly.")
+    print()
+
+
 def _print_filter_results(
     scored: list[ScoredRecipe],
     excluded: int,
@@ -320,7 +341,8 @@ def run_pipeline(
     timer.tick("llm_parsing", "llm_parsing")
 
     if not recipes:
-        print("\n  No recipes parsed. Try a different query.")
+        print("\n  Parsing failed for all pages. Showing best candidates from search:")
+        _print_unscored_candidates(pages)
         return None
 
     # Steps 8-9: Normalization + ratio engine

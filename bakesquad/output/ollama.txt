@@ -507,3 +507,194 @@ WARNING  bakesquad.ratio_engine  Suspiciously low flour (0g) for https://sandyki
   Total: 350.3s  (budget 180s)  [OVER BUDGET]
   Backend: ollama (qwen3.5)
 ==============================================================
+
+(cs6501) PS C:\Users\annaj\bakesquad> python main.py "healthy gluten-free banana bread with chocolate chips"
+WARNING  bakesquad.search.ingestion  Query plan parse failed; falling back to original query.
+WARNING  bakesquad.parser  Parse failed for https://allthehealthythings.com/gluten-free-chocolate-chip-banana-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://www.loveandzest.com/gluten-free-chocolate-chip-banana-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.scorer  Explanation generation failed: No valid JSON in LLM response: 
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'healthy gluten-free banana bread with chocolate chips'
+
+[Step 1: Query Understanding]
+  Category:    other
+  Constraints: -
+  Preferences: -
+  Queries generated:
+    - healthy gluten-free banana bread with chocolate chips
+  ok  10.3s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  6 candidates selected
+    [1.00] allthehealthythings.com  Gluten Free Chocolate Chip Banana Bread - All the Healthy 
+    [1.00] somethingnutritiousblog.com  Gluten-free Chocolate Chip Banana Bread - Something Nutrit
+    [1.00] loveandzest.com  Gluten Free Chocolate Chip Banana Bread - Love & Zest
+    [0.90] seasonalcravings.com  Best Ever Gluten Free Banana Bread with Chocolate Chips
+    [0.90] therealfooddietitians.com  Delicious and Moist Gluten Free Banana Bread
+    [0.80] bakedgreens.com  Chocolate Chip Coconut Flour Banana Bread - Baked Greens
+  ok  54.2s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  1.3s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  2 recipes parsed  (2 failed)
+  ok  89.5s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  2 ratio results  (0 from cache)
+  ok  0.0s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  2 recipes scored
+  Generating explanations (1 batched LLM call)...
+  ok  14.2s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: other
+
+  #1  Gluten-free Chocolate Chip Banana Bread
+      https://somethingnutritiousblog.com/gluten-free-chocolate-chip-banana-bread/
+      [oil-based] [banana] [chocolate]
+      Composite  ################....  81/100
+
+        Moisture Retention       ##################..  91  (w=0.45)
+        Structure & Leavening    ##################..  90  (w=0.30)
+        Sugar Balance            ####################  100  (w=0.25)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.657  !!
+        fat/flour:       0.328  !!
+        sugar/flour:     0.682  ok
+        leavening/flour: 0.0413 ok
+        fat source:      oil
+        flour type:      almond
+        modifiers:       gluten_free, dairy_free
+
+      Why this score:
+        Score explanation unavailable.
+
+  ----------------------------------------------------------
+
+  #2  Best Ever Gluten Free Banana Bread with Chocolate Chips
+      https://www.seasonalcravings.com/gluten-free-chocolate-chip-banana-bread/
+      [butter-based] [banana] [chocolate]
+      Composite  ###############.....  74/100
+
+        Moisture Retention       #############.......  67  (w=0.45)
+        Structure & Leavening    ####################  100  (w=0.30)
+        Sugar Balance            ####################  100  (w=0.25)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    2.083  !!
+        fat/flour:       0.631  ok
+        sugar/flour:     0.833  ok
+        leavening/flour: 0.0317 ok
+        fat source:      butter
+        flour type:      gf_blend
+        modifiers:       gluten_free, nut_free
+
+      Why this score:
+        Score explanation unavailable.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 169.6s  (budget 180s)  [OK]
+  Backend: ollama (qwen3.5)
+==============================================================
+
+(cs6501) PS C:\Users\annaj\bakesquad> python main.py "moist zucchini bread with chocolate chips"
+WARNING  bakesquad.search.ingestion  Query plan parse failed; falling back to original query.
+WARNING  bakesquad.search.ingestion  Snippet scoring failed; defaulting chunk to 0.5.
+WARNING  bakesquad.parser  Parse failed for https://chefsavvy.com/chocolate-chip-zucchini-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://www.bunsinmyoven.com/chocolate-zucchini-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://www.tasteofhome.com/recipes/zucchini-chip-loaves/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://butternutbakeryblog.com/chocolate-chip-zucchini-bread/: No valid JSON in LLM response: 
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'moist zucchini bread with chocolate chips'
+
+[Step 1: Query Understanding]
+  Category:    other
+  Constraints: -
+  Preferences: -
+  Queries generated:
+    - moist zucchini bread with chocolate chips
+  ok  60.0s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  8 candidates selected
+    [0.50] butternutbakeryblog.com  MOIST Chocolate Chip Zucchini Bread | Butternut Bakery
+    [0.50] chefsavvy.com  The BEST Chocolate Chip Zucchini Bread - Chef Savvy
+    [0.50] bunsinmyoven.com  Super Moist Chocolate Zucchini Bread with Chocolate Chips!
+    [0.50] tasteofhome.com  Chocolate Chip Zucchini Bread Recipe: How To Make It
+    [0.50] recipestokeep.com  Moist Zucchini Bread with Chocolate Chips in 1 Bowl (
+    [0.50] tasteitrecipes.com  Chocolate Chip Zucchini Bread Recipe - Moist & Easy
+  ok  59.2s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  2.0s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  0 recipes parsed  (4 failed)
+  ok  94.6s  (budget 15s)
+
+  No recipes parsed. Try a different query.
+
+
+  (cs6501) PS C:\Users\annaj\bakesquad> python main.py "moist zucchini bread with chocolate chips"
+WARNING  bakesquad.search.ingestion  Query plan parse failed (No valid JSON in LLM response: ). Raw LLM response: ''
+WARNING  bakesquad.search.ingestion  Snippet scoring failed; defaulting chunk to 0.5.
+WARNING  bakesquad.parser  Parse failed for https://www.bunsinmyoven.com/chocolate-zucchini-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://butternutbakeryblog.com/chocolate-chip-zucchini-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://www.theseoldcookbooks.com/moist-chocolate-chip-zucchini-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://www.daisily.co/articles/zucchini-bread-recipe: No valid JSON in LLM response: 
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: 'moist zucchini bread with chocolate chips'
+
+[Step 1: Query Understanding]
+  Category:    other
+  Constraints: -
+  Preferences: -
+  Queries generated:
+    - moist zucchini bread with chocolate chips
+  ok  7.2s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  8 candidates selected
+    [0.50] theseoldcookbooks.com  Moist Zucchini Bread with Chocolate Chips Recipe - These O
+    [0.50] daisily.co  Deliciously Moist Zucchini Bread With Chocolate Chips Reci
+    [0.50] butternutbakeryblog.com  MOIST Chocolate Chip Zucchini Bread | Butternut Bakery
+    [0.50] bunsinmyoven.com  Super Moist Chocolate Zucchini Bread with Chocolate Chips!
+    [0.50] skinnytaste.com  Moist Chocolate Chip Zucchini Bread - Skinnytaste
+    [0.50] creativehomemaking.com  Chocolate Chip Zucchini Bread Easy Recipe for Moist, Flavo
+  ok  30.3s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  1.1s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  0 recipes parsed  (4 failed)
+  ok  54.6s  (budget 15s)
+
+  No recipes parsed. Try a different query.

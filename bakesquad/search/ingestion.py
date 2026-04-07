@@ -168,8 +168,11 @@ class IngestionPipeline:
                 soft_preferences=data.get("soft_preferences", []),
                 queries=queries,
             )
-        except Exception:
-            logger.warning("Query plan parse failed; falling back to original query.")
+        except Exception as exc:
+            logger.warning(
+                "Query plan parse failed (%s). Raw LLM response: %r",
+                exc, raw[:400],
+            )
             plan = QueryPlan(
                 category="other",
                 flour_type="ap",
