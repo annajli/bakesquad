@@ -1,0 +1,775 @@
+
+BakeSquad Evaluation Framework
+  Backend : ollama (qwen3.5)
+  Dataset : C:\Users\annaj\bakesquad\evaluation\eval_dataset.json
+  Output  : evaluation\results\ollama
+  Debug   : True
+  Timestamp: 20260409_135527
+
+  Loaded 44 test cases from eval_dataset.json
+
+============================================================
+  Stage 1: Classification Testing  (44 cases)
+============================================================
+
+────────────────────────────────────────────────────────────
+[TC01] 'chocolate chip cookies'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'chocolate chip cookies'
+  RAW RESPONSE: {
+  "category": "cookie",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains chocolate"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "chocolate chip cookie recipe",
+    "classic chocolate chip cookies recipe"
+  ]
+}
+  PARSED: {'category': 'cookie', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains chocolate'], 'soft_preferences': [], 'queries': ['chocolate chip cookie recipe', 'classic chocolate chip cookies recipe']}
+  [01/44] ✓  TC01   chocolate chip cookies                    expected=cookie        got=cookie      
+
+────────────────────────────────────────────────────────────
+[TC02] 'chewy oatmeal raisin cookies'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'chewy oatmeal raisin cookies'
+  RAW RESPONSE: {
+  "category": "cookie",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains raisins"
+  ],
+  "soft_preferences": [
+    "chewy texture"
+  ],
+  "queries": [
+    "oatmeal raisin cookie recipe",
+    "chewy oatmeal raisin cookies recipe"
+  ]
+}
+  PARSED: {'category': 'cookie', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains raisins'], 'soft_preferences': ['chewy texture'], 'queries': ['oatmeal raisin cookie recipe', 'chewy oatmeal raisin cookies recipe']}
+  [02/44] ✓  TC02   chewy oatmeal raisin cookies              expected=cookie        got=cookie      
+
+────────────────────────────────────────────────────────────
+[TC03] 'snickerdoodle cookies'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'snickerdoodle cookies'
+  RAW RESPONSE: {
+  "category": "cookie",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [],
+  "soft_preferences": [],
+  "queries": [
+    "snickerdoodle cookie recipe",
+    "soft chewy snickerdoodle cookies recipe"
+  ]
+}
+  PARSED: {'category': 'cookie', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['snickerdoodle cookie recipe', 'soft chewy snickerdoodle cookies recipe']}
+  [03/44] ✓  TC03   snickerdoodle cookies                     expected=cookie        got=cookie      
+
+────────────────────────────────────────────────────────────
+[TC04] 'peanut butter cookies'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'peanut butter cookies'
+  RAW RESPONSE: {
+  "category": "cookie",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains peanut butter"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "peanut butter cookies recipe",
+    "classic peanut butter cookies recipe"
+  ]
+}
+  PARSED: {'category': 'cookie', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains peanut butter'], 'soft_preferences': [], 'queries': ['peanut butter cookies recipe', 'classic peanut butter cookies recipe']}
+  [04/44] ✓  TC04   peanut butter cookies                     expected=cookie        got=cookie      
+
+────────────────────────────────────────────────────────────
+[TC05] 'fudgy brownies with walnuts'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'fudgy brownies with walnuts'
+  ERROR: No valid JSON in LLM response: 
+  [05/44] ✗  TC05   fudgy brownies with walnuts               expected=cookie        got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC06] 'lemon bars'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'lemon bars'
+  RAW RESPONSE: {
+  "category": "cookie",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints
+  PARSED: []
+  [06/44] ✗  TC06   lemon bars                                expected=cookie        got=PARSE_ERROR 
+
+────────────────────────────────────────────────────────────
+[TC07] 'shortbread cookies'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'shortbread cookies'
+  RAW RESPONSE: {
+  "category": "cookie",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [],
+  "soft_preferences": [],
+  "queries": [
+    "shortbread cookies recipe",
+    "classic buttery shortbread cookies recipe"
+  ]
+}
+  PARSED: {'category': 'cookie', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['shortbread cookies recipe', 'classic buttery shortbread cookies recipe']}
+  [07/44] ✓  TC07   shortbread cookies                        expected=cookie        got=cookie      
+
+────────────────────────────────────────────────────────────
+[TC08] 'double chocolate chip cookies'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'double chocolate chip cookies'
+  RAW RESPONSE: {"category":"cookie","flour_type":"ap","modifiers":[],"hard_constraints":["contains chocolate"],"soft_preferences":[],"queries":["double chocolate chip cookie recipe","rich double chocolate chip cookies recipe"]}
+  PARSED: {'category': 'cookie', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains chocolate'], 'soft_preferences': [], 'queries': ['double chocolate chip cookie recipe', 'rich double chocolate chip cookies recipe']}
+  [08/44] ✓  TC08   double chocolate chip cookies             expected=cookie        got=cookie      
+
+────────────────────────────────────────────────────────────
+[TC09] 'white chocolate macadamia nut cookies'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'white chocolate macadamia nut cookies'
+  ERROR: No valid JSON in LLM response: 
+  [09/44] ✗  TC09   white chocolate macadamia nut cookies     expected=cookie        got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC10] 'soft sugar cookies with frosting'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'soft sugar cookies with frosting'
+  ERROR: No valid JSON in LLM response: 
+  [10/44] ✗  TC10   soft sugar cookies with frosting          expected=cookie        got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC11] 'red velvet cake'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'red velvet cake'
+  ERROR: No valid JSON in LLM response: 
+  [11/44] ✗  TC11   red velvet cake                           expected=cake          got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC12] 'carrot cake with cream cheese frosting'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'carrot cake with cream cheese frosting'
+  ERROR: No valid JSON in LLM response: 
+  [12/44] ✗  TC12   carrot cake with cream cheese frosting    expected=cake          got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC13] 'moist chocolate birthday cake'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'moist chocolate birthday cake'
+  RAW RESPONSE: {
+  "category": "cake",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains chocolate",
+    "moist texture"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "chocolate birthday cake recipe",
+    "moist chocolate birthday cake recipe from scratch"
+  ]
+}
+  PARSED: {'category': 'cake', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains chocolate', 'moist texture'], 'soft_preferences': [], 'queries': ['chocolate birthday cake recipe', 'moist chocolate birthday cake recipe from scratch']}
+  [13/44] ✓  TC13   moist chocolate birthday cake             expected=cake          got=cake        
+
+────────────────────────────────────────────────────────────
+[TC14] 'vanilla layer cake'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'vanilla layer cake'
+  ERROR: No valid JSON in LLM response: 
+  [14/44] ✗  TC14   vanilla layer cake                        expected=cake          got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC15] 'lemon bundt cake'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'lemon bundt cake'
+  ERROR: No valid JSON in LLM response: 
+  [15/44] ✗  TC15   lemon bundt cake                          expected=cake          got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC16] 'New York cheesecake'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'New York cheesecake'
+  ERROR: No valid JSON in LLM response: 
+  [16/44] ✗  TC16   New York cheesecake                       expected=cake          got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC17] 'vanilla cupcakes with buttercream'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'vanilla cupcakes with buttercream'
+  RAW RESPONSE: {
+  "category": "cake",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "vanilla flavor",
+    "includes buttercream frosting"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "vanilla cupcakes with buttercream recipe",
+    "classic vanilla cupcakes with buttercream frosting recipe"
+  ]
+}
+  PARSED: {'category': 'cake', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['vanilla flavor', 'includes buttercream frosting'], 'soft_preferences': [], 'queries': ['vanilla cupcakes with buttercream recipe', 'classic vanilla cupcakes with buttercream frosting recipe']}
+  [17/44] ✓  TC17   vanilla cupcakes with buttercream         expected=cake          got=cake        
+
+────────────────────────────────────────────────────────────
+[TC18] 'funfetti birthday cake'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'funfetti birthday cake'
+  ERROR: No valid JSON in LLM response: 
+  [18/44] ✗  TC18   funfetti birthday cake                    expected=cake          got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC19] 'blueberry muffins'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'blueberry muffins'
+  RAW RESPONSE: {"category":"quick_bread","flour_type":"ap","modifiers":[],"hard_constraints":["contains blueberries"],"soft_preferences":[],"queries":["blueberry muffin recipe","classic blueberry muffins recipe"]}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains blueberries'], 'soft_preferences': [], 'queries': ['blueberry muffin recipe', 'classic blueberry muffins recipe']}
+  [19/44] ✓  TC19   blueberry muffins                         expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC20] 'pumpkin bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'pumpkin bread'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [],
+  "soft_preferences": [],
+  "queries": [
+    "pumpkin bread recipe",
+    "moist classic pumpkin bread recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['pumpkin bread recipe', 'moist classic pumpkin bread recipe']}
+  [20/44] ✓  TC20   pumpkin bread                             expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC21] 'cornbread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'cornbread'
+  RAW RESPONSE: {"category":"quick_bread","flour_type":"ap","modifiers":[],"hard_constraints":[],"soft_preferences":[],"queries":["cornbread recipe","classic moist cornbread recipe"]}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['cornbread recipe', 'classic moist cornbread recipe']}
+  [21/44] ✓  TC21   cornbread                                 expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC22] 'cranberry orange scones'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'cranberry orange scones'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains cranberry",
+    "contains orange"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "cranberry orange scones recipe",
+    "tender cranberry orange scones recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains cranberry', 'contains orange'], 'soft_preferences': [], 'queries': ['cranberry orange scones recipe', 'tender cranberry orange scones recipe']}
+  [22/44] ✓  TC22   cranberry orange scones                   expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC23] 'pumpkin chocolate chip muffins'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'pumpkin chocolate chip muffins'
+  ERROR: No valid JSON in LLM response: 
+  [23/44] ✗  TC23   pumpkin chocolate chip muffins            expected=quick_bread   got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC24] 'cheddar jalapeÃ±o cornbread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'cheddar jalapeÃ±o cornbread'
+  ERROR: No valid JSON in LLM response: 
+  [24/44] ✗  TC24   cheddar jalapeÃ±o cornbread               expected=quick_bread   got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC25] 'banana bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'banana bread'
+  RAW RESPONSE: {"category":"quick_bread","flour_type":"ap","modifiers":[],"hard_constraints":[],"soft_preferences":[],"queries":["banana bread recipe","moist classic banana bread recipe"]}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['banana bread recipe', 'moist classic banana bread recipe']}
+  [25/44] ✓  TC25   banana bread                              expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC26] 'zucchini bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'zucchini bread'
+  RAW RESPONSE: {"category":"quick_bread","flour_type":"ap","modifiers":[],"hard_constraints":[],"soft_preferences":[],"queries":["zucchini bread recipe","moist classic zucchini bread recipe"]}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['zucchini bread recipe', 'moist classic zucchini bread recipe']}
+  [26/44] ✓  TC26   zucchini bread                            expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC27] 'chocolate chip banana bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'chocolate chip banana bread'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains chocolate"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "chocolate chip banana bread recipe",
+    "moist chocolate chip banana bread recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains chocolate'], 'soft_preferences': [], 'queries': ['chocolate chip banana bread recipe', 'moist chocolate chip banana bread recipe']}
+  [27/44] ✓  TC27   chocolate chip banana bread               expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC28] 'moist zucchini bread with walnuts'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'moist zucchini bread with walnuts'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains walnuts",
+    "moist texture"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "zucchini bread walnuts recipe",
+    "moist zucchini bread with walnuts recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains walnuts', 'moist texture'], 'soft_preferences': [], 'queries': ['zucchini bread walnuts recipe', 'moist zucchini bread with walnuts recipe']}
+  [28/44] ✓  TC28   moist zucchini bread with walnuts         expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC29] 'gluten-free banana bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'gluten-free banana bread'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "gf_blend",
+  "modifiers": [
+    "gluten_free"
+  ],
+  "hard_constraints": [],
+  "soft_preferences": [],
+  "queries": [
+    "gluten free banana bread recipe",
+    "best gluten free banana bread recipe moist"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'gf_blend', 'modifiers': ['gluten_free'], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['gluten free banana bread recipe', 'best gluten free banana bread recipe moist']}
+  [29/44] ✓  TC29   gluten-free banana bread                  expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC30] 'banana nut loaf'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'banana nut loaf'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains nuts"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "banana nut loaf recipe",
+    "moist classic banana nut bread recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains nuts'], 'soft_preferences': [], 'queries': ['banana nut loaf recipe', 'moist classic banana nut bread recipe']}
+  [30/44] ✓  TC30   banana nut loaf                           expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC31] 'zucchini chocolate loaf'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'zucchini chocolate loaf'
+  ERROR: No valid JSON in LLM response: 
+  [31/44] ✗  TC31   zucchini chocolate loaf                   expected=quick_bread   got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC32] 'quick bread with zucchini and lemon'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'quick bread with zucchini and lemon'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains zucchini",
+    "contains lemon"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "zucchini lemon quick bread recipe",
+    "moist zucchini lemon bread recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains zucchini', 'contains lemon'], 'soft_preferences': [], 'queries': ['zucchini lemon quick bread recipe', 'moist zucchini lemon bread recipe']}
+  [32/44] ✓  TC32   quick bread with zucchini and lemon       expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC33] 'savory muffins with gruyere and herbs'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'savory muffins with gruyere and herbs'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": ["savory flavor", "contains gruyere", "contains herbs"],
+  "soft_preferences": [],
+  "queries": ["savory gruyere muffins recipe", "savory muffins with gruyere cheese and herbs recipe"]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['savory flavor', 'contains gruyere', 'contains herbs'], 'soft_preferences': [], 'queries': ['savory gruyere muffins recipe', 'savory muffins with gruyere cheese and herbs recipe']}
+  [33/44] ✓  TC33   savory muffins with gruyere and herbs     expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC34] 'almond flour banana bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'almond flour banana bread'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "almond",
+  "modifiers": [
+    "gluten_free"
+  ],
+  "hard_constraints": [],
+  "soft_preferences": [],
+  "queries": [
+    "almond flour banana bread recipe",
+    "moist almond flour banana bread recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'almond', 'modifiers': ['gluten_free'], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['almond flour banana bread recipe', 'moist almond flour banana bread recipe']}
+  [34/44] ✓  TC34   almond flour banana bread                 expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC35] 'paleo banana bread with almond flour'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'paleo banana bread with almond flour'
+  RAW RESPONSE: {
+  "category": "quick_bread",
+  "flour_type": "almond",
+  "modifiers": [
+    "paleo"
+  ],
+  "hard_constraints": [],
+  "soft_preferences": [],
+  "queries": [
+    "paleo banana bread recipe",
+    "almond flour paleo banana bread moist recipe"
+  ]
+}
+  PARSED: {'category': 'quick_bread', 'flour_type': 'almond', 'modifiers': ['paleo'], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['paleo banana bread recipe', 'almond flour paleo banana bread moist recipe']}
+  [35/44] ✓  TC35   paleo banana bread with almond flour      expected=quick_bread   got=quick_bread 
+
+────────────────────────────────────────────────────────────
+[TC36] 'sourdough bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'sourdough bread'
+  RAW RESPONSE: {
+  "category": "other",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "requires sourdough starter"
+  ],
+  "soft_preferences": [
+    "crispy crust",
+    "airy crumb"
+  ],
+  "queries": [
+    "sourdough bread recipe",
+    "artisan sourdough bread recipe crispy crust"
+  ]
+}
+  PARSED: {'category': 'other', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['requires sourdough starter'], 'soft_preferences': ['crispy crust', 'airy crumb'], 'queries': ['sourdough bread recipe', 'artisan sourdough bread recipe crispy crust']}
+  [36/44] ✓  TC36   sourdough bread                           expected=other         got=other       
+
+────────────────────────────────────────────────────────────
+[TC37] 'homemade pizza dough'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'homemade pizza dough'
+  RAW RESPONSE: {
+  "category": "other",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [],
+  "soft_preferences": [],
+  "queries": [
+    "homemade pizza dough recipe",
+    "easy homemade pizza dough recipe from scratch"
+  ]
+}
+  PARSED: {'category': 'other', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': [], 'soft_preferences': [], 'queries': ['homemade pizza dough recipe', 'easy homemade pizza dough recipe from scratch']}
+  [37/44] ✓  TC37   homemade pizza dough                      expected=other         got=other       
+
+────────────────────────────────────────────────────────────
+[TC38] 'croissants from scratch'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'croissants from scratch'
+  ERROR: No valid JSON in LLM response: 
+  [38/44] ✗  TC38   croissants from scratch                   expected=other         got=ERROR       
+
+────────────────────────────────────────────────────────────
+[TC39] 'focaccia with rosemary and sea salt'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'focaccia with rosemary and sea salt'
+  RAW RESPONSE: {
+  "category": "other",
+  "flour_type": "ap",
+  "modifiers": [],
+  "hard_constraints": [
+    "contains rosemary",
+    "contains sea salt"
+  ],
+  "soft_preferences": [],
+  "queries": [
+    "focaccia recipe",
+    "classic rosemary sea salt focaccia recipe"
+  ]
+}
+  PARSED: {'category': 'other', 'flour_type': 'ap', 'modifiers': [], 'hard_constraints': ['contains rosemary', 'contains sea salt'], 'soft_preferences': [], 'queries': ['focaccia recipe', 'classic rosemary sea salt focaccia recipe']}
+  [39/44] ✓  TC39   focaccia with rosemary and sea salt       expected=other         got=other       
+
+────────────────────────────────────────────────────────────
+[TC40] 'something fruity and baked'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'something fruity and baked'
+  ERROR: No valid JSON in LLM response: 
+  [40/44] ✗  TC40   something fruity and baked                expected=other         got=ERROR        (ambiguous)
+
+────────────────────────────────────────────────────────────
+[TC41] 'healthy breakfast bread'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'healthy breakfast bread'
+  ERROR: No valid JSON in LLM response: 
+  [41/44] ✗  TC41   healthy breakfast bread                   expected=quick_bread   got=ERROR        (ambiguous)
+
+────────────────────────────────────────────────────────────
+[TC42] 'protein banana cake'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'protein banana cake'
+  ERROR: No valid JSON in LLM response: 
+  [42/44] ✗  TC42   protein banana cake                       expected=quick_bread   got=ERROR        (ambiguous)
+
+────────────────────────────────────────────────────────────
+[TC43] 'make me something with chocolate and nuts for a bake sale'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'make me something with chocolate and nuts for a bake sale'
+  ERROR: No valid JSON in LLM response: 
+  [43/44] ✗  TC43   make me something with chocolate and nut  expected=cookie        got=ERROR        (ambiguous)
+
+────────────────────────────────────────────────────────────
+[TC44] 'a moist loaf for gift giving'
+  SYSTEM PROMPT (first 300 chars):
+    You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:
+
+- "category": the type of baked good — one of: cookie, quick_bread, cake, other
+  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins,...
+  USER: 'a moist loaf for gift giving'
+  ERROR: No valid JSON in LLM response: 
+  [44/44] ✗  TC44   a moist loaf for gift giving              expected=quick_bread   got=ERROR        (ambiguous)
+Traceback (most recent call last):
+  File "C:\Users\annaj\bakesquad\evaluation\evaluate_agent.py", line 1206, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\annaj\bakesquad\evaluation\evaluate_agent.py", line 1138, in main
+    s1_diagnostics = diagnose_pipeline_issues(s1_results)
+  File "C:\Users\annaj\bakesquad\evaluation\evaluate_agent.py", line 641, in diagnose_pipeline_issues
+    and r.get("query_plan", {}).get("category") not in (None, "ERROR", "PARSE_ERROR")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'

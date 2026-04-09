@@ -1,0 +1,331 @@
+{
+  "_meta": {
+    "description": "BakeSquad evaluation dataset — ground-truth query/category pairs for Step 1 classification testing.",
+    "categories": ["cookie", "quick_bread", "cake", "other"],
+    "ambiguous_note": "Queries marked ambiguous:true have no single correct answer; they are evaluated separately and do not count against accuracy.",
+    "known_issues": [
+      "banana bread → other (should be quick_bread)",
+      "zucchini bread → other (should be quick_bread)"
+    ]
+  },
+  "test_cases": [
+    {
+      "id": "TC01",
+      "query": "chocolate chip cookies",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Canonical cookie baseline"
+    },
+    {
+      "id": "TC02",
+      "query": "chewy oatmeal raisin cookies",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Explicit 'cookies' keyword"
+    },
+    {
+      "id": "TC03",
+      "query": "snickerdoodle cookies",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Named variety"
+    },
+    {
+      "id": "TC04",
+      "query": "peanut butter cookies",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Explicit 'cookies' keyword"
+    },
+    {
+      "id": "TC05",
+      "query": "fudgy brownies with walnuts",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Brownies = bar cookies per schema"
+    },
+    {
+      "id": "TC06",
+      "query": "lemon bars",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Bar cookie variety"
+    },
+    {
+      "id": "TC07",
+      "query": "shortbread cookies",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Explicit 'cookies' keyword"
+    },
+    {
+      "id": "TC08",
+      "query": "double chocolate chip cookies",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Explicit 'cookies' keyword"
+    },
+    {
+      "id": "TC09",
+      "query": "white chocolate macadamia nut cookies",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Complex flavor cookie"
+    },
+    {
+      "id": "TC10",
+      "query": "soft sugar cookies with frosting",
+      "expected_category": "cookie",
+      "group": "clear_cookie",
+      "notes": "Texture-qualified cookie"
+    },
+    {
+      "id": "TC11",
+      "query": "red velvet cake",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Canonical cake baseline"
+    },
+    {
+      "id": "TC12",
+      "query": "carrot cake with cream cheese frosting",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Classic cake variety"
+    },
+    {
+      "id": "TC13",
+      "query": "moist chocolate birthday cake",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Explicit 'cake' keyword"
+    },
+    {
+      "id": "TC14",
+      "query": "vanilla layer cake",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Layer cake"
+    },
+    {
+      "id": "TC15",
+      "query": "lemon bundt cake",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Bundt cake"
+    },
+    {
+      "id": "TC16",
+      "query": "New York cheesecake",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Cheesecake = cake category per schema"
+    },
+    {
+      "id": "TC17",
+      "query": "vanilla cupcakes with buttercream",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Cupcakes = cake category per schema"
+    },
+    {
+      "id": "TC18",
+      "query": "funfetti birthday cake",
+      "expected_category": "cake",
+      "group": "clear_cake",
+      "notes": "Named cake variety"
+    },
+    {
+      "id": "TC19",
+      "query": "blueberry muffins",
+      "expected_category": "quick_bread",
+      "group": "clear_quick_bread",
+      "notes": "Muffins = quick_bread per schema"
+    },
+    {
+      "id": "TC20",
+      "query": "pumpkin bread",
+      "expected_category": "quick_bread",
+      "group": "clear_quick_bread",
+      "notes": "Pumpkin bread = quick_bread per schema"
+    },
+    {
+      "id": "TC21",
+      "query": "cornbread",
+      "expected_category": "quick_bread",
+      "group": "clear_quick_bread",
+      "notes": "Cornbread = quick_bread per schema"
+    },
+    {
+      "id": "TC22",
+      "query": "cranberry orange scones",
+      "expected_category": "quick_bread",
+      "group": "clear_quick_bread",
+      "notes": "Scones = quick_bread per schema"
+    },
+    {
+      "id": "TC23",
+      "query": "pumpkin chocolate chip muffins",
+      "expected_category": "quick_bread",
+      "group": "clear_quick_bread",
+      "notes": "Muffins + addins"
+    },
+    {
+      "id": "TC24",
+      "query": "cheddar jalapeño cornbread",
+      "expected_category": "quick_bread",
+      "group": "clear_quick_bread",
+      "notes": "Savory cornbread = quick_bread"
+    },
+    {
+      "id": "TC25",
+      "query": "banana bread",
+      "expected_category": "quick_bread",
+      "group": "known_issue",
+      "notes": "KNOWN BUG: reported as classified as 'other'"
+    },
+    {
+      "id": "TC26",
+      "query": "zucchini bread",
+      "expected_category": "quick_bread",
+      "group": "known_issue",
+      "notes": "KNOWN BUG: reported as classified as 'other'"
+    },
+    {
+      "id": "TC27",
+      "query": "chocolate chip banana bread",
+      "expected_category": "quick_bread",
+      "group": "known_issue",
+      "notes": "Known-issue variant: banana bread + addins"
+    },
+    {
+      "id": "TC28",
+      "query": "moist zucchini bread with walnuts",
+      "expected_category": "quick_bread",
+      "group": "known_issue",
+      "notes": "Known-issue variant: zucchini bread + addins"
+    },
+    {
+      "id": "TC29",
+      "query": "gluten-free banana bread",
+      "expected_category": "quick_bread",
+      "group": "known_issue",
+      "notes": "Known-issue variant: banana bread + dietary modifier"
+    },
+    {
+      "id": "TC30",
+      "query": "banana nut loaf",
+      "expected_category": "quick_bread",
+      "group": "edge_case",
+      "notes": "Edge: 'loaf' framing instead of 'bread'"
+    },
+    {
+      "id": "TC31",
+      "query": "zucchini chocolate loaf",
+      "expected_category": "quick_bread",
+      "group": "edge_case",
+      "notes": "Edge: 'loaf' framing instead of 'bread'"
+    },
+    {
+      "id": "TC32",
+      "query": "quick bread with zucchini and lemon",
+      "expected_category": "quick_bread",
+      "group": "edge_case",
+      "notes": "Edge: explicit 'quick bread' label in query"
+    },
+    {
+      "id": "TC33",
+      "query": "savory muffins with gruyere and herbs",
+      "expected_category": "quick_bread",
+      "group": "edge_case",
+      "notes": "Edge: savory muffins are still quick_bread"
+    },
+    {
+      "id": "TC34",
+      "query": "almond flour banana bread",
+      "expected_category": "quick_bread",
+      "group": "edge_case",
+      "notes": "Edge: flour-type modifier on known-issue item"
+    },
+    {
+      "id": "TC35",
+      "query": "paleo banana bread with almond flour",
+      "expected_category": "quick_bread",
+      "group": "edge_case",
+      "notes": "Edge: dietary + flour-type modifiers on known-issue item"
+    },
+    {
+      "id": "TC36",
+      "query": "sourdough bread",
+      "expected_category": "other",
+      "group": "clear_other",
+      "notes": "Sourdough = yeast-leavened, not quick_bread"
+    },
+    {
+      "id": "TC37",
+      "query": "homemade pizza dough",
+      "expected_category": "other",
+      "group": "clear_other",
+      "notes": "Pizza dough = out of scope"
+    },
+    {
+      "id": "TC38",
+      "query": "croissants from scratch",
+      "expected_category": "other",
+      "group": "clear_other",
+      "notes": "Laminated pastry = other"
+    },
+    {
+      "id": "TC39",
+      "query": "focaccia with rosemary and sea salt",
+      "expected_category": "other",
+      "group": "clear_other",
+      "notes": "Focaccia = yeast bread = other"
+    },
+    {
+      "id": "TC40",
+      "query": "something fruity and baked",
+      "expected_category": "other",
+      "group": "ambiguous",
+      "ambiguous": true,
+      "acceptable_categories": ["other", "quick_bread", "cake"],
+      "notes": "Ambiguous: could be any category"
+    },
+    {
+      "id": "TC41",
+      "query": "healthy breakfast bread",
+      "expected_category": "quick_bread",
+      "group": "ambiguous",
+      "ambiguous": true,
+      "acceptable_categories": ["quick_bread", "other"],
+      "notes": "Ambiguous: 'bread' leans quick_bread"
+    },
+    {
+      "id": "TC42",
+      "query": "protein banana cake",
+      "expected_category": "quick_bread",
+      "group": "ambiguous",
+      "ambiguous": true,
+      "acceptable_categories": ["quick_bread", "cake"],
+      "notes": "Ambiguous: banana leans quick_bread vs 'cake' label"
+    },
+    {
+      "id": "TC43",
+      "query": "make me something with chocolate and nuts for a bake sale",
+      "expected_category": "cookie",
+      "group": "ambiguous",
+      "ambiguous": true,
+      "acceptable_categories": ["cookie", "cake", "quick_bread"],
+      "notes": "Ambiguous: open-ended, no explicit category"
+    },
+    {
+      "id": "TC44",
+      "query": "a moist loaf for gift giving",
+      "expected_category": "quick_bread",
+      "group": "ambiguous",
+      "ambiguous": true,
+      "acceptable_categories": ["quick_bread", "cake"],
+      "notes": "Ambiguous: 'loaf' leans quick_bread but vague"
+    }
+  ]
+}
