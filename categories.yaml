@@ -1,0 +1,145 @@
+# BakeSquad category registry
+#
+# Each entry drives: prompt generation, ratio range lookups, scoring criteria
+# selection, and the Step 1 classification schema.
+#
+# Adding a new category here is the ONLY change needed to support it end-to-end
+# once the LangGraph migration (Phase 2) is complete.
+#
+# Fields:
+#   id          - machine key used in code (matches Literal values in models.py during transition)
+#   label       - human-readable display name
+#   synonyms    - surface forms the LLM should map to this category
+#   members     - canonical subtypes listed in the Step 1 prompt
+#   loaf_like   - true if free-standing loaf pans are the typical baking vessel
+#                 (used for Step 7 reconciliation heuristic)
+#   scoring_criteria - ordered list of criterion keys active for this category
+#   ratio_ranges_key - key into ratio_engine.RATIO_RANGES (may differ from id)
+
+categories:
+
+  - id: cookie
+    label: Cookie
+    synonyms:
+      - cookie
+      - cookies
+      - biscuit
+      - bar
+      - brownie
+      - blondie
+      - shortbread
+    members:
+      - drop cookies
+      - bar cookies
+      - brownies
+      - shortbread
+    loaf_like: false
+    scoring_criteria:
+      - moisture_retention
+      - structure_integrity
+      - flavor_balance
+    ratio_ranges_key: cookie
+
+  - id: quick_bread
+    label: Quick Bread
+    synonyms:
+      - quick bread
+      - muffin
+      - scone
+      - cornbread
+      - banana bread
+      - zucchini bread
+      - pumpkin bread
+      - loaf
+      - loaf cake
+    members:
+      - banana bread
+      - zucchini bread
+      - pumpkin bread
+      - muffins
+      - scones
+      - cornbread
+      - savory quick breads
+    loaf_like: true
+    scoring_criteria:
+      - moisture_retention
+      - leavening_validity
+      - flavor_balance
+    ratio_ranges_key: quick_bread
+
+  - id: cake
+    label: Cake
+    synonyms:
+      - cake
+      - cupcake
+      - cheesecake
+      - bundt
+      - layer cake
+      - gateau
+    members:
+      - layer cakes
+      - bundt cakes
+      - cheesecakes
+      - cupcakes
+    loaf_like: false
+    scoring_criteria:
+      - moisture_retention
+      - structure_integrity
+      - flavor_balance
+    ratio_ranges_key: cake
+
+  - id: yeasted_bread
+    label: Yeasted Bread
+    synonyms:
+      - sourdough
+      - focaccia
+      - baguette
+      - boule
+      - sandwich loaf
+      - dinner roll
+      - yeasted
+      - yeast bread
+    members:
+      - sourdough
+      - focaccia
+      - dinner rolls
+      - sandwich loaves
+      - enriched breads (brioche, challah)
+    loaf_like: true
+    scoring_criteria:
+      - structure_integrity
+      - flavor_balance
+    ratio_ranges_key: yeasted_bread
+    # NOTE: ratio_ranges_key does not yet exist in ratio_engine.py — add in Phase 2
+
+  - id: pastry
+    label: Pastry
+    synonyms:
+      - croissant
+      - danish
+      - puff pastry
+      - laminated
+      - choux
+      - eclair
+      - tart
+      - pie
+    members:
+      - croissants
+      - danish pastries
+      - choux (eclairs, profiteroles)
+      - tarts and pies
+    loaf_like: false
+    scoring_criteria:
+      - structure_integrity
+      - flavor_balance
+    ratio_ranges_key: pastry
+    # NOTE: ratio_ranges_key does not yet exist in ratio_engine.py — add in Phase 2
+
+  - id: other
+    label: Other
+    synonyms: []
+    members: []
+    loaf_like: false
+    scoring_criteria:
+      - flavor_balance
+    ratio_ranges_key: other
