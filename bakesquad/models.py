@@ -141,3 +141,4 @@ class ScoredRecipe(BaseModel):
     constraint_violations: list[str] = Field(default_factory=list)
     explanation: str = ""            # filled by batched LLM call after scoring math
     rank: int = 0
+    technique_note_delta: Optional[float] = None  # LLM-applied delta for novel technique (None = not applied)

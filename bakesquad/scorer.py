@@ -384,6 +384,7 @@ def add_explanations(scored: list[ScoredRecipe]) -> None:
                     if s.constraint_violations:
                         new_composite = max(0.0, new_composite - 20.0 * len(s.constraint_violations))
                     s.composite_score = round(min(100.0, max(0.0, new_composite)), 1)
+                    s.technique_note_delta = round(float(delta), 1)
 
     except Exception as e:
         logger.warning("Explanation generation failed: %s", e)

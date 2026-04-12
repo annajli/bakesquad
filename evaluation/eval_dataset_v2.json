@@ -1,0 +1,236 @@
+{
+  "_meta": {
+    "description": "BakeSquad evaluation dataset v2 — extends v1 with query-specificity triples, preference-capture cases, multi-turn sequences, and scoring-transparency targets.",
+    "groups": {
+      "short_query":             "1–3 word queries; baseline extraction with minimal context",
+      "medium_query":            "Single-sentence queries with 1–2 qualifiers",
+      "long_query":              "Multi-sentence queries with full preference specification",
+      "preference_rich":         "Queries with explicit constraints/preferences; tests extraction recall",
+      "multi_turn":              "Conversation sequences; tests classify_intent routing (Stage 1D)",
+      "scoring_transparency":    "Queries targeting specific technique signals; run with --full-pipeline (Stage 2)"
+    },
+    "extra_fields": {
+      "expected_constraint_keywords":  "Substrings that must appear in hard_constraints (case-insensitive). Tested in Stage 1B.",
+      "expected_preference_keywords":  "Substrings that must appear in soft_preferences (case-insensitive). Tested in Stage 1B.",
+      "expected_modifiers":            "Exact modifier tags expected in modifiers list. Tested in Stage 1B.",
+      "expected_flour_type":           "Exact flour_type string expected. Tested in Stage 1B.",
+      "expected_technique_signals":    "Technique signals parser should extract. Tested in Stage 2.",
+      "turns":                         "Multi-turn conversation for Stage 1D. Each turn has role, content, optional expected_turn_type, expected_extract."
+    }
+  },
+  "test_cases": [
+
+    {"id":"TC_SQ01","query":"cookies","expected_category":"cookie","group":"short_query","notes":"Single-word: canonical cookie"},
+    {"id":"TC_SQ02","query":"banana bread","expected_category":"quick_bread","group":"short_query","notes":"Known-issue baseline — 2-word quick_bread"},
+    {"id":"TC_SQ03","query":"birthday cake","expected_category":"cake","group":"short_query","notes":"2-word cake"},
+    {"id":"TC_SQ04","query":"muffins","expected_category":"quick_bread","group":"short_query","notes":"Single-word quick_bread"},
+    {"id":"TC_SQ05","query":"brownies","expected_category":"cookie","group":"short_query","notes":"Single-word; brownies = bar cookie"},
+    {"id":"TC_SQ06","query":"sourdough bread","expected_category":"other","group":"short_query","notes":"Yeast bread = other"},
+
+    {"id":"TC_MQ01","query":"chewy brown butter chocolate chip cookies","expected_category":"cookie","group":"medium_query","notes":"Cookie with technique qualifier"},
+    {"id":"TC_MQ02","query":"moist banana bread that stays fresh all week","expected_category":"quick_bread","group":"medium_query","notes":"quick_bread with moisture preference"},
+    {"id":"TC_MQ03","query":"layered chocolate birthday cake with ganache frosting","expected_category":"cake","group":"medium_query","notes":"Cake with build detail"},
+    {"id":"TC_MQ04","query":"bakery-style blueberry muffins with streusel topping","expected_category":"quick_bread","group":"medium_query","notes":"quick_bread with texture qualifier"},
+    {"id":"TC_MQ05","query":"fudgy brownies with walnuts and sea salt","expected_category":"cookie","group":"medium_query","notes":"Bar cookie with addins"},
+    {"id":"TC_MQ06","query":"classic sourdough with open crumb","expected_category":"other","group":"medium_query","notes":"Yeast bread with technique qualifier"},
+
+    {
+      "id":"TC_LQ01",
+      "query":"I want chocolate chip cookies that are chewy in the middle with crispy edges, made with browned butter that has been chilled overnight before baking, using both milk and dark chocolate chips for a richer flavour",
+      "expected_category":"cookie",
+      "group":"long_query",
+      "expected_constraint_keywords":["chocolate"],
+      "expected_preference_keywords":["chewy","crispy","brown butter"],
+      "notes":"Full-spec cookie: technique + texture + flavour preferences"
+    },
+    {
+      "id":"TC_LQ02",
+      "query":"Looking for a banana bread recipe that stays moist for at least 3 to 4 days. I strongly prefer oil-based recipes over butter-based ones, want a good rise, and would love to fold in chocolate chips or chopped walnuts. Extra ripe bananas are a must.",
+      "expected_category":"quick_bread",
+      "group":"long_query",
+      "expected_constraint_keywords":["banana"],
+      "expected_preference_keywords":["moist","oil","days"],
+      "notes":"Full-spec quick_bread: fat preference + moisture + addins"
+    },
+    {
+      "id":"TC_LQ03",
+      "query":"I need a rich, very moist chocolate layer cake for a birthday party of about 20 people. It should have at least 3 layers with ganache filling and chocolate buttercream frosting. No nuts anywhere because of allergies. The cake needs to stay moist for 2 days since I am baking it the day before the party.",
+      "expected_category":"cake",
+      "group":"long_query",
+      "expected_constraint_keywords":["nut","chocolate"],
+      "expected_preference_keywords":["moist","days"],
+      "notes":"Full-spec cake: hard nut constraint + moisture + timing"
+    },
+    {
+      "id":"TC_LQ04",
+      "query":"I want bakery-style blueberry muffins with huge domed tops and a crunchy brown sugar streusel. They should be moist inside but not gummy, and I want to use fresh blueberries not frozen. I prefer using buttermilk for extra tenderness and tanginess.",
+      "expected_category":"quick_bread",
+      "group":"long_query",
+      "expected_constraint_keywords":["blueberr"],
+      "expected_preference_keywords":["moist","tender","streusel"],
+      "notes":"Full-spec quick_bread: texture + technique + ingredient preferences"
+    },
+
+    {
+      "id":"TC_PR01",
+      "query":"chocolate chip cookies without any nuts",
+      "expected_category":"cookie",
+      "group":"preference_rich",
+      "expected_constraint_keywords":["nut"],
+      "expected_preference_keywords":[],
+      "expected_modifiers":[],
+      "expected_flour_type":"ap",
+      "notes":"Hard constraint: nut exclusion must be captured in hard_constraints"
+    },
+    {
+      "id":"TC_PR02",
+      "query":"moist banana bread that stays soft for at least 5 days",
+      "expected_category":"quick_bread",
+      "group":"preference_rich",
+      "expected_constraint_keywords":[],
+      "expected_preference_keywords":["moist","soft","days"],
+      "expected_modifiers":[],
+      "expected_flour_type":"ap",
+      "notes":"Moisture preference must be captured in soft_preferences"
+    },
+    {
+      "id":"TC_PR03",
+      "query":"gluten-free chocolate chip cookies using almond flour",
+      "expected_category":"cookie",
+      "group":"preference_rich",
+      "expected_constraint_keywords":["chocolate"],
+      "expected_preference_keywords":[],
+      "expected_modifiers":["gluten_free"],
+      "expected_flour_type":"almond",
+      "notes":"Modifier + flour_type inference from explicit text"
+    },
+    {
+      "id":"TC_PR04",
+      "query":"vegan chocolate cake without any dairy products",
+      "expected_category":"cake",
+      "group":"preference_rich",
+      "expected_constraint_keywords":[],
+      "expected_preference_keywords":[],
+      "expected_modifiers":["vegan","dairy_free"],
+      "expected_flour_type":"ap",
+      "notes":"Multiple modifiers: vegan + dairy_free must both be extracted"
+    },
+    {
+      "id":"TC_PR05",
+      "query":"oil-based banana bread only, no butter recipes",
+      "expected_category":"quick_bread",
+      "group":"preference_rich",
+      "expected_constraint_keywords":["oil"],
+      "expected_preference_keywords":[],
+      "expected_modifiers":[],
+      "expected_flour_type":"ap",
+      "notes":"Fat-type preference must surface as a constraint"
+    },
+    {
+      "id":"TC_PR06",
+      "query":"completely nut-free birthday cake for a school party",
+      "expected_category":"cake",
+      "group":"preference_rich",
+      "expected_constraint_keywords":["nut"],
+      "expected_preference_keywords":[],
+      "expected_modifiers":[],
+      "expected_flour_type":"ap",
+      "notes":"Nut-free is a hard safety constraint in school contexts"
+    },
+    {
+      "id":"TC_PR07",
+      "query":"paleo banana bread with almond flour and no refined sugar",
+      "expected_category":"quick_bread",
+      "group":"preference_rich",
+      "expected_constraint_keywords":["sugar"],
+      "expected_preference_keywords":[],
+      "expected_modifiers":["paleo"],
+      "expected_flour_type":"almond",
+      "notes":"Dietary modifier + flour_type + sugar constraint"
+    },
+    {
+      "id":"TC_PR08",
+      "query":"super chewy brown butter cookies with flaky sea salt on top",
+      "expected_category":"cookie",
+      "group":"preference_rich",
+      "expected_constraint_keywords":[],
+      "expected_preference_keywords":["chewy","brown butter"],
+      "expected_modifiers":[],
+      "expected_flour_type":"ap",
+      "notes":"Technique + texture preferences must be captured"
+    },
+
+    {
+      "id":"TC_MT01",
+      "group":"multi_turn",
+      "description":"Filter by fat type, then ask a factual question",
+      "turns":[
+        {"role":"user","content":"chocolate chip cookies","expected_turn_type":"new_search"},
+        {"role":"user","content":"only show me oil-based ones","expected_turn_type":"re_filter","expected_extract":{"require_fat_type":"oil"}},
+        {"role":"user","content":"why does oil make cookies stay softer longer than butter?","expected_turn_type":"factual"}
+      ]
+    },
+    {
+      "id":"TC_MT02",
+      "group":"multi_turn",
+      "description":"Exclude ingredient then re-search with different intent",
+      "turns":[
+        {"role":"user","content":"moist banana bread","expected_turn_type":"new_search"},
+        {"role":"user","content":"find me one without walnuts","expected_turn_type":"re_filter","expected_extract":{"exclude_ingredients":["walnut"]}},
+        {"role":"user","content":"actually I want chocolate banana bread instead","expected_turn_type":"re_search"}
+      ]
+    },
+    {
+      "id":"TC_MT03",
+      "group":"multi_turn",
+      "description":"Factual question mid-session, then narrow results",
+      "turns":[
+        {"role":"user","content":"blueberry muffins","expected_turn_type":"new_search"},
+        {"role":"user","content":"what does the leavening ratio number mean for muffins?","expected_turn_type":"factual"},
+        {"role":"user","content":"find me a low-sugar version of these","expected_turn_type":"re_search"}
+      ]
+    },
+    {
+      "id":"TC_MT04",
+      "group":"multi_turn",
+      "description":"Re-search with dietary restriction",
+      "turns":[
+        {"role":"user","content":"red velvet cake","expected_turn_type":"new_search"},
+        {"role":"user","content":"actually find me a dairy-free version instead","expected_turn_type":"re_search"}
+      ]
+    },
+
+    {
+      "id":"TC_ST01",
+      "query":"brown butter chocolate chip cookies chilled overnight before baking",
+      "expected_category":"cookie",
+      "group":"scoring_transparency",
+      "expected_technique_signals":["brown_butter","chill_dough","overnight_rest"],
+      "notes":"Stage 2 only. Should trigger brown_butter+chill_dough synergy (+10 bonus). Expected composite boost from technique."
+    },
+    {
+      "id":"TC_ST02",
+      "query":"moist banana bread using the fold method with rested batter",
+      "expected_category":"quick_bread",
+      "group":"scoring_transparency",
+      "expected_technique_signals":["fold_method","batter_rest"],
+      "notes":"Stage 2 only. Should trigger fold_method+batter_rest synergy (+10 bonus)."
+    },
+    {
+      "id":"TC_ST03",
+      "query":"New York style cheesecake baked in a water bath at low temperature",
+      "expected_category":"cake",
+      "group":"scoring_transparency",
+      "expected_technique_signals":["water_bath","bake_low"],
+      "notes":"Stage 2 only. Should trigger water_bath+bake_low synergy (+15 bonus). High technique score expected."
+    },
+    {
+      "id":"TC_ST04",
+      "query":"red velvet cupcakes with cream cheese frosting using room temperature butter creamed properly",
+      "expected_category":"cake",
+      "group":"scoring_transparency",
+      "expected_technique_signals":["cream_method","room_temp_butter"],
+      "notes":"Stage 2 only. Should trigger cream_method+room_temp_butter synergy (+10 bonus)."
+    }
+  ]
+}
