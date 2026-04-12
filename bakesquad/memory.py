@@ -179,6 +179,8 @@ _DEFAULT_PREFS: dict = {
     # Feedback inference controls
     "use_feedback_prefs": True,   # set False to disable all feedback-based pref updates
     "feedback_min_liked": 3,      # min liked recipes in a category before inferring prefs
+    # Accessibility preference: 0.0 = disabled, 1.0 = full weight (0.20) added to composite
+    "prefer_accessibility": 0.0,
     # Per-category weight overrides (populated by update_user_prefs_from_feedback)
     "category_prefs": {},
 }

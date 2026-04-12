@@ -1057,9 +1057,9 @@ internals. This gets you a working API endpoint + SSE stream before any LangGrap
 
 | Task | New files | Effort |
 |------|-----------|--------|
-| `categories.yaml` registry | `bakesquad/categories.yaml` | 2 h |
-| Registry loader + dynamic prompt injection | `bakesquad/category_registry.py` | 3 h |
-| Remove `Literal[...]` from `models.py` | `bakesquad/models.py` | 1 h |
+| `categories.yaml` registry | `bakesquad/categories.yaml` | **Done** |
+| Registry loader + dynamic prompt injection | `bakesquad/category_registry.py` | **Done** |
+| Expand `Literal[...]` in `models.py` to full registry (cookie, quick_bread, cake, yeasted_bread, pastry, other) | `bakesquad/models.py` | **Done** |
 | Next.js frontend scaffold | `frontend/` | 3–5 d |
 | `<RecipeCard>` + score bar components | `frontend/components/` | 2 d |
 | SSE client + chat panel | `frontend/components/ChatHistory.tsx` | 1 d |

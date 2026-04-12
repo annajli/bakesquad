@@ -25,14 +25,14 @@
     {"id":"TC_SQ03","query":"birthday cake","expected_category":"cake","group":"short_query","notes":"2-word cake"},
     {"id":"TC_SQ04","query":"muffins","expected_category":"quick_bread","group":"short_query","notes":"Single-word quick_bread"},
     {"id":"TC_SQ05","query":"brownies","expected_category":"cookie","group":"short_query","notes":"Single-word; brownies = bar cookie"},
-    {"id":"TC_SQ06","query":"sourdough bread","expected_category":"other","group":"short_query","notes":"Yeast bread = other"},
+    {"id":"TC_SQ06","query":"sourdough bread","expected_category":"yeasted_bread","group":"short_query","notes":"Yeast bread = yeasted_bread"},
 
     {"id":"TC_MQ01","query":"chewy brown butter chocolate chip cookies","expected_category":"cookie","group":"medium_query","notes":"Cookie with technique qualifier"},
     {"id":"TC_MQ02","query":"moist banana bread that stays fresh all week","expected_category":"quick_bread","group":"medium_query","notes":"quick_bread with moisture preference"},
     {"id":"TC_MQ03","query":"layered chocolate birthday cake with ganache frosting","expected_category":"cake","group":"medium_query","notes":"Cake with build detail"},
     {"id":"TC_MQ04","query":"bakery-style blueberry muffins with streusel topping","expected_category":"quick_bread","group":"medium_query","notes":"quick_bread with texture qualifier"},
     {"id":"TC_MQ05","query":"fudgy brownies with walnuts and sea salt","expected_category":"cookie","group":"medium_query","notes":"Bar cookie with addins"},
-    {"id":"TC_MQ06","query":"classic sourdough with open crumb","expected_category":"other","group":"medium_query","notes":"Yeast bread with technique qualifier"},
+    {"id":"TC_MQ06","query":"classic sourdough with open crumb","expected_category":"yeasted_bread","group":"medium_query","notes":"Yeast bread with technique qualifier"},
 
     {
       "id":"TC_LQ01",

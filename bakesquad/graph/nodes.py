@@ -103,13 +103,19 @@ def expand_query(state: BakeSquadState) -> dict:
         )
 
     plan = pipeline._build_query_plan(query, recency)
-    return {
+    update: dict = {
         "query_plan": plan,
-        "category_confidence": 1.0,
+        "category_confidence": plan.confidence,
         "category_override": None,   # clear any previous override on a fresh search
         "search_retry_count": 0,
-        "messages": [{"role": "assistant", "content": f"[Step 1] Category: {plan.category}"}],
+        "messages": [
+            {"role": "assistant",
+             "content": f"[Step 1] Category: {plan.category} (confidence: {plan.confidence:.2f})"}
+        ],
     }
+    if plan.clarification_question:
+        update["clarify_question"] = plan.clarification_question
+    return update
 
 
 # ---------------------------------------------------------------------------

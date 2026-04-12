@@ -42,9 +42,9 @@ from pathlib import Path
 from typing import Any, Optional
 
 if hasattr(sys.stdout, "buffer"):
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace", write_through=True)
 if hasattr(sys.stderr, "buffer"):
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace", write_through=True)
 
 try:
     from dotenv import load_dotenv
@@ -490,8 +490,6 @@ def _build_scoring_trace(
     user_prefs: dict,
 ) -> dict:
     """Build a detailed scoring trace dict from a ScoredRecipe."""
-    from bakesquad.scorer import TECHNIQUE_SYNERGIES
-
     # Determine weight source
     cat_prefs = (user_prefs.get("category_prefs") or {}).get(category_used, {})
     if cat_prefs and any(k in cat_prefs for k in ("moisture_base_weight", "structure_base_weight")):
@@ -513,16 +511,6 @@ def _build_scoring_trace(
     technique_notes   = str(getattr(scored_recipe.recipe, "technique_notes", "") or "")
     note_delta        = scored_recipe.technique_note_delta
 
-    # Identify which synergies fired
-    signal_set = set(technique_signals)
-    synergies_triggered = []
-    for required, bonus in TECHNIQUE_SYNERGIES.get(category_used, []):
-        if required.issubset(signal_set):
-            synergies_triggered.append({
-                "signals": sorted(required),
-                "bonus":   bonus,
-            })
-
     criteria_detail = []
     for c in scored_recipe.criteria:
         entry: dict[str, Any] = {
@@ -538,7 +526,6 @@ def _build_scoring_trace(
                 "technique_notes":      technique_notes,
                 "technique_base_score": base,
                 "technique_note_delta": note_delta,
-                "synergies_triggered":  synergies_triggered,
             })
         criteria_detail.append(entry)
 
