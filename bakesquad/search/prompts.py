@@ -11,6 +11,49 @@ Reason: LangChain template/chain overhead was ~1-2 s per call, incompatible with
 from __future__ import annotations
 
 
+def _build_category_block() -> str:
+    """
+    Build the category description block from the registry.
+
+    Falls back to the hardcoded description if pyyaml is not installed or the
+    registry file is missing — keeps the CLI working without the Phase 2 deps.
+
+    The Literal constraint in models.py still enforces cookie|quick_bread|cake|other
+    during the Phase 2 transition; the registry is used for richer member descriptions
+    and loaf-synonym notes only.  Phase 3 will expand the Literal to match the registry.
+    """
+    try:
+        from bakesquad.category_registry import load_registry
+        categories = load_registry()
+        lines = ['- "category": the type of baked good — one of: cookie, quick_bread, cake, other']
+        for cat in categories:
+            cat_id = cat["id"]
+            if cat_id == "other":
+                continue   # handled by the catch-all line below
+            members = cat.get("members", [])
+            member_str = ", ".join(members) if members else cat_id
+            line = f'  {cat_id} includes: {member_str}'
+            if cat.get("loaf_like") and cat_id == "quick_bread":
+                line += (
+                    '\n  NOTE: any baked "loaf" that is NOT a yeast bread is quick_bread'
+                    ' (e.g. "banana nut loaf", "zucchini chocolate loaf", "pumpkin loaf" → quick_bread)'
+                )
+            lines.append(line)
+        lines.append("  other: anything that does not fit the above (yeast breads, pizza dough, pastry)")
+        return "\n".join(lines) + "\n"
+    except Exception:
+        # Fallback — identical to the original hardcoded block
+        return (
+            '- "category": the type of baked good — one of: cookie, quick_bread, cake, other\n'
+            '  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread\n'
+            '  NOTE: any baked "loaf" that is NOT a yeast bread is quick_bread'
+            ' (e.g. "banana nut loaf", "zucchini chocolate loaf", "pumpkin loaf" → quick_bread)\n'
+            '  cookie includes: drop cookies, bar cookies, brownies, shortbread\n'
+            '  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n'
+            '  other: anything that does not fit the above (yeast breads, pizza dough, pastry)\n'
+        )
+
+
 def query_plan_prompt(
     query: str,
     recency: str | None,
@@ -36,14 +79,8 @@ def query_plan_prompt(
     system = (
         "You are a baking recipe search assistant. Given a user's natural language query, "
         "analyze it and return a JSON object with exactly these keys:\n\n"
-        '- "category": the type of baked good — one of: cookie, quick_bread, cake, other\n'
-        '  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread\n'
-        '  NOTE: any baked "loaf" that is NOT a yeast bread is quick_bread '
-        '(e.g. "banana nut loaf", "zucchini chocolate loaf", "pumpkin loaf" → quick_bread)\n'
-        '  cookie includes: drop cookies, bar cookies, brownies, shortbread\n'
-        '  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n'
-        '  other: anything that does not fit the above (yeast breads, pizza dough, pastry)\n'
-        '- "flour_type": the primary flour the recipe likely uses — one of:\n'
+        + _build_category_block()
+        + '- "flour_type": the primary flour the recipe likely uses — one of:\n'
         '    "ap" (all-purpose, default), "almond", "oat", "coconut", "rice", "gf_blend" (1:1 GF blend), "other"\n'
         '  Use "ap" unless the query explicitly mentions a non-AP flour or is gluten-free.\n'
         '  If gluten-free and no specific flour mentioned, use "gf_blend".\n'

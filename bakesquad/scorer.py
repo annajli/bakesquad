@@ -35,19 +35,115 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
+# Technique scoring rules (instruction-aware scoring)
+# ---------------------------------------------------------------------------
+
+# Maps (category, technique_signal) → score delta applied to a 50-pt baseline.
+# Positive values reward techniques that improve the eating experience for that
+# category; negative values penalise techniques that are harmful.
+TECHNIQUE_RULES: dict[str, dict[str, float]] = {
+    "quick_bread": {
+        "fold_method":       +20,   # muffin method → tender crumb (minimal gluten dev)
+        "bake_low":          +10,   # gentle heat → moist interior, no over-baked edges
+        "bake_high":         -15,   # overbakes edges before centre sets
+        "one_bowl":          +5,    # less mixing → less gluten
+        "brown_butter":      +10,   # added Maillard flavour complexity
+        "batter_rest":       +8,    # better flour hydration → more even crumb
+        "double_leavening":  +5,    # balanced rise with both soda and powder
+    },
+    "cookie": {
+        "brown_butter":      +15,   # Maillard flavour depth
+        "chill_dough":       +15,   # flavour development + controlled spread
+        "overnight_rest":    +10,   # further flavour development
+        "cream_method":      +8,    # proper fat aeration → correct spread and chew
+        "double_leavening":  +5,    # balanced texture
+        "bake_standard":     +5,    # optimal Maillard without overbaking
+        "bake_high":         -10,   # edges burn before centre sets
+    },
+    "cake": {
+        "cream_method":      +15,   # fat aeration → fine crumb
+        "water_bath":        +20,   # even moist heat (critical for cheesecakes)
+        "room_temp_butter":  +10,   # creams properly; cold butter doesn't aerate
+        "bake_low":          +10,   # slow even bake → less doming, moist crumb
+        "bake_high":         -10,   # dries out exterior
+        "parchment_lined":   +5,    # clean release, even base browning
+    },
+    "other": {},
+}
+
+# Synergy bonuses: applied once when ALL signals in the frozenset are present.
+# Rewards intentional technique combinations without stacking individual deltas twice.
+TECHNIQUE_SYNERGIES: dict[str, list[tuple[frozenset, float]]] = {
+    "cookie": [
+        (frozenset({"brown_butter", "chill_dough"}),        +10),  # classic depth-of-flavour chain
+        (frozenset({"cream_method", "room_temp_butter"}),   +8),   # correct aeration sequence
+        (frozenset({"chill_dough", "overnight_rest"}),      +5),   # flavour development compounds
+    ],
+    "quick_bread": [
+        (frozenset({"fold_method", "batter_rest"}),         +10),  # minimal gluten + full hydration
+        (frozenset({"fold_method", "brown_butter"}),        +8),   # flavour + tender crumb
+    ],
+    "cake": [
+        (frozenset({"cream_method", "room_temp_butter"}),   +10),  # aeration chain
+        (frozenset({"water_bath", "bake_low"}),             +15),  # cheesecake perfection
+    ],
+    "other": [],
+}
+
+
+def _score_technique(signals: list[str], category: str) -> float:
+    """
+    Return a rule-based technique quality score (0–100).
+
+    Baseline of 50 = no technique data (neutral).
+    Pass 1: per-signal deltas from TECHNIQUE_RULES.
+    Pass 2: one-time synergy bonus per matched combination in TECHNIQUE_SYNERGIES.
+
+    This is the deterministic component only. add_explanations() applies an
+    additional LLM-derived delta for novel techniques captured in technique_notes.
+    """
+    if not signals:
+        return 50.0
+    rules = TECHNIQUE_RULES.get(category, {})
+    score = 50.0
+    for signal in signals:
+        score += rules.get(signal, 0)
+    signal_set = set(signals)
+    for required, bonus in TECHNIQUE_SYNERGIES.get(category, []):
+        if required.issubset(signal_set):
+            score += bonus
+    return round(min(100.0, max(0.0, score)), 1)
+
+
+# ---------------------------------------------------------------------------
 # Weight derivation from query
 # ---------------------------------------------------------------------------
 
 def derive_weights(plan: QueryPlan, user_prefs: dict) -> dict[str, float]:
     """
     Build criterion weight vector from query intent + user preference model.
-    Reads soft_preferences and hard_constraints to boost relevant weights.
+
+    Priority order:
+      1. Category-specific prefs (user_prefs["category_prefs"][plan.category])
+      2. Global user prefs (user_prefs["moisture_base_weight"] etc.)
+      3. Hard-coded defaults
+    Then query signals (hard_constraints + soft_preferences) are applied on top.
     """
-    # Start from user base weights
+    # Layer 1: check for category-specific learned prefs first
+    cat_prefs: dict = (user_prefs.get("category_prefs") or {}).get(plan.category, {})
     weights = {
-        "moisture": user_prefs.get("moisture_base_weight", 0.45),
-        "structure": user_prefs.get("structure_base_weight", 0.30),
-        "balance": user_prefs.get("balance_base_weight", 0.25),
+        "moisture": cat_prefs.get(
+            "moisture_base_weight",
+            user_prefs.get("moisture_base_weight", 0.45),
+        ),
+        "structure": cat_prefs.get(
+            "structure_base_weight",
+            user_prefs.get("structure_base_weight", 0.30),
+        ),
+        "balance": cat_prefs.get(
+            "balance_base_weight",
+            user_prefs.get("balance_base_weight", 0.25),
+        ),
     }
 
     # Boost moisture for moisture-related query signals
@@ -125,6 +221,18 @@ def score_recipe(
             # Note: some almond/oat flour recipes rely on eggs for binding — don't hard-penalize
             # if binding_score < 50 but also not a hard constraint violation.
             pass
+
+    # --- Technique quality (fixed weight 0.15, not query-dependent) ---
+    # Rule-based score from technique_signals; add_explanations() applies a delta
+    # for any novel technique captured in technique_notes (Option B hybrid approach).
+    technique_signals = getattr(recipe, "technique_signals", []) or []
+    tech_score = _score_technique(technique_signals, category)
+    criteria.append(CriterionScore(
+        name="Technique Quality",
+        score=tech_score,
+        weight=0.15,
+        details=", ".join(technique_signals) if technique_signals else "no technique data",
+    ))
 
     # --- Hard constraint: chocolate (fixed) ---
     if "chocolate" in " ".join(plan.hard_constraints).lower() or "chocolate" in " ".join(plan.soft_preferences).lower():
@@ -209,33 +317,74 @@ def add_explanations(scored: list[ScoredRecipe]) -> None:
         if s.constraint_violations:
             violations_line = f"\n  Violations: {'; '.join(s.constraint_violations)}"
 
+        # Include novel technique notes so the LLM can score them
+        technique_notes = getattr(s.recipe, "technique_notes", "") or ""
+        notes_line = f"\n  Novel technique: {technique_notes}" if technique_notes else ""
+
         recipe_summaries.append(
             f"Recipe {i} — {s.recipe.title} [{s.recipe.url}]\n"
             f"  Composite: {s.composite_score:.0f}/100\n"
             + "\n".join(criteria_lines)
             + f"\n  Ratios: {', '.join(ratio_lines) if ratio_lines else 'unknown'}"
             + violations_line
+            + notes_line
         )
+
+    has_novel_techniques = any(
+        getattr(s.recipe, "technique_notes", "") for s in scored
+    )
+    novel_delta_instruction = (
+        '\n- "technique_note_delta": a float from -20.0 to +20.0 rating how much the '
+        '"Novel technique" line (if present) should adjust the Technique Quality score. '
+        "0.0 if no novel technique is listed or it is neutral. Positive = beneficial, "
+        "negative = detrimental. Omit the key if there is no novel technique for that recipe."
+    ) if has_novel_techniques else ""
 
     system = (
         "You are a baking science analyst. For each scored recipe below, write a 2-3 sentence "
         "explanation of WHY it received its score. Translate ratio math into eating-experience "
         "predictions (e.g. 'oil-based fat retains moisture better than butter over multiple days'). "
         "Mention any constraint violations prominently.\n\n"
-        'Return a JSON object with key "explanations": a list of objects, each with '
-        '"index" (int) and "text" (string). Return ONLY the JSON object.'
+        'Return a JSON object with key "explanations": a list of objects, each with:\n'
+        '- "index" (int)\n'
+        '- "text" (string — the 2-3 sentence explanation)'
+        + novel_delta_instruction
+        + "\nReturn ONLY the JSON object."
     )
     user = "Recipes to explain:\n\n" + "\n\n".join(recipe_summaries)
 
     try:
-        raw = chat(system, user, max_tokens=600, temperature=0)
+        raw = chat(system, user, max_tokens=700, temperature=0)
         data = extract_json(raw)
         items = data.get("explanations", []) if isinstance(data, dict) else []
         for item in items:
             idx = item.get("index")
             text = item.get("text", "")
-            if idx is not None and 0 <= idx < len(scored):
-                scored[idx].explanation = str(text)
+            if idx is None or not (0 <= idx < len(scored)):
+                continue
+            scored[idx].explanation = str(text)
+
+            # Apply novel-technique delta to Technique Quality criterion
+            delta = item.get("technique_note_delta")
+            if delta is not None:
+                s = scored[idx]
+                tech_criterion = next(
+                    (c for c in s.criteria if c.name == "Technique Quality"), None
+                )
+                if tech_criterion is not None:
+                    tech_criterion.score = round(
+                        min(100.0, max(0.0, tech_criterion.score + float(delta))), 1
+                    )
+                    # Recompute composite with updated criterion score
+                    total_weight = sum(c.weight for c in s.criteria)
+                    new_composite = (
+                        sum(c.score * c.weight for c in s.criteria) / total_weight
+                        if total_weight > 0 else 0.0
+                    )
+                    if s.constraint_violations:
+                        new_composite = max(0.0, new_composite - 20.0 * len(s.constraint_violations))
+                    s.composite_score = round(min(100.0, max(0.0, new_composite)), 1)
+
     except Exception as e:
         logger.warning("Explanation generation failed: %s", e)
         for s in scored:

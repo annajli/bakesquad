@@ -34,15 +34,13 @@ def _should_clarify(state: dict) -> str:
 
 
 def _route_turn_type(state: dict) -> str:
-    """After classify_intent, route to the appropriate sub-pipeline."""
+    """After classify_intent (or filter_node escalation), route to the appropriate sub-pipeline."""
     turn = state.get("turn_type", "new_search")
-    if turn == "new_search":
+    if turn in ("new_search", "re_search"):
         return "expand_query"
     if turn == "re_filter":
         return "filter_node"
-    if turn == "re_search":
-        return "expand_query"   # re-run full pipeline with merged plan
-    return "factual"            # factual / unknown
+    return "factual"
 
 
 def _has_results(state: dict) -> str:
@@ -128,8 +126,12 @@ def build_graph(checkpointing: bool = True):
     builder.add_edge("score", "memory")
     builder.add_edge("memory", END)
 
-    # Re-filter short-circuit → memory (results already in state)
-    builder.add_edge("filter_node", "memory")
+    # filter_node → memory normally; if filter found nothing it sets turn_type=re_search
+    # and routes back through classify_intent → expand_query for a full new search.
+    builder.add_conditional_edges(
+        "filter_node",
+        lambda s: "expand_query" if s.get("turn_type") == "re_search" else "memory",
+    )
 
     # Factual answer → done
     builder.add_edge("factual", END)

@@ -81,6 +81,8 @@ class ParsedRecipe(BaseModel):
     yield_description: str = ""      # "1 loaf", "24 cookies"
     instruction_count: int = 0       # proxy for recipe specificity
     has_chocolate: bool = False      # True if any chocolate ingredient present
+    technique_signals: list[str] = Field(default_factory=list)  # structured vocab signals
+    technique_notes: str = ""    # free-text description of novel/unusual techniques
     parse_error: Optional[str] = None
 
 

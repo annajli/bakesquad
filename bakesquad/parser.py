@@ -47,7 +47,19 @@ _SYSTEM_PROMPT = (
     '      Convert "3/4 cup" → 0.75, "1/3 cup" → 0.333, "2/3 cup" → 0.667\n'
     '- "yield_description": e.g. "1 loaf", "24 cookies", "one 9-inch cake" (string)\n'
     '- "instruction_count": estimated number of instruction steps (integer, 0 if unknown)\n'
-    '- "has_chocolate": true if any chocolate ingredient is present (bool)\n\n'
+    '- "has_chocolate": true if any chocolate ingredient is present (bool)\n'
+    '- "technique_signals": list of technique keywords present in the instructions.\n'
+    '  Include ONLY items from this fixed vocabulary (empty list if none apply or no instructions given):\n'
+    '    Mixing:       "fold_method", "cream_method", "melt_method", "one_bowl"\n'
+    '    Temperature:  "bake_low" (<=325F/163C), "bake_standard" (326-375F), "bake_high" (>375F/190C)\n'
+    '    Resting:      "chill_dough", "batter_rest", "overnight_rest"\n'
+    '    Fat prep:     "brown_butter", "clarified_butter", "room_temp_butter"\n'
+    '    Leavening:    "double_leavening" (both baking powder AND baking soda used)\n'
+    '    Special:      "water_bath", "steam_bake", "dutch_oven", "parchment_lined"\n'
+    '- "technique_notes": a single sentence (max 30 words) describing any notable technique '
+    'in the recipe that is NOT covered by the technique_signals vocabulary above — for example '
+    'tangzhong, autolyse, lamination, cold-start baking, reverse creaming, or any other '
+    'unconventional method. Empty string "" if nothing unusual is present.\n\n'
     "Important:\n"
     "- For 'mashed bananas' or 'ripe bananas': name='mashed banana', unit='whole', qty=count\n"
     "- For 'butter' measured in sticks: unit='sticks'\n"
@@ -94,6 +106,19 @@ def parse_recipe(page: FetchedPage) -> Optional[ParsedRecipe]:
             logger.warning("Parser returned no ingredients for %s", page.url)
             return None
 
+        # Validate technique_signals against the known vocabulary to prevent
+        # hallucinated values from polluting downstream scoring.
+        _VALID_SIGNALS = {
+            "fold_method", "cream_method", "melt_method", "one_bowl",
+            "bake_low", "bake_standard", "bake_high",
+            "chill_dough", "batter_rest", "overnight_rest",
+            "brown_butter", "clarified_butter", "room_temp_butter",
+            "double_leavening",
+            "water_bath", "steam_bake", "dutch_oven", "parchment_lined",
+        }
+        raw_signals = data.get("technique_signals") or []
+        technique_signals = [s for s in raw_signals if s in _VALID_SIGNALS]
+
         recipe = ParsedRecipe(
             title=str(data.get("title", page.title or "Unknown Recipe")),
             url=page.url,
@@ -104,6 +129,8 @@ def parse_recipe(page: FetchedPage) -> Optional[ParsedRecipe]:
             yield_description=str(data.get("yield_description", "")),
             instruction_count=int(data.get("instruction_count", 0) or 0),
             has_chocolate=bool(data.get("has_chocolate", False)),
+            technique_signals=technique_signals,
+            technique_notes=str(data.get("technique_notes") or "").strip()[:200],
         )
         logger.info("Parsed %d ingredients from %s", len(ingredients), page.url)
         return recipe
