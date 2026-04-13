@@ -139,6 +139,10 @@ class SearchRequest(BaseModel):
 class SearchResponse(BaseModel):
     thread_id: str
     recipes: list[dict]
+    candidates: list[dict] = Field(default_factory=list)
+    # ↑ All top-k snippet candidates that passed relevance scoring, regardless of
+    # whether the page was successfully fetched/parsed. Lets the frontend surface
+    # links to recipes that couldn't be scored so the user can visit them directly.
     query_plan: Optional[dict] = None
     clarify_question: Optional[str] = None
     message: str = ""
@@ -208,9 +212,25 @@ def search(req: SearchRequest):
     plan = result.get("query_plan")
     clarify_q = result.get("clarify_question")
 
+    # Serialize all snippet candidates that passed relevance scoring so the
+    # frontend can show links even for recipes that failed to fetch or parse.
+    scored_urls = {s.recipe.url for s in scored}
+    candidates = [
+        {
+            "url": s.url,
+            "title": s.title,
+            "domain": s.domain,
+            "excerpt": s.excerpt,
+            "relevance_score": s.relevance_score,
+            "scored": s.url in scored_urls,  # True if this candidate made it through to scoring
+        }
+        for s in (result.get("snippets") or [])
+    ]
+
     return SearchResponse(
         thread_id=thread_id,
         recipes=_serialize_scored(scored),
+        candidates=candidates,
         query_plan=plan.model_dump() if plan else None,
         clarify_question=clarify_q,
         message=f"{len(scored)} recipes scored" + (" — clarification needed" if clarify_q else ""),

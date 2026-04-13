@@ -242,12 +242,17 @@ class IngestionPipeline:
                 s.relevance_score = 0.0
                 s.skip_reason = reason
 
-        # Substack paywall heuristic
+        # Known paywall domains: Substack (short excerpt = locked post),
+        # Patreon (recipe content always requires patron authentication).
         for s in snippets:
             if s.relevance_score is None and "substack.com" in s.domain:
                 if len(s.excerpt) < SUBSTACK_PAYWALL_CUTOFF:
                     s.relevance_score = 0.0
                     s.skip_reason = "paywall"
+        for s in snippets:
+            if s.relevance_score is None and "patreon.com" in s.domain:
+                s.relevance_score = 0.0
+                s.skip_reason = "paywall"
 
         # Batched LLM scoring — all undecided snippets in one prompt
         to_score = [s for s in snippets if s.relevance_score is None]
