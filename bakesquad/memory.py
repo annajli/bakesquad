@@ -262,21 +262,23 @@ def add_feedback(url: str, feedback: str, content: str = "") -> None:
 
 def update_user_prefs_from_feedback() -> dict:
     """
-    Infer scoring weight adjustments from liked_recipes across all five pref dimensions.
+    Infer per-category scoring weight overrides from liked_recipes.
 
     Respects the use_feedback_prefs flag — returns current prefs unchanged when False.
 
     Per-category inference (stored in prefs["category_prefs"][category]):
-      moisture_base_weight  — normalised mean Moisture Retention score across liked recipes
-      structure_base_weight — normalised mean Structure & Leavening score
-      balance_base_weight   — normalised mean Sugar Balance score
-      preferred_fat         — dominant fat_type if ≥60% of liked recipes share one type
-      sweetness             — "low" / "medium" / "high" from median sugar_to_flour ratio
+      {criterion_name_key: weight}  — normalised mean score per criterion, summing to 1.0.
+        Criterion name → key conversion matches derive_weights() in scorer.py:
+        "Chew & Texture" → "chew_and_texture_weight"
+        "Moisture & Tenderness" → "moisture_and_tenderness_weight"  etc.
+      preferred_fat  — dominant fat_type if ≥60% of liked recipes share one type
+      sweetness      — "low" / "medium" / "high" from median sugar_to_flour ratio
 
     Requires ≥ prefs["feedback_min_liked"] liked recipes per category before inferring
     (prevents overfitting from a single data point).
 
-    Global prefs are updated from all liked recipes combined (category-agnostic).
+    Global weight inference is intentionally omitted: each category has its own
+    criteria set, so cross-category averaging is not meaningful.
     """
     prefs = load_prefs()
 
@@ -288,17 +290,8 @@ def update_user_prefs_from_feedback() -> dict:
     if not liked_rows:
         return prefs
 
-    # ── Parse stored ScoredRecipe dicts ───────────────────────────────────
-    # recipe_json stores a ScoredRecipe.model_dump() with keys:
-    #   recipe.category, ratios.fat_type, ratios.sugar_to_flour,
-    #   criteria[{name, score, weight}]
-    _MOISTURE_KEY  = "Moisture Retention"
-    _STRUCTURE_KEY = "Structure & Leavening"
-    _BALANCE_KEY   = "Sugar Balance"
-
     # Bucket liked recipes by category
     by_category: dict[str, list[dict]] = {}
-    all_parsed: list[dict] = []
     for row in liked_rows:
         try:
             data = json.loads(row["recipe_json"])
@@ -310,70 +303,72 @@ def update_user_prefs_from_feedback() -> dict:
             or "other"
         )
         by_category.setdefault(category, []).append(data)
-        all_parsed.append(data)
+
+    def _criterion_key(name: str) -> str:
+        """Convert criterion display name to user_prefs key (matches derive_weights logic)."""
+        return name.lower().replace(" & ", "_and_").replace(" ", "_") + "_weight"
 
     def _infer_for_group(group: list[dict]) -> dict:
-        """Infer all five pref dimensions from a list of parsed ScoredRecipe dicts."""
+        """
+        Infer weight overrides and fat/sweetness preferences from a list of
+        ScoredRecipe dicts (stored as model_dump() in recipe_json).
+        """
         n = len(group)
-        moisture_scores, structure_scores, balance_scores = [], [], []
+        criterion_scores: dict[str, list[float]] = {}
         fat_types: list[str] = []
         sugar_ratios: list[float] = []
 
         for data in group:
-            criteria = {c["name"]: c["score"] for c in data.get("criteria", [])}
+            # Accumulate per-criterion scores across all recipes in the group
+            for c in data.get("criteria", []):
+                name = c.get("name", "")
+                score = c.get("score")
+                # Skip universal add-on criteria — they're not per-category weights
+                if name in ("GF Binding Agent", "Accessibility") or not name or score is None:
+                    continue
+                criterion_scores.setdefault(name, []).append(float(score))
+
             ratios = data.get("ratios", {})
-
-            if _MOISTURE_KEY in criteria:
-                moisture_scores.append(criteria[_MOISTURE_KEY])
-            if _STRUCTURE_KEY in criteria:
-                structure_scores.append(criteria[_STRUCTURE_KEY])
-            if _BALANCE_KEY in criteria:
-                balance_scores.append(criteria[_BALANCE_KEY])
-
             fat = ratios.get("fat_type")
             if fat in ("oil", "butter", "mixed"):
                 fat_types.append(fat)
-
             sugar = ratios.get("sugar_to_flour")
             if sugar is not None:
                 sugar_ratios.append(float(sugar))
 
         result: dict = {}
 
-        # Weight inference: normalise mean criterion scores to sum to 1.0
+        # Weight inference: mean score per criterion, normalised to sum to 1.0
         means = {
-            "moisture":  sum(moisture_scores)  / len(moisture_scores)  if moisture_scores  else None,
-            "structure": sum(structure_scores) / len(structure_scores) if structure_scores else None,
-            "balance":   sum(balance_scores)   / len(balance_scores)   if balance_scores   else None,
+            name: sum(scores) / len(scores)
+            for name, scores in criterion_scores.items()
+            if scores
         }
-        valid_means = {k: v for k, v in means.items() if v is not None}
-        if len(valid_means) == 3:
-            total = sum(valid_means.values())
-            if total > 0:
-                m_w = round(valid_means["moisture"]  / total, 3)
-                s_w = round(valid_means["structure"] / total, 3)
-                b_w = round(1.0 - m_w - s_w, 3)   # ensures exact sum of 1
-                result["moisture_base_weight"]  = m_w
-                result["structure_base_weight"] = s_w
-                result["balance_base_weight"]   = b_w
+        total = sum(means.values())
+        if means and total > 0:
+            names = sorted(means)  # stable ordering
+            weights = [round(means[n] / total, 3) for n in names]
+            # Ensure exact sum of 1.0 by adjusting the largest weight
+            diff = round(1.0 - sum(weights), 3)
+            if diff:
+                max_idx = weights.index(max(weights))
+                weights[max_idx] = round(weights[max_idx] + diff, 3)
+            for name, w in zip(names, weights):
+                result[_criterion_key(name)] = w
 
         # Fat preference: dominant type if ≥60% of liked recipes share it
         if fat_types:
             fat_counts: dict[str, int] = {}
             for f in fat_types:
                 fat_counts[f] = fat_counts.get(f, 0) + 1
-            dominant_fat = max(fat_counts, key=fat_counts.__getitem__)
-            result["preferred_fat"] = (
-                dominant_fat if fat_counts[dominant_fat] / n >= 0.6 else None
-            )
+            dominant = max(fat_counts, key=fat_counts.__getitem__)
+            result["preferred_fat"] = dominant if fat_counts[dominant] / n >= 0.6 else None
 
         # Sweetness: median sugar_to_flour ratio
         if sugar_ratios:
             sugar_ratios.sort()
             median = sugar_ratios[len(sugar_ratios) // 2]
-            result["sweetness"] = (
-                "low" if median < 0.35 else ("high" if median > 0.90 else "medium")
-            )
+            result["sweetness"] = "low" if median < 0.35 else ("high" if median > 0.90 else "medium")
 
         return result
 
@@ -384,22 +379,34 @@ def update_user_prefs_from_feedback() -> dict:
             category_prefs[category] = _infer_for_group(group)
 
     prefs["category_prefs"] = category_prefs
-
-    # ── Global inference from all liked recipes combined ─────────────────
-    if len(all_parsed) >= min_liked:
-        global_inferred = _infer_for_group(all_parsed)
-        for key, value in global_inferred.items():
-            if key not in ("moisture_base_weight", "structure_base_weight",
-                           "balance_base_weight", "preferred_fat", "sweetness"):
-                continue  # never overwrite control fields
-            prefs[key] = value
-
     return prefs
 
 
 # ---------------------------------------------------------------------------
 # Semantic recipe retrieval
 # ---------------------------------------------------------------------------
+
+def embed_text(text: str, dims: int = 128) -> list[float]:
+    """
+    Deterministic hash-based bag-of-words embedding.
+
+    No external dependencies or API calls. Suitable for a small personal corpus
+    where approximate semantic overlap between recipe titles and queries is enough.
+    Each word is hashed to a bucket; the resulting count vector is L2-normalised.
+    """
+    import hashlib
+    import math
+
+    tokens = text.lower().split()
+    vec = [0.0] * dims
+    for token in tokens:
+        bucket = int(hashlib.md5(token.encode()).hexdigest(), 16) % dims
+        vec[bucket] += 1.0
+    mag = math.sqrt(sum(x * x for x in vec))
+    if mag > 0:
+        vec = [x / mag for x in vec]
+    return vec
+
 
 def save_embedding(url: str, title: str, category: str, embedding: list[float]) -> None:
     """Persist a recipe embedding as a JSON float array."""

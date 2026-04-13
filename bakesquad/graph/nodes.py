@@ -246,33 +246,87 @@ def verify(state: BakeSquadState) -> dict:
 
 def score(state: BakeSquadState) -> dict:
     """
-    Steps 8–10: normalization, ratio engine, technique + ratio scoring, LLM explanations.
+    Steps 8–10: normalization, ratio engine, scoring, LLM explanations.
+
+    After scoring live web results, recalls semantically similar recipes from the
+    personal corpus (stored via the memory node on previous runs) and merges them
+    into the result set. Recalled recipes use cached ratios and are re-scored
+    against the current query plan so weights and boosts are applied fresh.
 
     Applies category_override if verify set one; otherwise uses query_plan.category.
     """
+    from bakesquad.memory import embed_text, get_liked_recipes, get_semantic_candidates
+    from bakesquad.models import ParsedRecipe, RatioResult
     from bakesquad.ratio_engine import compute_ratios
     from bakesquad.scorer import add_explanations, score_all
 
     recipes = state.get("parsed_recipes") or []
-    if not recipes:
-        return {"scored_recipes": [], "ratio_results": []}
-
     plan = state["query_plan"]
     if state.get("category_override"):
         plan = plan.model_copy(update={"category": state["category_override"]})
-
-    ratios_list = [compute_ratios(r) for r in recipes]
     user_prefs = state.get("user_prefs") or {}
-    scored = score_all(recipes, ratios_list, plan, user_prefs)
+
+    # ── Recall from corpus ────────────────────────────────────────────────
+    # Embed the query and fetch the top-3 stored recipes most similar to it.
+    # Skip any URL already in the live result set to avoid duplicates.
+    live_urls = {r.url for r in recipes}
+    recalled_recipes: list[ParsedRecipe] = []
+    recalled_ratios: list[RatioResult] = []
+    try:
+        query_text = f"{state['user_query']} {plan.category}"
+        query_emb = embed_text(query_text)
+        candidates = get_semantic_candidates(
+            query_emb, top_k=3, category_filter=plan.category
+        )
+        # Load full ScoredRecipe data from liked_recipes for high-similarity matches
+        if candidates:
+            liked_map = {
+                row["url"]: row
+                for row in get_liked_recipes()
+            }
+            import json as _json
+            for c in candidates:
+                if c["similarity"] < 0.30 or c["url"] in live_urls:
+                    continue
+                row = liked_map.get(c["url"])
+                if not row:
+                    continue
+                try:
+                    stored = _json.loads(row["recipe_json"])
+                    r = ParsedRecipe(**stored["recipe"])
+                    rt = RatioResult(**stored["ratios"])
+                    recalled_recipes.append(r)
+                    recalled_ratios.append(rt)
+                    live_urls.add(c["url"])
+                except Exception as exc:
+                    logger.debug("recall: skipping %s — %s", c["url"], exc)
+    except Exception as exc:
+        logger.warning("score: corpus recall failed: %s", exc)
+
+    # ── Score live + recalled together ───────────────────────────────────
+    if not recipes and not recalled_recipes:
+        return {"scored_recipes": [], "ratio_results": []}
+
+    all_recipes = recipes + recalled_recipes
+    # For live recipes compute ratios fresh; recalled recipes use their stored ratios
+    live_ratios = [compute_ratios(r) for r in recipes]
+    all_ratios = live_ratios + recalled_ratios
+
+    scored = score_all(all_recipes, all_ratios, plan, user_prefs)
     add_explanations(scored)
 
     top = scored[0].recipe.title if scored else "none"
+    recalled_count = len(recalled_recipes)
     return {
-        "ratio_results": ratios_list,
+        "ratio_results": all_ratios,
         "scored_recipes": scored,
         "messages": [
             {"role": "assistant",
-             "content": f"[Step 10] {len(scored)} recipes scored. Top: {top}"}
+             "content": (
+                 f"[Step 10] {len(scored)} recipes scored"
+                 + (f" ({recalled_count} from corpus)" if recalled_count else "")
+                 + f". Top: {top}"
+             )}
         ],
     }
 
@@ -355,17 +409,21 @@ def memory(state: BakeSquadState) -> dict:
     """
     Write-through memory operations after each scored turn:
 
-    1. Upsert ratio_cache for every scored recipe URL (existing behaviour).
-    2. Update user_prefs from feedback history if use_feedback_prefs is True.
-    3. Pre-load liked_recipe_urls for fast filtering on future turns.
+    1. Upsert ratio_cache for every scored recipe URL.
+    2. Save recipe embeddings for every successfully scored recipe (enables
+       semantic recall on future queries).
+    3. Update user_prefs from feedback history if use_feedback_prefs is True.
+    4. Pre-load liked_recipe_urls for fast filtering on future turns.
 
     Recipe liking (save_liked_recipe) is triggered by explicit user feedback
     via the /feedback API endpoint, not automatically here.
     """
     from bakesquad.memory import (
         cache_put,
+        embed_text,
         get_liked_urls,
         load_prefs,
+        save_embedding,
         save_prefs,
         update_user_prefs_from_feedback,
     )
@@ -373,14 +431,24 @@ def memory(state: BakeSquadState) -> dict:
     scored = state.get("scored_recipes") or []
     ratios = state.get("ratio_results") or []
 
-    # 1. Upsert ratio cache for every scored recipe
+    # 1. Upsert ratio cache
     for ratio in ratios:
         try:
             cache_put(ratio.url, ratio.category, ratio.model_dump())
         except Exception as exc:
             logger.warning("memory: cache_put failed for %s: %s", ratio.url, exc)
 
-    # 2. Refresh user_prefs from feedback history (respects use_feedback_prefs flag)
+    # 2. Save embeddings — title + category + ingredient names as embedding text
+    for s in scored:
+        try:
+            ing_names = " ".join(i.name for i in (s.recipe.ingredients or []))
+            text = f"{s.recipe.title} {s.recipe.category} {ing_names}"
+            embedding = embed_text(text)
+            save_embedding(s.recipe.url, s.recipe.title, s.recipe.category, embedding)
+        except Exception as exc:
+            logger.warning("memory: save_embedding failed for %s: %s", s.recipe.url, exc)
+
+    # 3. Refresh user_prefs from feedback history
     try:
         updated_prefs = update_user_prefs_from_feedback()
         save_prefs(updated_prefs)
@@ -388,7 +456,7 @@ def memory(state: BakeSquadState) -> dict:
         logger.warning("memory: pref inference failed: %s", exc)
         updated_prefs = load_prefs()
 
-    # 3. Refresh liked URLs for next turn's pre-filtering
+    # 4. Refresh liked URLs
     try:
         liked_urls = get_liked_urls()
     except Exception as exc:
