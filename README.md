@@ -1,75 +1,138 @@
 # BakeSquad
 
-A recipe search and scoring agent that cuts through review-inflation bias on popular recipe sites. Instead of ranking by social proof (star ratings, review counts), BakeSquad evaluates recipes based on **ingredient ratios** and **baking science principles** — then personalizes ranking using your preference profile.
-
-> Final project for an AI agents workshop.
+A recipe scoring agent that cuts through review-inflation bias. Instead of ranking by social proof (star ratings, review counts), BakeSquad evaluates recipes using **ingredient ratios**, **baking science principles**, and **LLM-assessed technique quality** — then personalizes ranking using a preference profile built from your history.
 
 ---
 
 ## The problem
 
-AllRecipes, Food Network, and similar sites rank recipes by PageRank-style popularity. A recipe posted in 2010 with 4,000 reviews consistently outranks a technically superior recipe from 2023. BakeSquad evaluates the recipe itself — its ingredient ratios and structure — not its audience size.
+AllRecipes, Food Network, and similar sites rank by PageRank-style popularity. A recipe posted in 2010 with 4,000 reviews consistently outranks a technically superior recipe from 2023. BakeSquad evaluates the recipe itself — its ratios and structure — not its audience size.
+
+You can also paste in a URL you found anywhere and score it directly, building a personal corpus of vetted recipes that improves future recommendations.
 
 ---
 
 ## How it works
 
-BakeSquad runs an 11-step fixed pipeline from natural language query to ranked output:
+BakeSquad is a LangGraph-orchestrated agent with a multi-step pipeline from natural language query (or URL) to ranked output.
 
 ```
-Query
-  │
-  ▼
-[1] Query Understanding      — 1 LLM call: extract category, constraints, scoring weights
-  │
-  ▼
-[2] DuckDuckGo Search        — 2 query variants (broad + specific), deduplicated
-  │
-  ▼
-[3] Snippet Pre-check        — 1 batched LLM call scores all snippets at once
-  │
-  ▼
-[4] Domain Cap               — max 2 results per domain, relevance-ranked
-  │
-  ▼
-[5] Adaptive Retry           — if < 3 candidates, retry with relaxed queries
-  │
-  ▼
-[6] Parallel Page Fetch      — requests + BeautifulSoup, 5 s timeout, max 4 pages
-  │
-  ▼
-[7] LLM Parse (parallel)     — BS4 pre-extracts ingredients section; LLM structures it
-  │
-  ▼
-[8] Unit Normalization       — lookup table converts all quantities to grams (no LLM)
-  │
-  ▼
-[9] Ratio Engine             — deterministic math; results cached in SQLite by URL
-  │
-  ▼
-[10] Scoring + Explanations  — deterministic scores; 1 batched LLM call for "why"
-  │
-  ▼
-[11] Ranked Output           — score cards with ratio breakdowns and explanations
+User input: query or URL
+       │
+       ▼
+[classify_intent]  — turn type: new_search | re_filter | re_search | factual
+       │
+       ▼
+[expand_query]     — Step 1: QueryPlan via LLM (category, constraints, query variants)
+       │         └─ confidence < 0.55 → [clarify] node asks user a question
+       ▼
+[search]           — Steps 2–5: DuckDuckGo, snippet scoring, domain cap, adaptive retry
+       │
+       ▼
+[fetch]            — Step 6: JSON-LD extraction (primary) → BS4 fallback; parallel
+       │
+       ▼
+[parse]            — Step 7: parallel LLM recipe parsing into structured ingredients
+       │
+       ▼
+[verify]           — Step 7b: majority-vote category reconciliation
+       │
+       ▼
+[score]            — Steps 8–10: unit normalization → ratio engine → per-category
+       │             scoring math → LLM explanations + LLM-assessed criteria
+       │             + corpus recall (semantically similar previously-scored recipes)
+       ▼
+[memory]           — cache ratios, save embeddings, update preference model
+       │
+       ▼
+Ranked output
 ```
 
-**Key performance properties:**
-- Every LLM call that can be batched *is* batched — never one call per item
-- Page fetching is parallel (`ThreadPoolExecutor`)
-- Unit normalization, ratio math, and scoring contain **zero LLM calls**
-- Ratio results are cached in SQLite — repeat queries skip parse + normalize + ratio entirely
+### Conversation turns
+
+After an initial search, follow-up messages are classified and routed:
+
+| Turn type | Example | Behaviour |
+|---|---|---|
+| `re_filter` | "only show me oil-based ones" | Zero LLM — filter existing results |
+| `re_search` | "actually I want chocolate banana bread" | Full new pipeline with prior context |
+| `factual` | "why does oil keep bread moist longer?" | Single LLM answer, no search |
 
 ---
 
-## MVP scope
+## Scoring model
 
-Supports three baked-good categories:
+Scoring is **per-category** — each baked-good type has its own named criteria reflecting the quality axes that actually matter for that style.
 
-| Category | Example query |
+### Category criteria
+
+| Category | Criteria | Notes |
+|---|---|---|
+| `cookie` | Chew & Texture, Spread & Structure, Sweetness Balance, Flavor & Technique† | Brown/white sugar split predicts chew; leavening type predicts spread |
+| `quick_bread` | Moisture & Tenderness, Rise & Dome, Sweetness Balance | Over-leavening flagged as tunneling risk |
+| `cake` | Moisture & Tenderness, Crumb & Structure, Sweetness Calibration | Custard cakes (cheesecake, flourless) bypass flour-ratio scoring |
+| `yeasted_bread` | Hydration, Enrichment Level, Flavor Complexity† | Baker's % hydration; lean vs enriched style |
+| `pastry` | Fat & Richness, Structure & Balance, Technique & Layers† | Fat/flour is dominant signal; wide range covers shortcrust → croissant |
+| `other` | Overall Balance | Sugar/flour as general proxy |
+
+† LLM-assessed: starts at placeholder 50/100; scored 0–100 in the batched explanation call.
+
+Universal add-ons (applied after category criteria):
+
+| Criterion | When active | Weight |
+|---|---|---|
+| GF Binding Agent | Gluten-free modifiers or non-AP flour | 0.20 fixed |
+| Accessibility | `prefer_accessibility > 0` in user prefs | 0–0.20 scaled |
+
+### Dynamic weight derivation
+
+Weights shift based on query signals:
+
+- `"stays moist for days"` → Moisture & Tenderness boosted
+- `"crispy edges"`, `"open crumb"` → structure criterion boosted
+- `"brown butter"`, `"fermented"` → flavor criterion boosted
+
+Weights also learn from your liked recipe history — per-category inferences stored in `user_prefs.json`.
+
+### Ratio reference ranges
+
+All ratios are computed from normalized gram weights (King Arthur Baking + USDA density tables). Ranges are calibrated per flour type (AP, almond, oat, coconut, GF blend).
+
+| Category | Key ratios |
 |---|---|
-| `quick_bread` | `"chocolate chip banana bread that stays moist for days"` |
-| `cookie` | `"chewy brown butter chocolate chip cookies"` |
-| `cake` | `"moist chocolate birthday cake with cream cheese frosting"` |
+| Quick bread | liquid/flour 0.85–1.50, fat/flour 0.28–0.65, leavening/flour 0.008–0.030 |
+| Cake | liquid/flour 0.80–1.25, fat/flour 0.35–0.80, sugar/flour 0.65–1.20 |
+| Cookie | fat/flour 0.40–0.75, brown/white sugar 0.5–3.0, leavening/flour 0.005–0.025 |
+| Yeasted bread | liquid/flour 0.55–0.85 (hydration), fat/flour 0.00–0.60 |
+| Pastry | fat/flour 0.40–1.20, liquid/flour 0.15–3.00 |
+
+---
+
+## Supported categories
+
+| Category | Includes |
+|---|---|
+| `cookie` | Drop cookies, bar cookies, brownies, shortbread, blondies |
+| `quick_bread` | Banana bread, zucchini bread, muffins, scones, cornbread |
+| `cake` | Layer cakes, bundt cakes, cheesecakes, cupcakes |
+| `yeasted_bread` | Sourdough, focaccia, baguette, dinner rolls, brioche, challah |
+| `pastry` | Croissants, danish, choux (éclairs, profiteroles), tarts, pies |
+| `other` | Anything uncategorizable |
+
+---
+
+## Persistence
+
+All data lives in `~/.bakesquad/`:
+
+| Store | Format | Purpose |
+|---|---|---|
+| `bakesquad.db → ratio_cache` | SQLite | Ratio results keyed by URL; cache hits skip parse + normalize entirely |
+| `bakesquad.db → liked_recipes` | SQLite | Recipes saved with ratings, notes, tried date |
+| `bakesquad.db → recipe_embeddings` | SQLite | Hash-based embeddings for semantic corpus recall |
+| `bakesquad.db → user_feedback` | SQLite | Event log: liked / disliked / tried / note |
+| `user_prefs.json` | JSON | Scoring weights + per-category inferences from feedback history |
+| `graph.db` | SQLite | LangGraph conversation checkpoints (multi-turn state) |
 
 ---
 
@@ -83,157 +146,55 @@ pip install -r requirements.txt
 
 ### 2. Configure API keys
 
-Copy `.env.example` (or create `.env`) with the keys for whichever backends you plan to use:
+Create a `.env` file:
 
 ```env
-GROQ_API_KEY=your_groq_key_here
 ANTHROPIC_API_KEY=your_anthropic_key_here
+GROQ_API_KEY=your_groq_key_here        # optional
 ```
 
-Groq keys are free at [console.groq.com](https://console.groq.com). Ollama requires no key.
-
----
-
-## Running the agent
+### 3. Run the API server
 
 ```bash
-MODEL_BACKEND=groq  python main.py "chocolate chip banana bread that stays moist for days"
+MODEL_BACKEND=claude uvicorn bakesquad.api:app --reload --port 8000
+```
+
+### 4. Run the CLI (optional)
+
+```bash
 MODEL_BACKEND=claude python main.py "chewy brown butter chocolate chip cookies"
-MODEL_BACKEND=ollama python main.py "moist banana bread"
+MODEL_BACKEND=claude python main.py "sourdough with open crumb" --recency year
 ```
-
-**With recency filter:**
-```bash
-MODEL_BACKEND=groq python main.py "sourdough discard cookies" --recency year
-MODEL_BACKEND=groq python main.py "viral banana bread" --recency month
-```
-
-Switching backends requires only changing `MODEL_BACKEND` — no code changes.
 
 ---
 
 ## LLM backends
 
-| `MODEL_BACKEND` | Model | Time budget | Notes |
-|---|---|---|---|
-| `groq` | `llama-3.1-8b-instant` | 60 s | Free tier; fast; use for dev |
-| `claude` | `claude-sonnet-4-20250514` | 60 s | Best explanation quality; use for demos |
-| `ollama` | `qwen3:8b` (local) | 3 min | No cost; requires Ollama running locally |
+| `MODEL_BACKEND` | Model | Notes |
+|---|---|---|
+| `claude` | `claude-sonnet-4-20250514` | Best quality; recommended |
+| `groq` | `llama-3.1-8b-instant` | Free tier; fast; good for development |
+| `ollama` | `qwen3:8b` (local) | No cost; requires Ollama running locally |
 
-All LLM calls route through `bakesquad/llm_client.py` — a thin wrapper that handles backend selection, rate-limit retries, and think-tag stripping (for qwen3).
+All calls route through `bakesquad/llm_client.py` — a thin wrapper handling backend selection, rate-limit retries, and think-tag stripping.
 
 ---
 
-## Example output
+## API
 
-```
-==============================================================
-  BakeSquad  |  Backend: groq (llama-3.1-8b-instant)
-==============================================================
-  Query: 'chocolate chip banana bread that stays moist for days'
+The FastAPI server runs at `http://localhost:8000`. Interactive docs at `/docs`.
 
-[Step 1: Query Understanding]
-  Category:    quick_bread
-  Constraints: contains chocolate, contains banana, stays moist for days
-  Queries generated:
-    - moist chocolate chip banana bread recipe
-    - best ever chocolate chip banana bread recipe with buttermilk and brown sugar
-  ok  3.3s  (budget 5s)
-
-[Step 2-5: Search + Candidate Selection]
-  11 candidates selected
-  ok  4.1s  (budget 8s)
-
-[Step 6: Page Fetch]  (parallel, 5 s timeout)
-  4/4 pages fetched successfully
-  ok  1.3s  (budget 10s)
-
-...
-
-  #1  Perfect Chocolate Chip Banana Bread
-      https://cafedelites.com/banana-bread/
-        [butter-based] [banana] [chocolate]
-      Composite  ###############.....  73/100
-
-        Moisture Retention       ############........  61  (w=0.85)
-        Structure & Leavening    ####################  100  (w=0.20)
-        Sugar Balance            ####################  100  (w=0.15)
-
-      Ratios:
-        liquid/flour:    1.786  !!
-        fat/flour:       0.540  ok
-        sugar/flour:     0.952  ok
-        leavening/flour: 0.0272 ok
-        fat source:      butter
-
-      Why this score:
-        Recipe scored 73/100 with well-balanced leavening and sugar.
-        Butter-based fat is good for initial moisture but loses ground
-        to oil-based recipes on day 2+. Liquid/flour ratio is slightly
-        above the optimal range, which may soften the crumb further.
-
-==============================================================
-  Total: 29.2s  (budget 60s)  [OK]
-  Backend: groq (llama-3.1-8b-instant)
-  Ratio cache: 2/4 hits - skipped parse+normalize+ratio
-==============================================================
-```
-
----
-
-## Scoring model
-
-### Ratio reference ranges
-
-Ratios are computed from normalized gram weights (King Arthur Baking + USDA density tables).
-
-**Quick bread / banana bread:**
-
-| Ratio | Optimal range | What it predicts |
+| Method | Endpoint | Purpose |
 |---|---|---|
-| liquid / flour | 0.85 – 1.50 | Crumb moisture; banana counts as liquid |
-| fat / flour | 0.28 – 0.65 | Tenderness and shelf life |
-| sugar / flour | 0.35 – 0.90 | Sweetness balance; sugar is hygroscopic |
-| leavening / flour | 0.008 – 0.030 | Rise, crumb openness |
-| fat source | oil > mixed > butter | Multi-day moisture retention |
+| `POST` | `/api/search` | Natural-language query → scored recipes. Pass `thread_id` to continue a conversation. |
+| `POST` | `/api/score-url` | Paste a URL → score that recipe and store it in your corpus |
+| `GET` | `/api/saved` | All recipes in your personal corpus |
+| `POST` | `/api/feedback` | Record liked / disliked / tried / note for a recipe URL |
+| `GET` | `/api/prefs` | Current scoring preferences |
+| `PATCH` | `/api/prefs` | Update preferences (accessibility weight, fat preference, etc.) |
+| `GET` | `/api/health` | Liveness check + backend info |
 
-**Cookie:**
-
-| Ratio | Optimal range | What it predicts |
-|---|---|---|
-| butter / flour | 0.40 – 0.75 | Spread and richness |
-| sugar / flour | 0.55 – 1.10 | Sweetness and texture |
-| brown / white sugar | 0.5 – 3.0 | Chew (high brown) vs crispness (high white) |
-| leavening / flour | 0.005 – 0.025 | Lift and spread control |
-
-### Criteria types
-
-| Type | Description |
-|---|---|
-| **Fixed** | Always scored; failures penalize regardless of user profile (leavening floor, constraint satisfaction) |
-| **Variable** | Weighted by query context + user preference model (moisture retention, sugar balance) |
-
-### Dynamic weight derivation
-
-Weights shift based on what you ask for:
-
-- `"stays moist for days"` → moisture retention weight boosted to ~0.85
-- `"crispy edges"` → structure weight boosted
-- `"not too sweet"` → sugar balance weight boosted
-
----
-
-## Persistence
-
-All persistent data lives in `~/.bakesquad/`:
-
-| Store | Format | Purpose |
-|---|---|---|
-| `bakesquad.db` → `ratio_cache` | SQLite | Ratio results keyed by URL; cache hits skip parse + normalize + ratio |
-| `bakesquad.db` → `liked_recipes` | SQLite | Recipes you've saved with ratings and notes |
-| `user_prefs.json` | JSON | Base criterion weights (updated over time) |
-
-On a **cache hit**, the pipeline skips steps 7–9 entirely and jumps straight to scoring. Observed speedup: ~29 s first run → ~19 s with 3/4 cache hits.
+`POST /api/search` returns both `recipes` (fully scored) and `candidates` (all URLs that passed snippet scoring, including those that failed to fetch or parse) — so you can visit high-relevance recipes that couldn't be scored automatically.
 
 ---
 
@@ -241,55 +202,60 @@ On a **cache hit**, the pipeline skips steps 7–9 entirely and jumps straight t
 
 ```
 bakesquad/
-├── main.py                    # Entry point — full pipeline with per-step timing
+├── main.py                    # CLI entry point
 ├── requirements.txt
-├── CONTEXT.md                 # Full system specification
+├── categories.yaml            # Category registry: criteria, ratio keys, synonyms
 └── bakesquad/
-    ├── config.py              # Pipeline constants and step time budgets
-    ├── models.py              # Pydantic data models (SearchSnippet → ScoredRecipe)
-    ├── llm_client.py          # Multi-backend LLM wrapper (ollama / groq / claude)
-    ├── memory.py              # SQLite + JSON persistence layer
+    ├── api.py                 # FastAPI REST layer
+    ├── config.py              # Pipeline constants and time budgets
+    ├── models.py              # Pydantic models (SearchSnippet → ScoredRecipe)
+    ├── llm_client.py          # Multi-backend LLM wrapper
+    ├── memory.py              # SQLite + JSON persistence; preference inference; embeddings
     ├── normalizer.py          # Unit → grams conversion (lookup table, no LLM)
     ├── ratio_engine.py        # Deterministic ratio math + SQLite cache
     ├── parser.py              # Parallel LLM recipe parsing
-    ├── scorer.py              # Scoring math + batched LLM explanations
+    ├── scorer.py              # Per-category scoring + batched LLM explanations
+    ├── session.py             # Turn classification helpers
+    ├── category_registry.py   # categories.yaml loader
+    ├── graph/
+    │   ├── builder.py         # LangGraph StateGraph assembly + SqliteSaver checkpointing
+    │   ├── nodes.py           # Node implementations (classify_intent, search, score, memory…)
+    │   └── state.py           # BakeSquadState TypedDict
     └── search/
-        ├── ingestion.py       # Steps 1–6: query plan → search → fetch
+        ├── ingestion.py       # Steps 1–6: query plan → DDG search → fetch (JSON-LD + BS4)
         └── prompts.py         # Plain-string prompt builders
 ```
 
 ---
 
-## Design decisions and tradeoffs
+## Design decisions
+
+### LangGraph over a fixed pipeline
+
+The original implementation was a deterministic 11-step pipeline. LangGraph adds multi-turn conversation routing (re_filter, re_search, factual), clarification interrupts when category confidence is low, and SqliteSaver checkpointing for persistent conversation state across API requests — none of which are possible with a fixed pipeline.
+
+### JSON-LD extraction before BS4
+
+Most major recipe sites and WordPress recipe plugins embed `schema.org/Recipe` structured data. JSON-LD extraction is tried first — it's machine-readable, survives layout changes, and dramatically improves parse success rates. BS4 heuristic extraction is the fallback for sites that don't implement structured data.
+
+### Per-category scoring over universal criteria
+
+A single rubric (moisture/structure/balance) applied across all categories loses the signal that matters per style: chew and spread for cookies, hydration for yeasted breads, lamination for pastry. Each category now has its own named criteria; LLM-assessed criteria handle axes (flavor complexity, technique quality) that ingredient ratios can't reach.
 
 ### No LangChain
 
-CONTEXT.md specifies LangChain. We bypass it and call the OpenAI-compatible / Anthropic APIs directly. LangChain template + chain overhead added ~1–2 s per LLM call, which was incompatible with the 60 s total budget. All deviations are commented in the code at the point of deviation.
-
-### Fixed pipeline, not ReAct
-
-The orchestrator is a deterministic 11-step pipeline, not a ReAct loop. For a task with well-defined sub-steps, a fixed pipeline is strictly better: predictable latency, easy to budget, and impossible for the LLM to get stuck in a reasoning loop. ReAct would buy nothing here and cost budget control.
+LangChain template and chain overhead added ~1–2 s per LLM call, incompatible with the 60 s time budget. All LLM calls route through a thin `llm_client.py` wrapper instead.
 
 ### Sequential DuckDuckGo search
 
-The spec calls for parallel search queries. DDGS v9 uses `primp` (a Rust HTTP client) which deadlocks when called from multiple Python threads on Windows. With only 2 queries, sequential execution takes ~2–3 s — well within the 8 s search budget — so parallelism provides no meaningful benefit.
-
-### Domain weighting
-
-No developer-defined domain tier is applied. All sources compete on snippet relevance score alone. If two snippets score equally, a user-configured trusted source wins the tiebreak. This avoids recreating authority bias under a different name.
+DDGS v9 uses `primp` (a Rust HTTP client) that deadlocks when called from multiple Python threads on Windows. With 2 queries, sequential execution takes ~2–3 s — well within budget.
 
 ---
 
 ## Known limitations
 
-- Unit normalization is imperfect for vague measurements (`"a handful of chocolate chips"`) — these are flagged as low-confidence
-- Ingredient ratio ranges encode opinionated food science sources (King Arthur, Serious Eats, Stella Parks) — alternatives may disagree
-- Technique signals (resting dough, browning butter) are not scorable from ingredient lists; recipe specificity (instruction count) is used as a proxy
-- Paywalled Substack posts return a login wall — detected at snippet pre-check and skipped
-- No ground truth for validation without a controlled blind tasting study
-
----
-
-## Validation plan
-
-Pick 4–5 recipes spanning the agent's score range for a single category. Bake under controlled conditions. Blind taste test with 3+ people. Check whether rank order correlates with agent scores. Even a small sample provides real empirical results — a weak correlation is a finding, not a failure.
+- Unit normalization is imperfect for vague measurements (`"a handful of chocolate chips"`) — flagged as low-confidence
+- Technique signal recall is low (~8%) — web recipes describe technique in prose, not vocabulary terms. Differentiation comes from LLM-assessed criteria and `technique_notes` delta
+- JavaScript-rendered sites (Serious Eats, NYT Cooking) return empty content to requests — neither JSON-LD nor BS4 can help
+- Paywalled content (Substack, Patreon) is detected at snippet pre-check and skipped; URLs are still surfaced in the `candidates` response field
+- No ground truth for scoring validation without a controlled blind tasting study
