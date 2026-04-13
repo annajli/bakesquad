@@ -35,9 +35,10 @@ categories:
       - shortbread
     loaf_like: false
     scoring_criteria:
-      - moisture_retention
-      - structure_integrity
-      - flavor_balance
+      - chew_and_texture       # brown/white sugar split, leavening type, fat/flour
+      - spread_and_structure   # leavening amount in range, fat/flour in range
+      - sweetness_balance      # sugar/flour in expected range
+      - flavor_and_technique   # LLM-assessed: brown butter, overnight rest, etc.
     ratio_ranges_key: cookie
 
   - id: quick_bread
@@ -62,9 +63,9 @@ categories:
       - savory quick breads
     loaf_like: true
     scoring_criteria:
-      - moisture_retention
-      - leavening_validity
-      - flavor_balance
+      - moisture_and_tenderness  # fat type, liquid/flour, banana bonus
+      - rise_and_dome            # leavening/flour in range; over-leavening → tunneling risk
+      - sweetness_balance        # sugar/flour in expected range
     ratio_ranges_key: quick_bread
 
   - id: cake
@@ -83,9 +84,9 @@ categories:
       - cupcakes
     loaf_like: false
     scoring_criteria:
-      - moisture_retention
-      - structure_integrity
-      - flavor_balance
+      - moisture_and_tenderness  # fat type, liquid/flour (bypassed for custard cakes)
+      - crumb_and_structure      # leavening/flour, fat/flour (bypassed for custard cakes)
+      - sweetness_calibration    # sugar/flour in expected range
     ratio_ranges_key: cake
 
   - id: yeasted_bread
@@ -107,10 +108,10 @@ categories:
       - enriched breads (brioche, challah)
     loaf_like: true
     scoring_criteria:
-      - structure_integrity
-      - flavor_balance
+      - hydration          # liquid/flour (baker's %); open crumb potential
+      - enrichment_level   # fat/flour + sugar/flour; lean vs enriched style
+      - flavor_complexity  # LLM-assessed: fermentation depth, crust character, aroma
     ratio_ranges_key: yeasted_bread
-    # NOTE: ratio_ranges_key does not yet exist in ratio_engine.py — add in Phase 2
 
   - id: pastry
     label: Pastry
@@ -130,10 +131,10 @@ categories:
       - tarts and pies
     loaf_like: false
     scoring_criteria:
-      - structure_integrity
-      - flavor_balance
+      - fat_and_richness      # fat/flour; high fat expected for laminated/shortcrust
+      - structure_and_balance # liquid/flour, sugar/flour in pastry range
+      - technique_and_layers  # LLM-assessed: lamination quality, shatter, hollow choux
     ratio_ranges_key: pastry
-    # NOTE: ratio_ranges_key does not yet exist in ratio_engine.py — add in Phase 2
 
   - id: other
     label: Other
@@ -141,5 +142,5 @@ categories:
     members: []
     loaf_like: false
     scoring_criteria:
-      - flavor_balance
+      - overall_balance   # sugar/flour as a general proxy
     ratio_ranges_key: other
