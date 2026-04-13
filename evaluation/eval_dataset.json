@@ -257,30 +257,30 @@
     {
       "id": "TC36",
       "query": "sourdough bread",
-      "expected_category": "other",
-      "group": "clear_other",
-      "notes": "Sourdough = yeast-leavened, not quick_bread"
+      "expected_category": "yeasted_bread",
+      "group": "clear_yeasted_bread",
+      "notes": "Sourdough = yeasted_bread"
     },
     {
       "id": "TC37",
       "query": "homemade pizza dough",
-      "expected_category": "other",
-      "group": "clear_other",
-      "notes": "Pizza dough = out of scope"
+      "expected_category": "yeasted_bread",
+      "group": "clear_yeasted_bread",
+      "notes": "Pizza dough = yeasted_bread"
     },
     {
       "id": "TC38",
       "query": "croissants from scratch",
-      "expected_category": "other",
-      "group": "clear_other",
-      "notes": "Laminated pastry = other"
+      "expected_category": "pastry",
+      "group": "clear_pastry",
+      "notes": "Laminated dough = pastry"
     },
     {
       "id": "TC39",
       "query": "focaccia with rosemary and sea salt",
-      "expected_category": "other",
-      "group": "clear_other",
-      "notes": "Focaccia = yeast bread = other"
+      "expected_category": "yeasted_bread",
+      "group": "clear_yeasted_bread",
+      "notes": "Focaccia = yeasted_bread"
     },
     {
       "id": "TC40",

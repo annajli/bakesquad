@@ -160,7 +160,7 @@ def get_time_budget() -> int:
 # Helpers
 # ---------------------------------------------------------------------------
 
-_THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
+_THINK_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL)
 
 
 def _parse_retry_after(error_msg: str) -> float:
@@ -172,8 +172,20 @@ def _parse_retry_after(error_msg: str) -> float:
 
 
 def _strip_think_tags(text: str) -> str:
-    """Strip qwen3-style <think>…</think> reasoning blocks."""
-    return _THINK_RE.sub("", text).strip()
+    """Strip qwen3-style <think>…</think> reasoning blocks.
+
+    If stripping leaves an empty string (qwen3.5 sometimes wraps the *entire*
+    response in <think>), fall back to extracting JSON from inside the largest
+    <think> block rather than returning an empty string.
+    """
+    blocks = _THINK_RE.findall(text)
+    stripped = _THINK_RE.sub("", text).strip()
+    if stripped:
+        return stripped
+    # Fallback: the whole response was inside <think>; return the largest block
+    if blocks:
+        return max(blocks, key=len).strip()
+    return stripped
 
 
 def extract_json(text: str) -> dict | list:

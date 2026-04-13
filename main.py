@@ -345,6 +345,26 @@ def run_pipeline(
         _print_unscored_candidates(pages)
         return None
 
+    # Step 7b: Category reconciliation — if Step 7 parsers majority-vote a different
+    # category than Step 1, override plan.category before ratio/scoring steps.
+    # This corrects Step 1 misclassifications using ingredient-level evidence.
+    from collections import Counter
+    _step7_cats = Counter(
+        r.category for r in recipes
+        if getattr(r, "category", None) and r.category != "other"
+    )
+    if _step7_cats:
+        _dominant = _step7_cats.most_common(1)[0][0]
+        if _dominant != plan.category:
+            import logging as _logging
+            _logging.warning(
+                "Category override (Step 7 reconciliation): %s → %s",
+                plan.category,
+                _dominant,
+            )
+            print(f"  [Step 7b] Category override: {plan.category} → {_dominant}  (Step 7 majority vote)")
+            plan = plan.model_copy(update={"category": _dominant})
+
     # Steps 8-9: Normalization + ratio engine
     print("\n[Steps 8-9: Normalization + Ratios]")
     ratios_list: list[RatioResult] = []

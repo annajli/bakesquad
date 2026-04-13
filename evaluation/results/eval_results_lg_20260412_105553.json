@@ -1,0 +1,2815 @@
+{
+  "timestamp": "20260412_105553",
+  "backend": "groq",
+  "model": "llama-3.1-8b-instant",
+  "stage1a": [
+    {
+      "id": "TC_SQ01",
+      "query": "cookies",
+      "group": "short_query",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "cookies recipe",
+          "best cookie recipe"
+        ]
+      },
+      "elapsed_s": 2.65,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"cookies recipe\",\"best cookie recipe\"]}",
+          "elapsed_s": 2.648,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_SQ02",
+      "query": "banana bread",
+      "group": "short_query",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "banana bread recipe",
+          "moist classic banana bread recipe"
+        ]
+      },
+      "elapsed_s": 0.38,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "banana bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"banana bread recipe\",\"moist classic banana bread recipe\"]}",
+          "elapsed_s": 0.383,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_SQ03",
+      "query": "birthday cake",
+      "group": "short_query",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "birthday cake recipe",
+          "moist classic birthday cake recipe from scratch"
+        ]
+      },
+      "elapsed_s": 0.23,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "birthday cake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"birthday cake recipe\",\"moist classic birthday cake recipe from scratch\"]}",
+          "elapsed_s": 0.229,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_SQ04",
+      "query": "muffins",
+      "group": "short_query",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "muffin recipe",
+          "blueberry banana muffin recipe"
+        ]
+      },
+      "elapsed_s": 0.34,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "muffins",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"muffin recipe\",\"blueberry banana muffin recipe\"]}",
+          "elapsed_s": 0.342,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_SQ05",
+      "query": "brownies",
+      "group": "short_query",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "brownie recipe",
+          "fudgy brownie recipe"
+        ]
+      },
+      "elapsed_s": 0.23,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "brownies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"brownie recipe\",\"fudgy brownie recipe\"]}",
+          "elapsed_s": 0.232,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_SQ06",
+      "query": "sourdough bread",
+      "group": "short_query",
+      "expected_category": "other",
+      "predicted_category": "yeasted_bread",
+      "correct": false,
+      "plan_data": {
+        "category": "yeasted_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "sourdough bread recipe",
+          "homemade sourdough bread recipe from scratch"
+        ]
+      },
+      "elapsed_s": 8.28,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "sourdough bread",
+          "raw_response": "{\"category\":\"yeasted_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"sourdough bread recipe\",\"homemade sourdough bread recipe from scratch\"]}",
+          "elapsed_s": 8.276,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_MQ01",
+      "query": "chewy brown butter chocolate chip cookies",
+      "group": "medium_query",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [
+          "chewy texture",
+          "brown butter flavor"
+        ],
+        "queries": [
+          "brown butter chocolate chip cookie recipe",
+          "chewy brown butter chocolate chip cookies recipe"
+        ]
+      },
+      "elapsed_s": 14.36,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "chewy brown butter chocolate chip cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[\"chewy texture\",\"brown butter flavor\"],\"queries\":[\"brown butter chocolate chip cookie recipe\",\"chewy brown butter chocolate chip cookies recipe\"]}",
+          "elapsed_s": 14.363,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_MQ02",
+      "query": "moist banana bread that stays fresh all week",
+      "group": "medium_query",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "stays fresh all week",
+          "moist texture"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "banana bread recipe",
+          "moist banana bread recipe that stays fresh all week"
+        ]
+      },
+      "elapsed_s": 5.38,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "moist banana bread that stays fresh all week",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"stays fresh all week\",\"moist texture\"],\"soft_preferences\":[],\"queries\":[\"banana bread recipe\",\"moist banana bread recipe that stays fresh all week\"]}",
+          "elapsed_s": 5.381,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_MQ03",
+      "query": "layered chocolate birthday cake with ganache frosting",
+      "group": "medium_query",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "layered chocolate birthday cake recipe",
+          "chocolate ganache frosting birthday cake recipe"
+        ]
+      },
+      "elapsed_s": 13.54,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "layered chocolate birthday cake with ganache frosting",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"layered chocolate birthday cake recipe\",\"chocolate ganache frosting birthday cake recipe\"]}",
+          "elapsed_s": 13.544,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_MQ04",
+      "query": "bakery-style blueberry muffins with streusel topping",
+      "group": "medium_query",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "bakery style blueberry muffins recipe",
+          "blueberry muffins with streusel topping recipe"
+        ]
+      },
+      "elapsed_s": 4.36,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "bakery-style blueberry muffins with streusel topping",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"bakery style blueberry muffins recipe\",\"blueberry muffins with streusel topping recipe\"]}",
+          "elapsed_s": 4.363,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_MQ05",
+      "query": "fudgy brownies with walnuts and sea salt",
+      "group": "medium_query",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains nuts",
+          "contains chocolate",
+          "contains sea salt"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "fudgy brownie recipe",
+          "fudgy brownies with walnuts and sea salt recipe"
+        ]
+      },
+      "elapsed_s": 9.84,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "fudgy brownies with walnuts and sea salt",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains nuts\",\"contains chocolate\",\"contains sea salt\"],\"soft_preferences\":[],\"queries\":[\"fudgy brownie recipe\",\"fudgy brownies with walnuts and sea salt recipe\"]}",
+          "elapsed_s": 9.841,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_MQ06",
+      "query": "classic sourdough with open crumb",
+      "group": "medium_query",
+      "expected_category": "other",
+      "predicted_category": "yeasted_bread",
+      "correct": false,
+      "plan_data": {
+        "category": "yeasted_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [
+          "open crumb"
+        ],
+        "queries": [
+          "classic sourdough bread recipe",
+          "sourdough bread with open crumb texture"
+        ]
+      },
+      "elapsed_s": 13.58,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "classic sourdough with open crumb",
+          "raw_response": "{\"category\":\"yeasted_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[\"open crumb\"],\"queries\":[\"classic sourdough bread recipe\",\"sourdough bread with open crumb texture\"]}",
+          "elapsed_s": 13.58,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_LQ01",
+      "query": "I want chocolate chip cookies that are chewy in the middle with crispy edges, made with browned butter that has been chilled overnight before baking, using both milk and dark chocolate chips for a richer flavour",
+      "group": "long_query",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate",
+          "chewy texture",
+          "crispy edges"
+        ],
+        "soft_preferences": [
+          "chewy texture",
+          "crispy edges",
+          "rich flavor"
+        ],
+        "queries": [
+          "chewy brown butter chocolate chip cookie recipe",
+          "chewy brown butter chocolate chip cookies with milk and dark chocolate recipe"
+        ]
+      },
+      "elapsed_s": 10.39,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "I want chocolate chip cookies that are chewy in the middle with crispy edges, made with browned butter that has been chilled overnight before baking, using both milk and dark chocolate chips for a richer flavour",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\",\"chewy texture\",\"crispy edges\"],\"soft_preferences\":[\"chewy texture\",\"crispy edges\",\"rich flavor\"],\"queries\":[\"chewy brown butter chocolate chip cookie recipe\",\"chewy brown butter chocolate chip cookies with milk and dark chocolate recipe\"]}",
+          "elapsed_s": 10.389,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_LQ02",
+      "query": "Looking for a banana bread recipe that stays moist for at least 3 to 4 days. I strongly prefer oil-based recipes over butter-based ones, want a good rise, and would love to fold in chocolate chips or chopped walnuts. Extra ripe bananas are a must.",
+      "group": "long_query",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [
+          "oil-based",
+          "good rise",
+          "moist texture",
+          "extra ripe bananas"
+        ],
+        "queries": [
+          "banana bread recipe with good rise",
+          "moist oil-based banana bread recipe with chocolate chips or walnuts"
+        ]
+      },
+      "elapsed_s": 14.49,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "Looking for a banana bread recipe that stays moist for at least 3 to 4 days. I strongly prefer oil-based recipes over butter-based ones, want a good rise, and would love to fold in chocolate chips or chopped walnuts. Extra ripe bananas are a must.",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[\"oil-based\",\"good rise\",\"moist texture\",\"extra ripe bananas\"],\"queries\":[\"banana bread recipe with good rise\",\"moist oil-based banana bread recipe with chocolate chips or walnuts\"]}",
+          "elapsed_s": 14.485,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_LQ03",
+      "query": "I need a rich, very moist chocolate layer cake for a birthday party of about 20 people. It should have at least 3 layers with ganache filling and chocolate buttercream frosting. No nuts anywhere because of allergies. The cake needs to stay moist for 2 days since I am baking it the day before the party.",
+      "group": "long_query",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "stays moist for 2 days",
+          "no nuts",
+          "contains chocolate",
+          "ganache filling",
+          "chocolate buttercream frosting"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "rich moist chocolate layer cake recipe",
+          "3 layer chocolate cake with ganache and chocolate buttercream frosting recipe"
+        ]
+      },
+      "elapsed_s": 10.37,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "I need a rich, very moist chocolate layer cake for a birthday party of about 20 people. It should have at least 3 layers with ganache filling and chocolate buttercream frosting. No nuts anywhere because of allergies. The cake needs to stay moist for 2 days since I am baking it the day before the party.",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"stays moist for 2 days\",\"no nuts\",\"contains chocolate\",\"ganache filling\",\"chocolate buttercream frosting\"],\"soft_preferences\":[],\"queries\":[\"rich moist chocolate layer cake recipe\",\"3 layer chocolate cake with ganache and chocolate buttercream frosting recipe\"]}",
+          "elapsed_s": 10.367,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_LQ04",
+      "query": "I want bakery-style blueberry muffins with huge domed tops and a crunchy brown sugar streusel. They should be moist inside but not gummy, and I want to use fresh blueberries not frozen. I prefer using buttermilk for extra tenderness and tanginess.",
+      "group": "long_query",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "uses buttermilk",
+          "contains fresh blueberries",
+          "crunchy streusel topping"
+        ],
+        "soft_preferences": [
+          "domed top",
+          "moist texture",
+          "not gummy"
+        ],
+        "queries": [
+          "blueberry muffin recipe with streusel topping",
+          "buttermilk blueberry muffins with crunchy brown sugar topping recipe"
+        ]
+      },
+      "elapsed_s": 10.46,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "I want bakery-style blueberry muffins with huge domed tops and a crunchy brown sugar streusel. They should be moist inside but not gummy, and I want to use fresh blueberries not frozen. I prefer using buttermilk for extra tenderness and tanginess.",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"uses buttermilk\",\"contains fresh blueberries\",\"crunchy streusel topping\"],\"soft_preferences\":[\"domed top\",\"moist texture\",\"not gummy\"],\"queries\":[\"blueberry muffin recipe with streusel topping\",\"buttermilk blueberry muffins with crunchy brown sugar topping recipe\"]}",
+          "elapsed_s": 10.459,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR01",
+      "query": "chocolate chip cookies without any nuts",
+      "group": "preference_rich",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [
+          "nut_free"
+        ],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "chocolate chip cookie recipe",
+          "nut free chocolate chip cookie recipe"
+        ]
+      },
+      "elapsed_s": 9.34,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "chocolate chip cookies without any nuts",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[\"nut_free\"],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"chocolate chip cookie recipe\",\"nut free chocolate chip cookie recipe\"]}",
+          "elapsed_s": 9.337,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR02",
+      "query": "moist banana bread that stays soft for at least 5 days",
+      "group": "preference_rich",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "stays soft for days"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "banana bread recipe",
+          "moist banana bread stays soft for days recipe"
+        ]
+      },
+      "elapsed_s": 9.39,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "moist banana bread that stays soft for at least 5 days",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"stays soft for days\"],\"soft_preferences\":[],\"queries\":[\"banana bread recipe\",\"moist banana bread stays soft for days recipe\"]}",
+          "elapsed_s": 9.394,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR03",
+      "query": "gluten-free chocolate chip cookies using almond flour",
+      "group": "preference_rich",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "almond",
+        "modifiers": [
+          "gluten_free"
+        ],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "almond flour chocolate chip cookie recipe",
+          "gluten free almond flour chocolate chip cookies recipe"
+        ]
+      },
+      "elapsed_s": 13.48,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "gluten-free chocolate chip cookies using almond flour",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"almond\",\"modifiers\":[\"gluten_free\"],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"almond flour chocolate chip cookie recipe\",\"gluten free almond flour chocolate chip cookies recipe\"]}",
+          "elapsed_s": 13.477,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR04",
+      "query": "vegan chocolate cake without any dairy products",
+      "group": "preference_rich",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [
+          "vegan",
+          "dairy_free"
+        ],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "vegan chocolate cake recipe",
+          "dairy free chocolate cake recipe from scratch"
+        ]
+      },
+      "elapsed_s": 14.28,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "vegan chocolate cake without any dairy products",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[\"vegan\",\"dairy_free\"],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"vegan chocolate cake recipe\",\"dairy free chocolate cake recipe from scratch\"]}",
+          "elapsed_s": 14.281,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR05",
+      "query": "oil-based banana bread only, no butter recipes",
+      "group": "preference_rich",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "oil-based"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "oil-based banana bread recipe",
+          "moist oil-based banana bread recipe"
+        ]
+      },
+      "elapsed_s": 5.28,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "oil-based banana bread only, no butter recipes",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"oil-based\"],\"soft_preferences\":[],\"queries\":[\"oil-based banana bread recipe\",\"moist oil-based banana bread recipe\"]}",
+          "elapsed_s": 5.275,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR06",
+      "query": "completely nut-free birthday cake for a school party",
+      "group": "preference_rich",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [
+          "nut_free"
+        ],
+        "hard_constraints": [],
+        "soft_preferences": [
+          "birthday cake",
+          "school party"
+        ],
+        "queries": [
+          "nut free birthday cake recipe",
+          "completely nut free school party cake recipe"
+        ]
+      },
+      "elapsed_s": 3.37,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "completely nut-free birthday cake for a school party",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[\"nut_free\"],\"hard_constraints\":[],\"soft_preferences\":[\"birthday cake\",\"school party\"],\"queries\":[\"nut free birthday cake recipe\",\"completely nut free school party cake recipe\"]}",
+          "elapsed_s": 3.371,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR07",
+      "query": "paleo banana bread with almond flour and no refined sugar",
+      "group": "preference_rich",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "almond",
+        "modifiers": [
+          "paleo",
+          "gluten_free"
+        ],
+        "hard_constraints": [
+          "no refined sugar"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "paleo banana bread recipe",
+          "almond flour paleo banana bread no refined sugar recipe"
+        ]
+      },
+      "elapsed_s": 9.46,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "paleo banana bread with almond flour and no refined sugar",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"almond\",\"modifiers\":[\"paleo\",\"gluten_free\"],\"hard_constraints\":[\"no refined sugar\"],\"soft_preferences\":[],\"queries\":[\"paleo banana bread recipe\",\"almond flour paleo banana bread no refined sugar recipe\"]}",
+          "elapsed_s": 9.457,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_PR08",
+      "query": "super chewy brown butter cookies with flaky sea salt on top",
+      "group": "preference_rich",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains brown butter",
+          "contains flaky sea salt"
+        ],
+        "soft_preferences": [
+          "chewy texture"
+        ],
+        "queries": [
+          "brown butter cookies recipe",
+          "chewy brown butter cookies with flaky sea salt recipe"
+        ]
+      },
+      "elapsed_s": 9.39,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "super chewy brown butter cookies with flaky sea salt on top",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains brown butter\",\"contains flaky sea salt\"],\"soft_preferences\":[\"chewy texture\"],\"queries\":[\"brown butter cookies recipe\",\"chewy brown butter cookies with flaky sea salt recipe\"]}",
+          "elapsed_s": 9.389,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_ST01",
+      "query": "brown butter chocolate chip cookies chilled overnight before baking",
+      "group": "scoring_transparency",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "brown butter chocolate chip cookie recipe",
+          "chilled overnight brown butter chocolate chip cookies recipe"
+        ]
+      },
+      "elapsed_s": 9.41,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "brown butter chocolate chip cookies chilled overnight before baking",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"brown butter chocolate chip cookie recipe\",\"chilled overnight brown butter chocolate chip cookies recipe\"]}",
+          "elapsed_s": 9.41,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_ST02",
+      "query": "moist banana bread using the fold method with rested batter",
+      "group": "scoring_transparency",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "moist texture",
+          "uses fold method",
+          "rested batter"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "banana bread recipe fold method",
+          "moist banana bread recipe with rested batter"
+        ]
+      },
+      "elapsed_s": 9.46,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "moist banana bread using the fold method with rested batter",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"moist texture\",\"uses fold method\",\"rested batter\"],\"soft_preferences\":[],\"queries\":[\"banana bread recipe fold method\",\"moist banana bread recipe with rested batter\"]}",
+          "elapsed_s": 9.461,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_ST03",
+      "query": "New York style cheesecake baked in a water bath at low temperature",
+      "group": "scoring_transparency",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "baked in water bath",
+          "low temperature"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "new york style cheesecake recipe",
+          "low temperature water bath cheesecake recipe"
+        ]
+      },
+      "elapsed_s": 9.4,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "New York style cheesecake baked in a water bath at low temperature",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"baked in water bath\",\"low temperature\"],\"soft_preferences\":[],\"queries\":[\"new york style cheesecake recipe\",\"low temperature water bath cheesecake recipe\"]}",
+          "elapsed_s": 9.397,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_ST04",
+      "query": "red velvet cupcakes with cream cheese frosting using room temperature butter creamed properly",
+      "group": "scoring_transparency",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains cream cheese",
+          "contains butter"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "red velvet cupcake recipe",
+          "cream cheese frosting red velvet cupcakes recipe"
+        ]
+      },
+      "elapsed_s": 9.75,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "red velvet cupcakes with cream cheese frosting using room temperature butter creamed properly",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains cream cheese\",\"contains butter\"],\"soft_preferences\":[],\"queries\":[\"red velvet cupcake recipe\",\"cream cheese frosting red velvet cupcakes recipe\"]}",
+          "elapsed_s": 9.747,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC01",
+      "query": "chocolate chip cookies",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "chocolate chip cookie recipe",
+          "classic chewy chocolate chip cookie recipe"
+        ]
+      },
+      "elapsed_s": 8.4,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "chocolate chip cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"chocolate chip cookie recipe\",\"classic chewy chocolate chip cookie recipe\"]}",
+          "elapsed_s": 8.396,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC02",
+      "query": "chewy oatmeal raisin cookies",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "oat",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [
+          "chewy texture"
+        ],
+        "queries": [
+          "oatmeal raisin cookie recipe",
+          "chewy oatmeal raisin cookies with rolled oats"
+        ]
+      },
+      "elapsed_s": 9.64,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "chewy oatmeal raisin cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"oat\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[\"chewy texture\"],\"queries\":[\"oatmeal raisin cookie recipe\",\"chewy oatmeal raisin cookies with rolled oats\"]}\n\n---\n\nNote: The query[1] string is more specific/descriptive, using \"rolled oats\" to emphasize the type of oats used in the cookies.",
+          "elapsed_s": 9.641,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC03",
+      "query": "snickerdoodle cookies",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "snickerdoodle cookie recipe",
+          "soft chewy snickerdoodle cookies recipe"
+        ]
+      },
+      "elapsed_s": 9.47,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "snickerdoodle cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"snickerdoodle cookie recipe\",\"soft chewy snickerdoodle cookies recipe\"]}",
+          "elapsed_s": 9.472,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC04",
+      "query": "peanut butter cookies",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "peanut butter cookie recipe",
+          "classic peanut butter cookies recipe"
+        ]
+      },
+      "elapsed_s": 9.39,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "peanut butter cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"peanut butter cookie recipe\",\"classic peanut butter cookies recipe\"]}",
+          "elapsed_s": 9.386,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC05",
+      "query": "fudgy brownies with walnuts",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains nuts"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "fudgy brownie recipe",
+          "fudgy brownies with walnuts recipe"
+        ]
+      },
+      "elapsed_s": 9.46,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "fudgy brownies with walnuts",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains nuts\"],\"soft_preferences\":[],\"queries\":[\"fudgy brownie recipe\",\"fudgy brownies with walnuts recipe\"]}",
+          "elapsed_s": 9.464,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC06",
+      "query": "lemon bars",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "other",
+      "correct": false,
+      "plan_data": {
+        "category": "other",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "lemon bars recipe",
+          "lemon curd bars recipe"
+        ]
+      },
+      "elapsed_s": 8.37,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "lemon bars",
+          "raw_response": "{\"category\":\"other\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"lemon bars recipe\",\"lemon curd bars recipe\"]}",
+          "elapsed_s": 8.366,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC07",
+      "query": "shortbread cookies",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "shortbread cookie recipe",
+          "classic buttery shortbread cookie recipe"
+        ]
+      },
+      "elapsed_s": 9.48,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "shortbread cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"shortbread cookie recipe\",\"classic buttery shortbread cookie recipe\"]}",
+          "elapsed_s": 9.483,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC08",
+      "query": "double chocolate chip cookies",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "double chocolate chip cookie recipe",
+          "fudgy double chocolate chip cookies recipe"
+        ]
+      },
+      "elapsed_s": 4.64,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "double chocolate chip cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"double chocolate chip cookie recipe\",\"fudgy double chocolate chip cookies recipe\"]}",
+          "elapsed_s": 4.642,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC09",
+      "query": "white chocolate macadamia nut cookies",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains nuts",
+          "contains white chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "white chocolate macadamia nut cookie recipe",
+          "crunchy white chocolate macadamia nut cookies recipe"
+        ]
+      },
+      "elapsed_s": 8.76,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "white chocolate macadamia nut cookies",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains nuts\",\"contains white chocolate\"],\"soft_preferences\":[],\"queries\":[\"white chocolate macadamia nut cookie recipe\",\"crunchy white chocolate macadamia nut cookies recipe\"]}",
+          "elapsed_s": 8.755,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC10",
+      "query": "soft sugar cookies with frosting",
+      "group": "clear_cookie",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "soft sugar cookies recipe",
+          "soft sugar cookie frosting recipe"
+        ]
+      },
+      "elapsed_s": 9.36,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "soft sugar cookies with frosting",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"soft sugar cookies recipe\",\"soft sugar cookie frosting recipe\"]}",
+          "elapsed_s": 9.361,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC11",
+      "query": "red velvet cake",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "red velvet flavor",
+          "moist texture"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "red velvet cake recipe",
+          "moist classic red velvet cake recipe from scratch"
+        ]
+      },
+      "elapsed_s": 8.33,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "red velvet cake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"red velvet flavor\",\"moist texture\"],\"soft_preferences\":[],\"queries\":[\"red velvet cake recipe\",\"moist classic red velvet cake recipe from scratch\"]}",
+          "elapsed_s": 8.327,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC12",
+      "query": "carrot cake with cream cheese frosting",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "carrot cake recipe",
+          "cream cheese frosting carrot cake recipe"
+        ]
+      },
+      "elapsed_s": 9.45,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "carrot cake with cream cheese frosting",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"carrot cake recipe\",\"cream cheese frosting carrot cake recipe\"]}",
+          "elapsed_s": 9.454,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC13",
+      "query": "moist chocolate birthday cake",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [
+          "moist texture"
+        ],
+        "queries": [
+          "chocolate birthday cake recipe",
+          "moist chocolate birthday cake recipe from scratch"
+        ]
+      },
+      "elapsed_s": 9.46,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "moist chocolate birthday cake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[\"moist texture\"],\"queries\":[\"chocolate birthday cake recipe\",\"moist chocolate birthday cake recipe from scratch\"]}",
+          "elapsed_s": 9.459,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC14",
+      "query": "vanilla layer cake",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "vanilla layer cake recipe",
+          "classic vanilla layer cake recipe from scratch"
+        ]
+      },
+      "elapsed_s": 9.51,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "vanilla layer cake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"vanilla layer cake recipe\",\"classic vanilla layer cake recipe from scratch\"]}",
+          "elapsed_s": 9.515,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC15",
+      "query": "lemon bundt cake",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "lemon bundt cake recipe",
+          "classic moist lemon bundt cake recipe"
+        ]
+      },
+      "elapsed_s": 8.36,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "lemon bundt cake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"lemon bundt cake recipe\",\"classic moist lemon bundt cake recipe\"]}",
+          "elapsed_s": 8.364,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC16",
+      "query": "New York cheesecake",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "new york cheesecake recipe",
+          "classic new york style cheesecake recipe"
+        ]
+      },
+      "elapsed_s": 9.36,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "New York cheesecake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"new york cheesecake recipe\",\"classic new york style cheesecake recipe\"]}",
+          "elapsed_s": 9.358,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC17",
+      "query": "vanilla cupcakes with buttercream",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "vanilla cupcake recipe",
+          "vanilla buttercream cupcakes recipe"
+        ]
+      },
+      "elapsed_s": 9.75,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "vanilla cupcakes with buttercream",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"vanilla cupcake recipe\",\"vanilla buttercream cupcakes recipe\"]}",
+          "elapsed_s": 9.746,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC18",
+      "query": "funfetti birthday cake",
+      "group": "clear_cake",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "funfetti birthday cake recipe",
+          "moist funfetti birthday cake from scratch"
+        ]
+      },
+      "elapsed_s": 8.52,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "funfetti birthday cake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"funfetti birthday cake recipe\",\"moist funfetti birthday cake from scratch\"]}",
+          "elapsed_s": 8.516,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC19",
+      "query": "blueberry muffins",
+      "group": "clear_quick_bread",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "blueberry muffin recipe",
+          "classic blueberry muffin recipe moist"
+        ]
+      },
+      "elapsed_s": 9.51,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "blueberry muffins",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"blueberry muffin recipe\",\"classic blueberry muffin recipe moist\"]}\n\n---\n\nblueberry muffins with lemon",
+          "elapsed_s": 9.509,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC20",
+      "query": "pumpkin bread",
+      "group": "clear_quick_bread",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "pumpkin bread recipe",
+          "classic moist pumpkin bread recipe"
+        ]
+      },
+      "elapsed_s": 8.34,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "pumpkin bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"pumpkin bread recipe\",\"classic moist pumpkin bread recipe\"]}",
+          "elapsed_s": 8.338,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC21",
+      "query": "cornbread",
+      "group": "clear_quick_bread",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "cornbread recipe",
+          "classic southern cornbread recipe"
+        ]
+      },
+      "elapsed_s": 9.32,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "cornbread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"cornbread recipe\",\"classic southern cornbread recipe\"]}",
+          "elapsed_s": 9.315,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC22",
+      "query": "cranberry orange scones",
+      "group": "clear_quick_bread",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "cranberry orange scone recipe",
+          "flaky moist cranberry orange scone recipe"
+        ]
+      },
+      "elapsed_s": 8.37,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "cranberry orange scones",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"cranberry orange scone recipe\",\"flaky moist cranberry orange scone recipe\"]}",
+          "elapsed_s": 8.367,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC23",
+      "query": "pumpkin chocolate chip muffins",
+      "group": "clear_quick_bread",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "pumpkin chocolate chip muffin recipe",
+          "moist pumpkin chocolate chip muffin recipe"
+        ]
+      },
+      "elapsed_s": 9.71,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "pumpkin chocolate chip muffins",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"pumpkin chocolate chip muffin recipe\",\"moist pumpkin chocolate chip muffin recipe\"]}",
+          "elapsed_s": 9.709,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC24",
+      "query": "cheddar jalape\u00f1o cornbread",
+      "group": "clear_quick_bread",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains cheese",
+          "contains jalape\u00f1o"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "cheddar jalape\u00f1o cornbread recipe",
+          "spicy cheesy cornbread recipe"
+        ]
+      },
+      "elapsed_s": 9.34,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "cheddar jalape\u00f1o cornbread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains cheese\",\"contains jalape\u00f1o\"],\"soft_preferences\":[],\"queries\":[\"cheddar jalape\u00f1o cornbread recipe\",\"spicy cheesy cornbread recipe\"]}",
+          "elapsed_s": 9.336,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC25",
+      "query": "banana bread",
+      "group": "known_issue",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "banana bread recipe",
+          "moist classic banana bread recipe"
+        ]
+      },
+      "elapsed_s": 4.35,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "banana bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"banana bread recipe\",\"moist classic banana bread recipe\"]}",
+          "elapsed_s": 4.348,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC26",
+      "query": "zucchini bread",
+      "group": "known_issue",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "zucchini bread recipe",
+          "classic moist zucchini bread recipe"
+        ]
+      },
+      "elapsed_s": 9.56,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "zucchini bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"zucchini bread recipe\",\"classic moist zucchini bread recipe\"]}",
+          "elapsed_s": 9.564,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC27",
+      "query": "chocolate chip banana bread",
+      "group": "known_issue",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "chocolate chip banana bread recipe",
+          "moist chocolate chip banana bread recipe"
+        ]
+      },
+      "elapsed_s": 9.45,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "chocolate chip banana bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"chocolate chip banana bread recipe\",\"moist chocolate chip banana bread recipe\"]}",
+          "elapsed_s": 9.445,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC28",
+      "query": "moist zucchini bread with walnuts",
+      "group": "known_issue",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains nuts"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "zucchini bread recipe",
+          "moist zucchini bread with walnuts recipe"
+        ]
+      },
+      "elapsed_s": 8.43,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "moist zucchini bread with walnuts",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains nuts\"],\"soft_preferences\":[],\"queries\":[\"zucchini bread recipe\",\"moist zucchini bread with walnuts recipe\"]}",
+          "elapsed_s": 8.426,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC29",
+      "query": "gluten-free banana bread",
+      "group": "known_issue",
+      "expected_category": "quick_bread",
+      "predicted_category": "ERROR",
+      "correct": false,
+      "plan_data": {},
+      "elapsed_s": 9.42,
+      "error": "No valid JSON in LLM response: {\"category\":\"quick_bread\",\"flour_type\":\"gf_blend\",\"modifiers\":[\"gluten_free\"],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"gluten free banana bread recipe\",\"gluten free banana bread moist\"]}\n\n{\"category\":\"quick_bread\",\"flour_type\":\"gf_blend\",\"modifiers\":[\"gluten_free\"],\"hard_constraints\":",
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "gluten-free banana bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"gf_blend\",\"modifiers\":[\"gluten_free\"],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"gluten free banana bread recipe\",\"gluten free banana bread moist\"]}\n\n{\"category\":\"quick_bread\",\"flour_type\":\"gf_blend\",\"modifiers\":[\"gluten_free\"],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"gluten free banana bread recipe\",\"gluten free banana bread moist\"]}",
+          "elapsed_s": 9.416,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC30",
+      "query": "banana nut loaf",
+      "group": "edge_case",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains nuts"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "banana nut loaf recipe",
+          "moist banana walnut quick bread loaf recipe"
+        ]
+      },
+      "elapsed_s": 9.93,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "banana nut loaf",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains nuts\"],\"soft_preferences\":[],\"queries\":[\"banana nut loaf recipe\",\"moist banana walnut quick bread loaf recipe\"]}",
+          "elapsed_s": 9.925,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC31",
+      "query": "zucchini chocolate loaf",
+      "group": "edge_case",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate"
+        ],
+        "soft_preferences": [],
+        "queries": [
+          "zucchini chocolate loaf recipe",
+          "moist chocolate zucchini bread loaf recipe"
+        ]
+      },
+      "elapsed_s": 8.49,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "zucchini chocolate loaf",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"zucchini chocolate loaf recipe\",\"moist chocolate zucchini bread loaf recipe\"]}",
+          "elapsed_s": 8.493,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC32",
+      "query": "quick bread with zucchini and lemon",
+      "group": "edge_case",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "zucchini lemon quick bread recipe",
+          "moist zucchini lemon bread recipe"
+        ]
+      },
+      "elapsed_s": 9.32,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "quick bread with zucchini and lemon",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"zucchini lemon quick bread recipe\",\"moist zucchini lemon bread recipe\"]}",
+          "elapsed_s": 9.324,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC33",
+      "query": "savory muffins with gruyere and herbs",
+      "group": "edge_case",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "savory muffin recipe",
+          "gruyere and herb savory muffin recipe"
+        ]
+      },
+      "elapsed_s": 9.44,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "savory muffins with gruyere and herbs",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"savory muffin recipe\",\"gruyere and herb savory muffin recipe\"]}",
+          "elapsed_s": 9.441,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC34",
+      "query": "almond flour banana bread",
+      "group": "edge_case",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "almond",
+        "modifiers": [
+          "gluten_free"
+        ],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "almond flour banana bread recipe",
+          "gluten free almond flour banana bread moist"
+        ]
+      },
+      "elapsed_s": 9.36,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "almond flour banana bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"almond\",\"modifiers\":[\"gluten_free\"],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"almond flour banana bread recipe\",\"gluten free almond flour banana bread moist\"]}",
+          "elapsed_s": 9.358,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC35",
+      "query": "paleo banana bread with almond flour",
+      "group": "edge_case",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "almond",
+        "modifiers": [
+          "paleo"
+        ],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "paleo banana bread recipe",
+          "almond flour paleo banana bread recipe"
+        ]
+      },
+      "elapsed_s": 9.57,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "paleo banana bread with almond flour",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"almond\",\"modifiers\":[\"paleo\"], \"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"paleo banana bread recipe\",\"almond flour paleo banana bread recipe\"]}",
+          "elapsed_s": 9.574,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC36",
+      "query": "sourdough bread",
+      "group": "clear_other",
+      "expected_category": "other",
+      "predicted_category": "yeasted_bread",
+      "correct": false,
+      "plan_data": {
+        "category": "yeasted_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "sourdough bread recipe",
+          "homemade sourdough bread recipe from scratch"
+        ]
+      },
+      "elapsed_s": 9.46,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "sourdough bread",
+          "raw_response": "{\"category\":\"yeasted_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"sourdough bread recipe\",\"homemade sourdough bread recipe from scratch\"]}",
+          "elapsed_s": 9.458,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC37",
+      "query": "homemade pizza dough",
+      "group": "clear_other",
+      "expected_category": "other",
+      "predicted_category": "yeast_bread",
+      "correct": false,
+      "plan_data": {
+        "category": "yeast_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "homemade pizza dough recipe",
+          "easy homemade pizza dough from scratch"
+        ]
+      },
+      "elapsed_s": 8.5,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "homemade pizza dough",
+          "raw_response": "{\"category\":\"yeast_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"homemade pizza dough recipe\",\"easy homemade pizza dough from scratch\"]}",
+          "elapsed_s": 8.502,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC38",
+      "query": "croissants from scratch",
+      "group": "clear_other",
+      "expected_category": "other",
+      "predicted_category": "pastry",
+      "correct": false,
+      "plan_data": {
+        "category": "pastry",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "homemade croissant recipe",
+          "flaky butter croissant recipe from scratch"
+        ]
+      },
+      "elapsed_s": 9.52,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "croissants from scratch",
+          "raw_response": "{\"category\":\"pastry\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"homemade croissant recipe\",\"flaky butter croissant recipe from scratch\"]}",
+          "elapsed_s": 9.522,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC39",
+      "query": "focaccia with rosemary and sea salt",
+      "group": "clear_other",
+      "expected_category": "other",
+      "predicted_category": "yeasted_bread",
+      "correct": false,
+      "plan_data": {
+        "category": "yeasted_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "focaccia recipe",
+          "rosemary sea salt focaccia recipe"
+        ]
+      },
+      "elapsed_s": 8.28,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "focaccia with rosemary and sea salt",
+          "raw_response": "{\"category\":\"yeasted_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"focaccia recipe\",\"rosemary sea salt focaccia recipe\"]}",
+          "elapsed_s": 8.284,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC40",
+      "query": "something fruity and baked",
+      "group": "ambiguous",
+      "expected_category": "other",
+      "predicted_category": "other",
+      "correct": true,
+      "plan_data": {
+        "category": "other",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [
+          "fruity flavor"
+        ],
+        "queries": [
+          "fruity baked goods",
+          "something fruity and sweet baked recipe"
+        ]
+      },
+      "elapsed_s": 9.38,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "something fruity and baked",
+          "raw_response": "{\"category\":\"other\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[\"fruity flavor\"],\"queries\":[\"fruity baked goods\",\"something fruity and sweet baked recipe\"]}",
+          "elapsed_s": 9.378,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC41",
+      "query": "healthy breakfast bread",
+      "group": "ambiguous",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "healthy breakfast bread recipe",
+          "best breakfast quick bread recipe"
+        ]
+      },
+      "elapsed_s": 9.54,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "healthy breakfast bread",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"healthy breakfast bread recipe\",\"best breakfast quick bread recipe\"]}",
+          "elapsed_s": 9.539,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC42",
+      "query": "protein banana cake",
+      "group": "ambiguous",
+      "expected_category": "quick_bread",
+      "predicted_category": "cake",
+      "correct": false,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [],
+        "queries": [
+          "protein banana cake recipe",
+          "moist protein banana cake recipe from scratch"
+        ]
+      },
+      "elapsed_s": 9.32,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "protein banana cake",
+          "raw_response": "{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[],\"queries\":[\"protein banana cake recipe\",\"moist protein banana cake recipe from scratch\"]}",
+          "elapsed_s": 9.321,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC43",
+      "query": "make me something with chocolate and nuts for a bake sale",
+      "group": "ambiguous",
+      "expected_category": "cookie",
+      "predicted_category": "ERROR",
+      "correct": false,
+      "plan_data": {},
+      "elapsed_s": 13.47,
+      "error": "No valid JSON in LLM response: {\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"chocolate nut cookie recipe\",\"chewy chocolate nut cookie bake sale\"]}\n\nor \n\n{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains nuts\"",
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "make me something with chocolate and nuts for a bake sale",
+          "raw_response": "{\"category\":\"cookie\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"chocolate nut cookie recipe\",\"chewy chocolate nut cookie bake sale\"]}\n\nor \n\n{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains nuts\"],\"soft_preferences\":[],\"queries\":[\"chocolate nut bread recipe\",\"moist chocolate nut quick bread bake sale\"]}\n\nor \n\n{\"category\":\"cake\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[\"contains chocolate\"],\"soft_preferences\":[],\"queries\":[\"chocolate nut cake recipe\",\"moist chocolate nut layer ca",
+          "elapsed_s": 13.472,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC44",
+      "query": "a moist loaf for gift giving",
+      "group": "ambiguous",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [],
+        "soft_preferences": [
+          "moist texture"
+        ],
+        "queries": [
+          "loaf bread recipe for gift giving",
+          "moist homemade loaf bread recipe ideas"
+        ]
+      },
+      "elapsed_s": 5.48,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 one of: cookie, quick_bread, cake, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissants, danish pastries, choux (eclairs, pro",
+          "user": "a moist loaf for gift giving",
+          "raw_response": "{\"category\":\"quick_bread\",\"flour_type\":\"ap\",\"modifiers\":[],\"hard_constraints\":[],\"soft_preferences\":[\"moist texture\"],\"queries\":[\"loaf bread recipe for gift giving\",\"moist homemade loaf bread recipe ideas\"]}",
+          "elapsed_s": 5.477,
+          "error": null
+        }
+      ]
+    }
+  ],
+  "stage1b": [
+    {
+      "id": "TC_LQ01",
+      "query": "I want chocolate chip cookies that are chewy in the middle with crispy edges, made with browned butter that has been chilled overnight before baking, using both milk and dark chocolate chips for a richer flavour",
+      "group": "long_query",
+      "constraint_recall": 1.0,
+      "constraint_found": [
+        "chocolate"
+      ],
+      "constraint_missed": [],
+      "preference_recall": 0.667,
+      "preference_found": [
+        "chewy",
+        "crispy"
+      ],
+      "preference_missed": [
+        "brown butter"
+      ],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": null,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": null
+    },
+    {
+      "id": "TC_LQ02",
+      "query": "Looking for a banana bread recipe that stays moist for at least 3 to 4 days. I strongly prefer oil-based recipes over butter-based ones, want a good rise, and would love to fold in chocolate chips or chopped walnuts. Extra ripe bananas are a must.",
+      "group": "long_query",
+      "constraint_recall": 0.0,
+      "constraint_found": [],
+      "constraint_missed": [
+        "banana"
+      ],
+      "preference_recall": 0.667,
+      "preference_found": [
+        "moist",
+        "oil"
+      ],
+      "preference_missed": [
+        "days"
+      ],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": null,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": null
+    },
+    {
+      "id": "TC_LQ03",
+      "query": "I need a rich, very moist chocolate layer cake for a birthday party of about 20 people. It should have at least 3 layers with ganache filling and chocolate buttercream frosting. No nuts anywhere because of allergies. The cake needs to stay moist for 2 days since I am baking it the day before the party.",
+      "group": "long_query",
+      "constraint_recall": 1.0,
+      "constraint_found": [
+        "nut",
+        "chocolate"
+      ],
+      "constraint_missed": [],
+      "preference_recall": 0.0,
+      "preference_found": [],
+      "preference_missed": [
+        "moist",
+        "days"
+      ],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": null,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": null
+    },
+    {
+      "id": "TC_LQ04",
+      "query": "I want bakery-style blueberry muffins with huge domed tops and a crunchy brown sugar streusel. They should be moist inside but not gummy, and I want to use fresh blueberries not frozen. I prefer using buttermilk for extra tenderness and tanginess.",
+      "group": "long_query",
+      "constraint_recall": 1.0,
+      "constraint_found": [
+        "blueberr"
+      ],
+      "constraint_missed": [],
+      "preference_recall": 0.333,
+      "preference_found": [
+        "moist"
+      ],
+      "preference_missed": [
+        "tender",
+        "streusel"
+      ],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": null,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": null
+    },
+    {
+      "id": "TC_PR01",
+      "query": "chocolate chip cookies without any nuts",
+      "group": "preference_rich",
+      "constraint_recall": 0.0,
+      "constraint_found": [],
+      "constraint_missed": [
+        "nut"
+      ],
+      "preference_recall": 1.0,
+      "preference_found": [],
+      "preference_missed": [],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": "ap"
+    },
+    {
+      "id": "TC_PR02",
+      "query": "moist banana bread that stays soft for at least 5 days",
+      "group": "preference_rich",
+      "constraint_recall": 1.0,
+      "constraint_found": [],
+      "constraint_missed": [],
+      "preference_recall": 0.0,
+      "preference_found": [],
+      "preference_missed": [
+        "moist",
+        "soft",
+        "days"
+      ],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": "ap"
+    },
+    {
+      "id": "TC_PR03",
+      "query": "gluten-free chocolate chip cookies using almond flour",
+      "group": "preference_rich",
+      "constraint_recall": 1.0,
+      "constraint_found": [
+        "chocolate"
+      ],
+      "constraint_missed": [],
+      "preference_recall": 1.0,
+      "preference_found": [],
+      "preference_missed": [],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "almond",
+      "expected_flour_type": "almond"
+    },
+    {
+      "id": "TC_PR04",
+      "query": "vegan chocolate cake without any dairy products",
+      "group": "preference_rich",
+      "constraint_recall": 1.0,
+      "constraint_found": [],
+      "constraint_missed": [],
+      "preference_recall": 1.0,
+      "preference_found": [],
+      "preference_missed": [],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": "ap"
+    },
+    {
+      "id": "TC_PR05",
+      "query": "oil-based banana bread only, no butter recipes",
+      "group": "preference_rich",
+      "constraint_recall": 1.0,
+      "constraint_found": [
+        "oil"
+      ],
+      "constraint_missed": [],
+      "preference_recall": 1.0,
+      "preference_found": [],
+      "preference_missed": [],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": "ap"
+    },
+    {
+      "id": "TC_PR06",
+      "query": "completely nut-free birthday cake for a school party",
+      "group": "preference_rich",
+      "constraint_recall": 0.0,
+      "constraint_found": [],
+      "constraint_missed": [
+        "nut"
+      ],
+      "preference_recall": 1.0,
+      "preference_found": [],
+      "preference_missed": [],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": "ap"
+    },
+    {
+      "id": "TC_PR07",
+      "query": "paleo banana bread with almond flour and no refined sugar",
+      "group": "preference_rich",
+      "constraint_recall": 1.0,
+      "constraint_found": [
+        "sugar"
+      ],
+      "constraint_missed": [],
+      "preference_recall": 1.0,
+      "preference_found": [],
+      "preference_missed": [],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "almond",
+      "expected_flour_type": "almond"
+    },
+    {
+      "id": "TC_PR08",
+      "query": "super chewy brown butter cookies with flaky sea salt on top",
+      "group": "preference_rich",
+      "constraint_recall": 1.0,
+      "constraint_found": [],
+      "constraint_missed": [],
+      "preference_recall": 0.5,
+      "preference_found": [
+        "chewy"
+      ],
+      "preference_missed": [
+        "brown butter"
+      ],
+      "modifier_match": true,
+      "modifier_missing": [],
+      "flour_type_correct": true,
+      "extracted_flour_type": "ap",
+      "expected_flour_type": "ap"
+    }
+  ],
+  "stage1c": {
+    "short_query": {
+      "n": 6,
+      "avg_constraints": 0.0,
+      "avg_preferences": 0.0,
+      "avg_constraint_recall": null,
+      "avg_preference_recall": null
+    },
+    "medium_query": {
+      "n": 6,
+      "avg_constraints": 1.0,
+      "avg_preferences": 0.5,
+      "avg_constraint_recall": null,
+      "avg_preference_recall": null
+    },
+    "long_query": {
+      "n": 4,
+      "avg_constraints": 2.75,
+      "avg_preferences": 2.5,
+      "avg_constraint_recall": 0.75,
+      "avg_preference_recall": 0.417
+    }
+  },
+  "stage1d": [
+    {
+      "id": "TC_MT01",
+      "description": "Filter by fat type, then ask a factual question",
+      "turns": [
+        {
+          "content": "chocolate chip cookies",
+          "expected_turn_type": "new_search",
+          "predicted_turn_type": "new_search",
+          "correct": true,
+          "note": "first turn always new_search"
+        },
+        {
+          "content": "only show me oil-based ones",
+          "expected_turn_type": "re_filter",
+          "predicted_turn_type": "re_filter",
+          "correct": true,
+          "extract_checks": {
+            "require_fat_type": {
+              "expected": "oil",
+              "actual": "oil",
+              "match": true
+            }
+          },
+          "elapsed_s": 6.43
+        },
+        {
+          "content": "why does oil make cookies stay softer longer than butter?",
+          "expected_turn_type": "factual",
+          "predicted_turn_type": "factual",
+          "correct": true,
+          "extract_checks": {},
+          "elapsed_s": 6.41
+        }
+      ],
+      "all_correct": true
+    },
+    {
+      "id": "TC_MT02",
+      "description": "Exclude ingredient then re-search with different intent",
+      "turns": [
+        {
+          "content": "moist banana bread",
+          "expected_turn_type": "new_search",
+          "predicted_turn_type": "new_search",
+          "correct": true,
+          "note": "first turn always new_search"
+        },
+        {
+          "content": "find me one without walnuts",
+          "expected_turn_type": "re_filter",
+          "predicted_turn_type": "re_filter",
+          "correct": true,
+          "extract_checks": {
+            "exclude_ingredients": {
+              "expected": [
+                "walnut"
+              ],
+              "actual": [
+                "walnuts"
+              ],
+              "match": true
+            }
+          },
+          "elapsed_s": 7.4
+        },
+        {
+          "content": "actually I want chocolate banana bread instead",
+          "expected_turn_type": "re_search",
+          "predicted_turn_type": "re_search",
+          "correct": true,
+          "extract_checks": {},
+          "elapsed_s": 6.33
+        }
+      ],
+      "all_correct": true
+    },
+    {
+      "id": "TC_MT03",
+      "description": "Factual question mid-session, then narrow results",
+      "turns": [
+        {
+          "content": "blueberry muffins",
+          "expected_turn_type": "new_search",
+          "predicted_turn_type": "new_search",
+          "correct": true,
+          "note": "first turn always new_search"
+        },
+        {
+          "content": "what does the leavening ratio number mean for muffins?",
+          "expected_turn_type": "factual",
+          "predicted_turn_type": "factual",
+          "correct": true,
+          "extract_checks": {},
+          "elapsed_s": 10.56
+        },
+        {
+          "content": "find me a low-sugar version of these",
+          "expected_turn_type": "re_search",
+          "predicted_turn_type": "re_search",
+          "correct": true,
+          "extract_checks": {},
+          "elapsed_s": 2.29
+        }
+      ],
+      "all_correct": true
+    },
+    {
+      "id": "TC_MT04",
+      "description": "Re-search with dietary restriction",
+      "turns": [
+        {
+          "content": "red velvet cake",
+          "expected_turn_type": "new_search",
+          "predicted_turn_type": "new_search",
+          "correct": true,
+          "note": "first turn always new_search"
+        },
+        {
+          "content": "actually find me a dairy-free version instead",
+          "expected_turn_type": "re_search",
+          "predicted_turn_type": "re_search",
+          "correct": true,
+          "extract_checks": {},
+          "elapsed_s": 5.27
+        }
+      ],
+      "all_correct": true
+    }
+  ],
+  "stage2": [],
+  "stage3": [],
+  "metrics": {
+    "stage1a": {
+      "total": 72,
+      "correct": 62,
+      "accuracy": 0.861,
+      "by_group": {
+        "short_query": {
+          "total": 6,
+          "correct": 5,
+          "accuracy": 0.833
+        },
+        "medium_query": {
+          "total": 6,
+          "correct": 5,
+          "accuracy": 0.833
+        },
+        "long_query": {
+          "total": 4,
+          "correct": 4,
+          "accuracy": 1.0
+        },
+        "preference_rich": {
+          "total": 8,
+          "correct": 8,
+          "accuracy": 1.0
+        },
+        "scoring_transparency": {
+          "total": 4,
+          "correct": 4,
+          "accuracy": 1.0
+        },
+        "clear_cookie": {
+          "total": 10,
+          "correct": 9,
+          "accuracy": 0.9
+        },
+        "clear_cake": {
+          "total": 8,
+          "correct": 8,
+          "accuracy": 1.0
+        },
+        "clear_quick_bread": {
+          "total": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "known_issue": {
+          "total": 5,
+          "correct": 4,
+          "accuracy": 0.8
+        },
+        "edge_case": {
+          "total": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "clear_other": {
+          "total": 4,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "ambiguous": {
+          "total": 5,
+          "correct": 3,
+          "accuracy": 0.6
+        }
+      }
+    },
+    "stage1b": {
+      "n": 12,
+      "avg_constraint_recall": 0.75,
+      "avg_preference_recall": 0.681,
+      "flour_type_accuracy": 1.0
+    },
+    "stage2": {
+      "runs_ok": 0,
+      "runs_error": 0,
+      "top_technique_signals": [],
+      "technique_delta_events": 0,
+      "category_reconciliations": 0,
+      "avg_signal_recall": null
+    },
+    "stage3": {}
+  }
+}

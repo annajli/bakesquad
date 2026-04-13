@@ -1,0 +1,146 @@
+# BakeSquad category registry
+#
+# Each entry drives: prompt generation, ratio range lookups, scoring criteria
+# selection, and the Step 1 classification schema.
+#
+# Adding a new category here is the ONLY change needed to support it end-to-end
+# once the LangGraph migration (Phase 2) is complete.
+#
+# Fields:
+#   id          - machine key used in code (matches Literal values in models.py during transition)
+#   label       - human-readable display name
+#   synonyms    - surface forms the LLM should map to this category
+#   members     - canonical subtypes listed in the Step 1 prompt
+#   loaf_like   - true if free-standing loaf pans are the typical baking vessel
+#                 (used for Step 7 reconciliation heuristic)
+#   scoring_criteria - ordered list of criterion keys active for this category
+#   ratio_ranges_key - key into ratio_engine.RATIO_RANGES (may differ from id)
+
+categories:
+
+  - id: cookie
+    label: Cookie
+    synonyms:
+      - cookie
+      - cookies
+      - biscuit
+      - bar
+      - brownie
+      - blondie
+      - shortbread
+    members:
+      - drop cookies
+      - bar cookies
+      - brownies
+      - shortbread
+    loaf_like: false
+    scoring_criteria:
+      - chew_and_texture       # brown/white sugar split, leavening type, fat/flour
+      - spread_and_structure   # leavening amount in range, fat/flour in range
+      - sweetness_balance      # sugar/flour in expected range
+      - flavor_and_technique   # LLM-assessed: brown butter, overnight rest, etc.
+    ratio_ranges_key: cookie
+
+  - id: quick_bread
+    label: Quick Bread
+    synonyms:
+      - quick bread
+      - muffin
+      - scone
+      - cornbread
+      - banana bread
+      - zucchini bread
+      - pumpkin bread
+      - loaf
+      - loaf cake
+    members:
+      - banana bread
+      - zucchini bread
+      - pumpkin bread
+      - muffins
+      - scones
+      - cornbread
+      - savory quick breads
+    loaf_like: true
+    scoring_criteria:
+      - moisture_and_tenderness  # fat type, liquid/flour, banana bonus
+      - rise_and_dome            # leavening/flour in range; over-leavening → tunneling risk
+      - sweetness_balance        # sugar/flour in expected range
+    ratio_ranges_key: quick_bread
+
+  - id: cake
+    label: Cake
+    synonyms:
+      - cake
+      - cupcake
+      - cheesecake
+      - bundt
+      - layer cake
+      - gateau
+    members:
+      - layer cakes
+      - bundt cakes
+      - cheesecakes
+      - cupcakes
+    loaf_like: false
+    scoring_criteria:
+      - moisture_and_tenderness  # fat type, liquid/flour (bypassed for custard cakes)
+      - crumb_and_structure      # leavening/flour, fat/flour (bypassed for custard cakes)
+      - sweetness_calibration    # sugar/flour in expected range
+    ratio_ranges_key: cake
+
+  - id: yeasted_bread
+    label: Yeasted Bread
+    synonyms:
+      - sourdough
+      - focaccia
+      - baguette
+      - boule
+      - sandwich loaf
+      - dinner roll
+      - yeasted
+      - yeast bread
+    members:
+      - sourdough
+      - focaccia
+      - dinner rolls
+      - sandwich loaves
+      - enriched breads (brioche, challah)
+    loaf_like: true
+    scoring_criteria:
+      - hydration          # liquid/flour (baker's %); open crumb potential
+      - enrichment_level   # fat/flour + sugar/flour; lean vs enriched style
+      - flavor_complexity  # LLM-assessed: fermentation depth, crust character, aroma
+    ratio_ranges_key: yeasted_bread
+
+  - id: pastry
+    label: Pastry
+    synonyms:
+      - croissant
+      - danish
+      - puff pastry
+      - laminated
+      - choux
+      - eclair
+      - tart
+      - pie
+    members:
+      - croissants
+      - danish pastries
+      - choux (eclairs, profiteroles)
+      - tarts and pies
+    loaf_like: false
+    scoring_criteria:
+      - fat_and_richness      # fat/flour; high fat expected for laminated/shortcrust
+      - structure_and_balance # liquid/flour, sugar/flour in pastry range
+      - technique_and_layers  # LLM-assessed: lamination quality, shatter, hollow choux
+    ratio_ranges_key: pastry
+
+  - id: other
+    label: Other
+    synonyms: []
+    members: []
+    loaf_like: false
+    scoring_criteria:
+      - overall_balance   # sugar/flour as a general proxy
+    ratio_ranges_key: other

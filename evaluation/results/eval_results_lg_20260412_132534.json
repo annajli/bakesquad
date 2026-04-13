@@ -1,0 +1,444 @@
+{
+  "timestamp": "20260412_132534",
+  "backend": "groq",
+  "model": "llama-3.1-8b-instant",
+  "stage1a": [
+    {
+      "id": "TC_ST01",
+      "query": "brown butter chocolate chip cookies chilled overnight before baking",
+      "group": "scoring_transparency",
+      "expected_category": "cookie",
+      "predicted_category": "cookie",
+      "correct": true,
+      "plan_data": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate chips"
+        ],
+        "soft_preferences": [
+          "chilled dough",
+          "browned butter flavor"
+        ],
+        "queries": [
+          "brown butter chocolate chip cookie recipe",
+          "chilled brown butter chocolate chip cookies recipe"
+        ],
+        "confidence": 1.0,
+        "clarification_question": ""
+      },
+      "elapsed_s": 5.35,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 must be EXACTLY one of: cookie, quick_bread, cake, yeasted_bread, pastry, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissant",
+          "user": "brown butter chocolate chip cookies chilled overnight before baking",
+          "raw_response": "{\n  \"category\": \"cookie\",\n  \"flour_type\": \"ap\",\n  \"modifiers\": [],\n  \"hard_constraints\": [\"contains chocolate chips\"],\n  \"soft_preferences\": [\"chilled dough\", \"browned butter flavor\"],\n  \"queries\": [\"brown butter chocolate chip cookie recipe\", \"chilled brown butter chocolate chip cookies recipe\"],\n  \"confidence\": 1.0,\n  \"clarification_question\": \"\"\n}",
+          "elapsed_s": 5.351,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_ST02",
+      "query": "moist banana bread using the fold method with rested batter",
+      "group": "scoring_transparency",
+      "expected_category": "quick_bread",
+      "predicted_category": "quick_bread",
+      "correct": true,
+      "plan_data": {
+        "category": "quick_bread",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains banana"
+        ],
+        "soft_preferences": [
+          "moist",
+          "fold method",
+          "rested batter"
+        ],
+        "queries": [
+          "moist banana bread recipe",
+          "banana bread using the fold method with rested batter recipe"
+        ],
+        "confidence": 0.8,
+        "clarification_question": "Are you looking for a traditional quick bread or a more artisanal, yeasted loaf?"
+      },
+      "elapsed_s": 0.31,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 must be EXACTLY one of: cookie, quick_bread, cake, yeasted_bread, pastry, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissant",
+          "user": "moist banana bread using the fold method with rested batter",
+          "raw_response": "{\n  \"category\": \"quick_bread\",\n  \"flour_type\": \"ap\",\n  \"modifiers\": [],\n  \"hard_constraints\": [\"contains banana\"],\n  \"soft_preferences\": [\"moist\", \"fold method\", \"rested batter\"],\n  \"queries\": [\"moist banana bread recipe\", \"banana bread using the fold method with rested batter recipe\"],\n  \"confidence\": 0.8,\n  \"clarification_question\": \"Are you looking for a traditional quick bread or a more artisanal, yeasted loaf?\"\n}",
+          "elapsed_s": 0.314,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_ST03",
+      "query": "New York style cheesecake baked in a water bath at low temperature",
+      "group": "scoring_transparency",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "baked in water bath",
+          "low temperature"
+        ],
+        "soft_preferences": [
+          "New York style",
+          "cheesecake"
+        ],
+        "queries": [
+          "New York style cheesecake recipe",
+          "low temperature cheesecake baked in water bath recipe"
+        ],
+        "confidence": 1.0,
+        "clarification_question": ""
+      },
+      "elapsed_s": 0.43,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 must be EXACTLY one of: cookie, quick_bread, cake, yeasted_bread, pastry, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissant",
+          "user": "New York style cheesecake baked in a water bath at low temperature",
+          "raw_response": "{\n  \"category\": \"cake\",\n  \"flour_type\": \"ap\",\n  \"modifiers\": [],\n  \"hard_constraints\": [\"baked in water bath\", \"low temperature\"],\n  \"soft_preferences\": [\"New York style\", \"cheesecake\"],\n  \"queries\": [\"New York style cheesecake recipe\", \"low temperature cheesecake baked in water bath recipe\"],\n  \"confidence\": 1.0,\n  \"clarification_question\": \"\"\n}",
+          "elapsed_s": 0.432,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "TC_ST04",
+      "query": "red velvet cupcakes with cream cheese frosting using room temperature butter creamed properly",
+      "group": "scoring_transparency",
+      "expected_category": "cake",
+      "predicted_category": "cake",
+      "correct": true,
+      "plan_data": {
+        "category": "cake",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains red velvet",
+          "contains cream cheese",
+          "contains butter"
+        ],
+        "soft_preferences": [
+          "room temperature butter",
+          "creamed properly"
+        ],
+        "queries": [
+          "red velvet cupcake recipe",
+          "cream cheese frosting cupcakes with room temperature butter"
+        ],
+        "confidence": 1.0,
+        "clarification_question": ""
+      },
+      "elapsed_s": 3.43,
+      "error": null,
+      "llm_trace": [
+        {
+          "step_label": "unknown",
+          "system": "You are a baking recipe search assistant. Given a user's natural language query, analyze it and return a JSON object with exactly these keys:\n\n- \"category\": the type of baked good \u2014 must be EXACTLY one of: cookie, quick_bread, cake, yeasted_bread, pastry, other\n  cookie includes: drop cookies, bar cookies, brownies, shortbread\n  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread, savory quick breads\n  NOTE: any baked \"loaf\" that is NOT a yeast bread is quick_bread (e.g. \"banana nut loaf\", \"zucchini chocolate loaf\", \"pumpkin loaf\" \u2192 quick_bread)\n  cake includes: layer cakes, bundt cakes, cheesecakes, cupcakes\n  yeasted_bread includes: sourdough, focaccia, dinner rolls, sandwich loaves, enriched breads (brioche, challah)\n  pastry includes: croissant",
+          "user": "red velvet cupcakes with cream cheese frosting using room temperature butter creamed properly",
+          "raw_response": "{\n  \"category\": \"cake\",\n  \"flour_type\": \"ap\",\n  \"modifiers\": [],\n  \"hard_constraints\": [\"contains red velvet\", \"contains cream cheese\", \"contains butter\"],\n  \"soft_preferences\": [\"room temperature butter\", \"creamed properly\"],\n  \"queries\": [\"red velvet cupcake recipe\", \"cream cheese frosting cupcakes with room temperature butter\"],\n  \"confidence\": 1.0,\n  \"clarification_question\": \"\"\n}",
+          "elapsed_s": 3.426,
+          "error": null
+        }
+      ]
+    }
+  ],
+  "stage1b": [],
+  "stage1c": {},
+  "stage1d": [],
+  "stage2": [
+    {
+      "id": "TC_ST01",
+      "query": "brown butter chocolate chip cookies chilled overnight before baking",
+      "group": "scoring_transparency",
+      "expected_technique_signals": [
+        "brown_butter",
+        "chill_dough",
+        "overnight_rest"
+      ],
+      "error": null,
+      "plan": {
+        "category": "cookie",
+        "flour_type": "ap",
+        "modifiers": [],
+        "hard_constraints": [
+          "contains chocolate chips"
+        ],
+        "soft_preferences": [
+          "chilled dough",
+          "browned butter flavor"
+        ]
+      },
+      "category_override": null,
+      "category_source": "step1",
+      "recipes_scored": 4,
+      "top_recipe": "Brown Butter Chocolate Chip Cookies",
+      "top_composite_score": 66.9,
+      "scoring_traces": [
+        {
+          "url": "https://hinamunawar.com/brown-butter-chocolate-chip-cookies/",
+          "title": "Brown Butter Chocolate Chip Cookies",
+          "rank": 1,
+          "composite_score": 66.9,
+          "category_used": "cookie",
+          "category_source": "step1",
+          "weight_source": "defaults",
+          "criteria": [
+            {
+              "name": "Moisture Retention",
+              "score": 32.0,
+              "weight": 0.45,
+              "details": "fat=butter"
+            },
+            {
+              "name": "Structure & Leavening",
+              "score": 100.0,
+              "weight": 0.3,
+              "details": "leavening/flour=0.0119, fat/flour=0.71"
+            },
+            {
+              "name": "Sugar Balance",
+              "score": 100.0,
+              "weight": 0.25,
+              "details": "sugar/flour=1.04, brown/white=0.00"
+            },
+            {
+              "name": "Technique Quality",
+              "score": 50.0,
+              "weight": 0.15,
+              "details": "no technique data",
+              "technique_signals": [],
+              "technique_notes": "",
+              "technique_base_score": 50.0,
+              "technique_note_delta": null,
+              "synergies_triggered": []
+            }
+          ],
+          "constraint_violations": [],
+          "explanation": "Recipe 0 received a composite score of 67/100 due to its excellent structure and leavening, sugar balance, and technique quality. However, it struggled with moisture retention, likely due to the high ratio of fat to flour (0.71), which may lead to a cookie that spreads too much and loses moisture. Additionally, using browned butter instead of oil may not retain moisture as well as other fat types."
+        },
+        {
+          "url": "https://joyfoodsunshine.com/the-most-amazing-chocolate-chip-cookies/",
+          "title": "the-most-amazing-chocolate-chip-cookies",
+          "rank": 2,
+          "composite_score": 59.5,
+          "category_used": "cookie",
+          "category_source": "step1",
+          "weight_source": "defaults",
+          "criteria": [
+            {
+              "name": "Moisture Retention",
+              "score": 52.0,
+              "weight": 0.45,
+              "details": "fat=butter"
+            },
+            {
+              "name": "Structure & Leavening",
+              "score": 42.4,
+              "weight": 0.3,
+              "details": "leavening/flour=0.0002, fat/flour=0.63"
+            },
+            {
+              "name": "Sugar Balance",
+              "score": 99.0,
+              "weight": 0.25,
+              "details": "sugar/flour=1.11, brown/white=1.00"
+            },
+            {
+              "name": "Technique Quality",
+              "score": 50.0,
+              "weight": 0.15,
+              "details": "no technique data",
+              "technique_signals": [],
+              "technique_notes": "",
+              "technique_base_score": 50.0,
+              "technique_note_delta": null,
+              "synergies_triggered": []
+            }
+          ],
+          "constraint_violations": [],
+          "explanation": "Recipe 1 scored 60/100 due to its decent moisture retention and sugar balance, but poor structure and leavening. The high ratio of sugar to flour (1.11) may contribute to a cookie that is too sweet and prone to spreading. Furthermore, the high browned sugar to white sugar ratio (1.00) may indicate an over-reliance on browned sugar, which can affect the cookie's texture and flavor."
+        },
+        {
+          "url": "https://www.epicurious.com/recipes/food/views/brown-butter-chocolate-chip-cookies",
+          "title": "Brown Butter Chocolate Chip Cookies Recipe | Epicurious",
+          "rank": 3,
+          "composite_score": 53.2,
+          "category_used": "cookie",
+          "category_source": "step1",
+          "weight_source": "defaults",
+          "criteria": [
+            {
+              "name": "Moisture Retention",
+              "score": 42.0,
+              "weight": 0.45,
+              "details": "fat=butter"
+            },
+            {
+              "name": "Structure & Leavening",
+              "score": 32.5,
+              "weight": 0.3,
+              "details": "leavening/flour=0.0000, fat/flour=0.34"
+            },
+            {
+              "name": "Sugar Balance",
+              "score": 100.0,
+              "weight": 0.25,
+              "details": "sugar/flour=0.96, brown/white=3.75"
+            },
+            {
+              "name": "Technique Quality",
+              "score": 50.0,
+              "weight": 0.15,
+              "details": "no technique data",
+              "technique_signals": [],
+              "technique_notes": "",
+              "technique_base_score": 50.0,
+              "technique_note_delta": null,
+              "synergies_triggered": []
+            }
+          ],
+          "constraint_violations": [],
+          "explanation": "Recipe 2 received a composite score of 53/100 due to its poor structure and leavening, and low moisture retention. The extremely low ratio of fat to flour (0.34) may result in a cookie that is too dense and crumbly. Additionally, the high browned sugar to white sugar ratio (3.75) may indicate an over-reliance on browned sugar, which can affect the cookie's texture and flavor."
+        },
+        {
+          "url": "https://bromabakery.com/chewy-oatmeal-chocolate-chip-cookies/",
+          "title": "Chewy OatmealChocolateChipCookies- Broma Bakery",
+          "rank": 4,
+          "composite_score": 29.0,
+          "category_used": "cookie",
+          "category_source": "step1",
+          "weight_source": "defaults",
+          "criteria": [
+            {
+              "name": "Moisture Retention",
+              "score": 12.0,
+              "weight": 0.45,
+              "details": "fat=butter"
+            },
+            {
+              "name": "Structure & Leavening",
+              "score": 2.4,
+              "weight": 0.3,
+              "details": "leavening/flour=0.0002, fat/flour=1.07"
+            },
+            {
+              "name": "Sugar Balance",
+              "score": 86.1,
+              "weight": 0.25,
+              "details": "sugar/flour=1.25, brown/white=0.00"
+            },
+            {
+              "name": "GF Binding Agent",
+              "score": 20.0,
+              "weight": 0.2,
+              "details": "no binding agent detected"
+            },
+            {
+              "name": "Technique Quality",
+              "score": 50.0,
+              "weight": 0.15,
+              "details": "no technique data",
+              "technique_signals": [],
+              "technique_notes": "",
+              "technique_base_score": 50.0,
+              "technique_note_delta": null,
+              "synergies_triggered": []
+            }
+          ],
+          "constraint_violations": [],
+          "explanation": "Recipe 3 scored 29/100 due to its poor structure and leavening, low moisture retention, and subpar gluten-free binding agent. The high ratio of fat to flour (1.07) may contribute to a cookie that spreads too much and loses moisture. Furthermore, the presence of oatmeal may affect the cookie's texture and structure, and the lack of browned sugar may result in a cookie that is too sweet and lacks depth of flavor."
+        }
+      ],
+      "technique_signals_found": [],
+      "technique_notes_found": [],
+      "technique_delta_events": [],
+      "signal_match": {
+        "expected": [
+          "brown_butter",
+          "chill_dough",
+          "overnight_rest"
+        ],
+        "found": [],
+        "missed": [
+          "brown_butter",
+          "chill_dough",
+          "overnight_rest"
+        ],
+        "recall": 0.0
+      }
+    },
+    {
+      "id": "TC_ST02",
+      "query": "moist banana bread using the fold method with rested batter",
+      "group": "scoring_transparency",
+      "expected_technique_signals": [
+        "fold_method",
+        "batter_rest"
+      ],
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kn2dhtn4fgqr4f26y8xd0589` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499941, Requested 2019. Please try again in 5m38.688s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    {
+      "id": "TC_ST03",
+      "query": "New York style cheesecake baked in a water bath at low temperature",
+      "group": "scoring_transparency",
+      "expected_technique_signals": [
+        "water_bath",
+        "bake_low"
+      ],
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kn2dhtn4fgqr4f26y8xd0589` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499882, Requested 1887. Please try again in 5m5.6832s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    {
+      "id": "TC_ST04",
+      "query": "red velvet cupcakes with cream cheese frosting using room temperature butter creamed properly",
+      "group": "scoring_transparency",
+      "expected_technique_signals": [
+        "cream_method",
+        "room_temp_butter"
+      ],
+      "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kn2dhtn4fgqr4f26y8xd0589` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499822, Requested 1888. Please try again in 4m55.488s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    }
+  ],
+  "stage3": [],
+  "metrics": {
+    "stage1a": {
+      "total": 4,
+      "correct": 4,
+      "accuracy": 1.0,
+      "by_group": {
+        "scoring_transparency": {
+          "total": 4,
+          "correct": 4,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "stage1b": {},
+    "stage2": {
+      "runs_ok": 1,
+      "runs_error": 3,
+      "top_technique_signals": [],
+      "technique_delta_events": 0,
+      "category_reconciliations": 0,
+      "avg_signal_recall": 0.0
+    },
+    "stage3": {}
+  }
+}

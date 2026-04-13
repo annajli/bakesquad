@@ -42,12 +42,14 @@ class FetchedPage(BaseModel):
 
 class QueryPlan(BaseModel):
     """Output of step 1 — query understanding + diversification in a single LLM call."""
-    category: Literal["cookie", "quick_bread", "cake", "other"]
+    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "other"]
     flour_type: str = "ap"           # primary flour: ap, almond, oat, coconut, rice, gf_blend, other
     modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free", "vegan", "paleo"]
     hard_constraints: list[str]      # must be true ("has chocolate", "stays moist for days")
     soft_preferences: list[str]      # inform weighting ("not too sweet", "crispy edges")
     queries: list[str]               # diversified search query variants (exactly 2)
+    confidence: float = Field(default=1.0, ge=0.0, le=1.0)  # category classification confidence
+    clarification_question: str = ""  # populated when confidence < 0.7
 
 
 class SnippetScore(BaseModel):
@@ -74,13 +76,15 @@ class RecipeIngredient(BaseModel):
 class ParsedRecipe(BaseModel):
     title: str
     url: str
-    category: Literal["cookie", "quick_bread", "cake", "other"]
+    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "other"]
     flour_type: str = "ap"           # primary flour detected from ingredients
     modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free", "vegan"]
     ingredients: list[RecipeIngredient]
     yield_description: str = ""      # "1 loaf", "24 cookies"
     instruction_count: int = 0       # proxy for recipe specificity
     has_chocolate: bool = False      # True if any chocolate ingredient present
+    technique_signals: list[str] = Field(default_factory=list)  # structured vocab signals
+    technique_notes: str = ""    # free-text description of novel/unusual techniques
     parse_error: Optional[str] = None
 
 
@@ -96,7 +100,7 @@ class NormalizedIngredient(BaseModel):
 
 class RatioResult(BaseModel):
     url: str
-    category: Literal["cookie", "quick_bread", "cake", "other"]
+    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "other"]
     flour_type: str = "ap"           # primary flour type (propagated from ParsedRecipe)
     modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free"]
 
@@ -139,3 +143,5 @@ class ScoredRecipe(BaseModel):
     constraint_violations: list[str] = Field(default_factory=list)
     explanation: str = ""            # filled by batched LLM call after scoring math
     rank: int = 0
+    technique_note_delta: Optional[float] = None  # LLM-applied delta for novel technique (None = not applied)
+    accessibility_score: Optional[float] = None   # LLM-assessed ease-of-making score (None = not computed)

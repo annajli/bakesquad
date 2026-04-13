@@ -12,6 +12,7 @@ is simpler, faster to import, and gives us more control over extraction.
 
 from __future__ import annotations
 
+import json
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Literal, Optional
@@ -380,18 +381,30 @@ class IngestionPipeline:
             )
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "lxml")
-
-            # Remove noise before extracting text
-            for tag in soup(["script", "style", "nav", "footer", "header", "aside", "iframe"]):
-                tag.decompose()
-
-            raw_text = soup.get_text(separator="\n", strip=True)
             title = snippet.title or (soup.title.string.strip() if soup.title else "")
 
-            # Pre-extract ingredients section for LLM (avoids sending full page)
+            # Strategy 1: JSON-LD structured data (schema.org/Recipe)
+            jsonld_excerpt = _extract_jsonld_ingredients(soup, title)
+            if jsonld_excerpt:
+                # Still build raw_text for the thin-page guard — use full stripped text
+                raw_text = soup.get_text(separator="\n", strip=True)
+                logger.debug("Fetched %s via JSON-LD (%d chars)", snippet.url, len(raw_text))
+                return FetchedPage(
+                    url=snippet.url,
+                    title=title,
+                    raw_text=raw_text,
+                    ingredients_excerpt=jsonld_excerpt,
+                    fetch_method="requests_bs4",
+                    snippet=snippet,
+                )
+
+            # Strategy 2: BS4 fallback — remove noise then heuristic ingredient extraction
+            for tag in soup(["script", "style", "nav", "footer", "header", "aside", "iframe"]):
+                tag.decompose()
+            raw_text = soup.get_text(separator="\n", strip=True)
             ingredients_excerpt = _extract_ingredients_section(soup, title)
 
-            logger.debug("Fetched %s (%d chars)", snippet.url, len(raw_text))
+            logger.debug("Fetched %s via BS4 (%d chars)", snippet.url, len(raw_text))
             return FetchedPage(
                 url=snippet.url,
                 title=title,
@@ -416,6 +429,77 @@ class IngestionPipeline:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+def _extract_jsonld_ingredients(soup: BeautifulSoup, title: str) -> str:
+    """
+    Extract ingredient list from schema.org/Recipe JSON-LD blocks.
+
+    Most major recipe sites and WordPress recipe plugins (WP Recipe Maker,
+    Tasty Recipes, Create) embed structured data in <script type="application/ld+json">
+    tags. This is machine-readable and survives layout changes.
+
+    Returns a formatted ingredients excerpt string, or "" if no Recipe JSON-LD found.
+    """
+    for script in soup.find_all("script", type="application/ld+json"):
+        try:
+            data = json.loads(script.string or "")
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+        # Handle both bare objects and @graph arrays
+        candidates: list[dict] = []
+        if isinstance(data, dict):
+            graph = data.get("@graph", [])
+            if graph:
+                candidates.extend(g for g in graph if isinstance(g, dict))
+            else:
+                candidates.append(data)
+        elif isinstance(data, list):
+            candidates.extend(item for item in data if isinstance(item, dict))
+
+        for node in candidates:
+            # Normalise @type — may be a string or list
+            node_type = node.get("@type", "")
+            if isinstance(node_type, list):
+                node_type = " ".join(node_type)
+            if "Recipe" not in node_type:
+                continue
+
+            ingredients = node.get("recipeIngredient", [])
+            if not ingredients or not isinstance(ingredients, list):
+                continue
+
+            # Use JSON-LD title if better than snippet title
+            jsonld_title = node.get("name", title) or title
+            ingredient_text = "\n".join(str(i) for i in ingredients if i)
+
+            if len(ingredient_text) < 20:
+                continue  # suspiciously short — probably malformed
+
+            # Include yield and description for context the parser can use
+            extra_parts = []
+            yield_val = node.get("recipeYield")
+            if yield_val:
+                yield_str = yield_val if isinstance(yield_val, str) else ", ".join(str(v) for v in yield_val)
+                extra_parts.append(f"Yield: {yield_str}")
+            description = node.get("description", "")
+            if description:
+                extra_parts.append(f"Description: {str(description)[:300]}")
+
+            header = "\n".join(extra_parts)
+            excerpt = (
+                f"Title: {jsonld_title}\n\n"
+                + (f"{header}\n\n" if header else "")
+                + f"Ingredients:\n{ingredient_text}"
+            )
+            logger.debug(
+                "JSON-LD extraction succeeded for %s (%d ingredients)",
+                jsonld_title, len(ingredients),
+            )
+            return excerpt[:3000]
+
+    return ""
+
 
 def _extract_ingredients_section(soup: BeautifulSoup, title: str) -> str:
     """

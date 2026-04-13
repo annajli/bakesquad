@@ -143,6 +143,30 @@ def _compute(
         else:
             base.leavening_type = "none"
 
+    elif category == "yeasted_bread":
+        # Hydration = water + milk + egg liquid / flour (baker's %).
+        # Yeast is not tracked as a chemical leavening, so leavening_to_flour
+        # is intentionally left None. Eggs counted at 75% by weight (water content).
+        effective_liquid = liquid + egg * 0.75 + egg_yolk * 0.5
+        if effective_liquid > 0:
+            base.liquid_to_flour = round(effective_liquid / flour, 3)
+        if total_fat > 0:
+            base.fat_to_flour = round(total_fat / flour, 3)
+        if total_sugar > 0:
+            base.sugar_to_flour = round(total_sugar / flour, 3)
+
+    elif category == "pastry":
+        # Pastry covers laminated doughs (croissants, danish), choux, and tart/pie.
+        # Fat/flour is the dominant quality signal: high fat (>0.5) = rich laminated/
+        # shortcrust; very high (>1.0) = proper croissant with separate butter block.
+        # Liquid/flour is useful for choux detection and dough hydration.
+        effective_liquid = liquid + egg * 0.75 + egg_yolk * 0.5
+        if effective_liquid > 0:
+            base.liquid_to_flour = round(effective_liquid / flour, 3)
+        base.fat_to_flour = round(total_fat / flour, 3)
+        if total_sugar > 0:
+            base.sugar_to_flour = round(total_sugar / flour, 3)
+
     else:
         # "other" category — compute what we can
         effective_liquid = liquid + banana + egg * 0.75
@@ -251,6 +275,31 @@ RATIO_RANGES: dict[str, dict[str, tuple[float, float]]] = {
         "fat_to_flour":       (0.50, 3.00),
         "sugar_to_flour":     (0.80, 3.50),
         "leavening_to_flour": (0.010, 0.080),
+    },
+
+    # ── Yeasted bread ─────────────────────────────────────────────────────
+    # Hydration ranges reflect baker's percentage conventions.
+    # Lean breads (sourdough, baguette): 65–80%. Enriched (brioche, challah):
+    # lower hydration (50–65%) is compensated by fat and eggs.
+    # Fat/flour: lean = 0–0.05, enriched = 0.10–0.60+ (brioche ~0.50–1.00).
+    # Sugar/flour: lean = 0–0.05, enriched = 0.05–0.25.
+    # Sources: FWSY (Forkish), Tartine, King Arthur enriched bread guidelines.
+    "yeasted_bread_ap": {
+        "liquid_to_flour": (0.55, 0.85),   # 55–85% hydration covers lean to enriched
+        "fat_to_flour":    (0.00, 0.60),   # 0 = lean sourdough; 0.60 = enriched brioche
+        "sugar_to_flour":  (0.00, 0.25),   # lean to moderately sweet
+    },
+
+    # ── Pastry ────────────────────────────────────────────────────────────
+    # Laminated doughs (croissant, danish): fat/flour 0.50–1.20 (détrempe + beurrage).
+    # Choux: liquid/flour very high (1.5–3.0); fat/flour ~0.5–1.0.
+    # Shortcrust / tart / pie crust: fat/flour 0.45–0.75; liquid low (0.15–0.45).
+    # Wide ranges accommodate all sub-types; scoring functions interpret the position.
+    # Sources: The Pastry Chef's Companion, King Arthur, serious eats pastry guides.
+    "pastry_ap": {
+        "liquid_to_flour": (0.15, 3.00),   # shortcrust (low) to choux (high)
+        "fat_to_flour":    (0.40, 1.20),   # shortcrust to laminated croissant
+        "sugar_to_flour":  (0.00, 0.50),   # savory tart to sweet danish
     },
 
     # ── GF blend (1:1 AP substitute) ─────────────────────────────────────
