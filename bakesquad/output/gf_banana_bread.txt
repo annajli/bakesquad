@@ -1,0 +1,421 @@
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="groq"; python main.py "I'm looking for a gluten-free banana bread recipe with chocolate chips, that is vegan."
+
+==============================================================
+  BakeSquad  |  Backend: groq (llama-3.1-8b-instant)
+==============================================================
+  Query: "I'm looking for a gluten-free banana bread recipe with chocolate chips, that is vegan."
+
+[Step 1: Query Understanding]
+  Category:    quick_bread
+  Constraints: contains banana, contains chocolate chips, gluten_free
+  Preferences: -
+  Queries generated:
+    - gluten-free banana bread recipe
+    - vegan banana bread with chocolate chips recipe
+  !! OVER BUDGET  6.1s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  14 candidates selected
+    [1.00] theconsciousplantkitchen.com  The Easier Vegan Chocolate Chip Banana Bread
+    [1.00] lovingitvegan.com  Vegan Chocolate Chip Banana Bread - Loving It Vegan
+    [1.00] apinchofparsley.com  The Best Vegan Chocolate Chip Banana Bread - apinchofparsl
+    [0.90] mamaknowsglutenfree.com  Gluten-Free Banana Bread - Mama Knows Gluten Free
+    [0.90] gimmedelicious.com  The Best Ever Super Moist Gluten Free Banana Bread | Gimme
+    [0.90] seasonalcravings.com  Best Ever Gluten Free Banana Bread with Chocolate Chips - 
+  ok  3.3s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  1.4s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  4 recipes parsed  (0 failed)
+  !! OVER BUDGET  59.9s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  4 ratio results  (0 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  4 recipes scored
+  Generating explanations (1 batched LLM call)...
+  !! OVER BUDGET  20.1s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: quick_bread
+  Must have: contains banana, contains chocolate chips, gluten_free
+
+  #1  Vegan Chocolate Chip Banana Bread
+      https://apinchofparsley.com/chocolate-chip-banana-bread/
+      [butter-based] [banana] [chocolate]
+      Composite  ################....  78/100
+
+        Moisture & Tenderness    ###########.........  57  (w=0.50)
+        Rise & Dome              ####################  100  (w=0.30)
+        Sweetness Balance        ####################  100  (w=0.20)
+
+      Ratios:
+        liquid/flour:    2.406  !!
+        fat/flour:       0.473  ok
+        sugar/flour:     0.833  ok
+        leavening/flour: 0.0274 ok
+        fat source:      butter
+        modifiers:       vegan
+
+      Why this score:
+        Recipe 0 received a composite score of 78/100 due to its
+        balanced ratios, particularly a moderate fat/flour ratio of
+        0.47, which suggests a tender crumb. However, its low moisture
+        & tenderness score of 57/100 indicates potential dryness. The
+        use of butter as the fat type may contribute to this issue
+        over time.
+
+  ----------------------------------------------------------
+
+  #2  Vegan Chocolate Chip Banana Bread
+      https://lovingitvegan.com/vegan-chocolate-chip-banana-bread/
+      [oil-based] [banana] [chocolate]
+      Composite  ###############.....  74/100
+
+        Moisture & Tenderness    ################....  80  (w=0.50)
+        Rise & Dome              ######..............  30  (w=0.30)
+        Sweetness Balance        ####################  100  (w=0.20)
+        GF Binding Agent         ####################  100  (w=0.20)
+
+      Ratios:
+        liquid/flour:    2.250  !!
+        fat/flour:       0.454  ok
+        sugar/flour:     0.833  ok
+        leavening/flour: 0.0500 !!
+        fat source:      oil
+        modifiers:       vegan, gluten_free
+        binding agent:   yes
+
+      Why this score:
+        Recipe 1 scored 74/100, with its high moisture & tenderness
+        score of 80/100 suggesting a moist crumb. The use of oil as
+        the fat type and a moderate fat/flour ratio of 0.45 likely
+        contribute to this result. However, its low rise & dome score
+        of 30/100 indicates potential issues with leavening.
+
+  ----------------------------------------------------------
+
+  #3  Vegan Chocolate Chip Banana Bread
+      https://www.theconsciousplantkitchen.com/vegan-chocolate-chip-banana-bread/
+      [oil-based] [banana] [chocolate]
+      Composite  #############.......  64/100
+
+        Moisture & Tenderness    ################....  79  (w=0.50)
+        Rise & Dome              ######..............  30  (w=0.30)
+        Sweetness Balance        ################....  79  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.875  !!
+        fat/flour:       0.400  ok
+        sugar/flour:     0.278  !!
+        leavening/flour: 0.0603 !!
+        fat source:      oil
+        modifiers:       vegan
+
+      Why this score:
+        Recipe 2 received a composite score of 64/100, with its low
+        sugar/flour ratio of 0.28 indicating potential
+        under-sweetness. The use of oil as the fat type and a moderate
+        fat/flour ratio of 0.40 may contribute to a tender crumb, but
+        its low rise & dome score of 30/100 suggests leavening issues.
+        Additionally, its low sweetness balance score of 79/100
+        indicates potential imbalances.
+
+  ----------------------------------------------------------
+
+  #4  Gluten-Free Banana Bread
+      https://www.mamaknowsglutenfree.com/easy-gluten-free-banana-bread/
+      [butter-based] [banana]
+      Composite  ############........  58/100
+
+        Moisture & Tenderness    ############........  61  (w=0.50)
+        Rise & Dome              ###############.....  75  (w=0.30)
+        Sweetness Balance        ####################  100  (w=0.20)
+        GF Binding Agent         ####################  100  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.528  ok
+        fat/flour:       0.946  !!
+        sugar/flour:     0.833  ok
+        leavening/flour: 0.0317 ok
+        fat source:      butter
+        flour type:      gf_blend
+        modifiers:       gluten_free
+        binding agent:   yes
+
+      ** CONSTRAINT RISK: No chocolate detected (query requires chocolate)
+
+      Why this score:
+        Recipe 3 scored 58/100, with its high fat/flour ratio of 0.95
+        indicating a potentially greasy crumb. The absence of
+        chocolate, a required ingredient, is a significant constraint
+        violation. Its moderate moisture & tenderness score of 61/100
+        suggests a decent texture, but its low rise & dome score of
+        75/100 indicates potential leavening issues.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 91.0s  (budget 60s)  [OVER BUDGET]
+  Backend: groq (llama-3.1-8b-instant)
+==============================================================
+                                                                                                                                                            
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="ollama"; python main.py "I'm looking for a gluten-free banana bread recipe with chocolate chips, that is vegan."
+WARNING  bakesquad.search.ingestion  Query plan parse failed (No valid JSON in LLM response: ). Raw LLM response: ''
+WARNING  bakesquad.search.ingestion  Snippet scoring failed; defaulting chunk to 0.5.
+WARNING  bakesquad.parser  Parse failed for https://godairyfree.org/recipes/gluten-free-vegan-chocolate-chip-banana-bread: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://avocadopesto.com/vegan-gluten-free-banana-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://organicallyaddison.com/vegan-chocolate-chip-banana-bread/: No valid JSON in LLM response: 
+WARNING  bakesquad.parser  Parse failed for https://www.resplendentkitchen.com/vegan-chocolate-chip-banana-bread/: No valid JSON in LLM response: 
+
+==============================================================
+  BakeSquad  |  Backend: ollama (qwen3.5)
+==============================================================
+  Query: "I'm looking for a gluten-free banana bread recipe with chocolate chips, that is vegan."
+
+[Step 1: Query Understanding]
+  Category:    other
+  Constraints: -
+  Preferences: -
+  Queries generated:
+    - I'm looking for a gluten-free banana bread recipe with chocolate chips, that is vegan.
+  ok  59.3s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  8 candidates selected
+    [0.50] resplendentkitchen.com  Vegan Chocolate Chip Banana Bread with Yogurt (Gluten-free
+    [0.50] godairyfree.org  Gluten-Free Vegan Chocolate Chip Banana Bread Recipe (Mapl
+    [0.50] organicallyaddison.com  Vegan Chocolate Chip Banana Bread - Organically Addison
+    [0.50] avocadopesto.com  Vegan Gluten Free Banana Bread with Dark Chocolate Chips
+    [0.50] rachlmansfield.com  Vegan Chocolate Chip Peanut Butter Banana Bread (gluten-fr
+    [0.50] simplytaralynn.com  Almond Butter Chocolate Chip Banana Bread (Vegan & GF) -
+  ok  29.8s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  1.4s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  0 recipes parsed  (4 failed)
+  ok  52.9s  (budget 15s)
+
+  Parsing failed for all pages. Showing best candidates from search:
+
+==============================================================
+  SEARCH CANDIDATES  (parse failed — unscored)
+==============================================================
+
+  #1  Gluten-Free Vegan Chocolate Chip Banana Bread Recipe (Maple
+       https://godairyfree.org/recipes/gluten-free-vegan-chocolate-chip-banana-bread  [relevance 0.50]
+       ...forthe real question:isthebreadany good?I’mhappy to reportthatitisdelicious! Based on the author’s flour guide,Imade ...
+
+  #2  Vegan Chocolate Chip Banana Bread with Yogurt (Gluten-free) -
+       https://www.resplendentkitchen.com/vegan-chocolate-chip-banana-bread/  [relevance 0.50]
+       Bake this easy and deliciousVeganChocolateChipBananaBreadthat'sgluten-freeand perfectforany time of the day....
+
+  #3  Vegan Chocolate Chip Banana Bread - Organically Addison
+       https://organicallyaddison.com/vegan-chocolate-chip-banana-bread/  [relevance 0.50]
+       ThisVeganchocolatechipbananabreadissoft, fluffy, and loadedwithbananaflavor! Itisquick and easy to make and has plenty o...
+
+  #4  Vegan Gluten Free Banana Bread with Dark Chocolate Chips
+       https://avocadopesto.com/vegan-gluten-free-banana-bread/  [relevance 0.50]
+       Withjustalight hint of sweetness andascattering of rich darkchocolatechunks thisveganglutenfreebananabreadrecipemakesfor...
+
+  Tip: these pages exist but their ingredients could not be extracted.
+  Try rephrasing your query or checking the URLs directly.
+
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="claude"; python main.py "I'm looking for a gluten-free banana bread recipe with chocolate chips, that is vegan."
+
+==============================================================
+  BakeSquad  |  Backend: claude (claude-sonnet-4-20250514)
+==============================================================
+  Query: "I'm looking for a gluten-free banana bread recipe with chocolate chips, that is vegan."
+
+[Step 1: Query Understanding]
+  Category:    quick_bread
+  Constraints: contains banana, contains chocolate chips
+  Preferences: -
+  Queries generated:
+    - gluten free vegan banana bread chocolate chips recipe
+    - dairy free gluten free banana chocolate chip bread recipe
+  !! OVER BUDGET  7.1s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  12 candidates selected
+    [1.00] elavegan.com  Vegan Chocolate Chip Banana Bread - Elavegan
+    [1.00] bakerita.com  Chocolate Chip Vegan Banana Bread (Gluten Free)
+    [1.00] healthylittlevittles.com  Chocolate Chip Banana Bread - Healthy Little Vittles
+    [1.00] darngoodveggies.com  Gluten Free Vegan Chocolate Chip Banana Bread - Darn Good 
+    [0.90] twopeasandtheirpod.com  Chocolate Gluten Free Vegan Banana Bread - Two Peas & Thei
+    [0.80] lovingitvegan.com  Vegan Chocolate Chip Banana Bread - Loving It Vegan
+  !! OVER BUDGET  14.0s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  1.4s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  4 recipes parsed  (0 failed)
+  ok  8.3s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  4 ratio results  (0 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  4 recipes scored
+  Generating explanations (1 batched LLM call)...
+  !! OVER BUDGET  12.2s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: quick_bread
+  Must have: contains banana, contains chocolate chips
+
+  #1  Gluten Free Vegan Chocolate Chip Banana Bread
+      https://www.darngoodveggies.com/gluten-free-vegan-chocolate-chip-banana-bread/
+      [oil-based] [banana] [chocolate]
+      Composite  ################....  80/100
+
+        Moisture & Tenderness    ##################..  91  (w=0.50)
+        Rise & Dome              ##################..  90  (w=0.30)
+        Sweetness Balance        ####################  100  (w=0.20)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.111  ok
+        fat/flour:       0.202  !!
+        sugar/flour:     0.596  ok
+        leavening/flour: 0.0360 !!
+        fat source:      oil
+        flour type:      gf_blend
+        modifiers:       gluten_free, vegan, dairy_free
+
+      Why this score:
+        This recipe achieves excellent moisture and rise through its
+        oil-based fat (which retains moisture better than butter) and
+        optimal liquid-to-flour ratio of 1.11. However, it suffers
+        from a critical constraint violation with an extremely low GF
+        binding agent score of 20/100, indicating insufficient xanthan
+        gum or similar binders essential for gluten-free structure.
+        The balanced ratios elsewhere create good texture, but the
+        lack of proper binding agents will likely result in a crumbly,
+        fragile loaf.
+
+  ----------------------------------------------------------
+
+  #2  Chocolate Chip Vegan Banana Bread
+      https://www.bakerita.com/chocolate-chip-vegan-banana-bread/
+      [banana] [chocolate]
+      Composite  ###############.....  74/100
+
+        Moisture & Tenderness    ################....  79  (w=0.50)
+        Rise & Dome              ######..............  30  (w=0.30)
+        Sweetness Balance        ####################  100  (w=0.20)
+        GF Binding Agent         ####################  100  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.915  !!
+        fat/flour:       0.592  ok
+        sugar/flour:     0.354  ok
+        leavening/flour: 0.0516 !!
+        fat source:      mixed
+        flour type:      oat
+        modifiers:       gluten_free, vegan, dairy_free
+        binding agent:   yes
+
+      Why this score:
+        The very high liquid-to-flour ratio of 1.92 and substantial
+        fat content (0.59) create exceptional moisture, but this
+        excess liquid severely compromises rise potential, resulting
+        in a dense, heavy texture. The mixed fat type provides good
+        flavor complexity and the recipe properly addresses
+        gluten-free binding needs with a perfect 100/100 score. While
+        the bread will be incredibly moist and tender, it will likely
+        be quite flat and dense due to the overwhelming liquid
+        content.
+
+  ----------------------------------------------------------
+
+  #3  Chocolate Chip Banana Bread
+      https://healthylittlevittles.com/chocolate-chip-banana-bread/
+      [butter-based] [banana] [chocolate]
+      Composite  ##############......  71/100
+
+        Moisture & Tenderness    #############.......  64  (w=0.50)
+        Rise & Dome              ###################.  97  (w=0.30)
+        Sweetness Balance        ####################  100  (w=0.20)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.463  ok
+        fat/flour:       0.218  !!
+        sugar/flour:     0.618  ok
+        leavening/flour: 0.0263 ok
+        fat source:      butter
+        flour type:      gf_blend
+        modifiers:       gluten_free, vegan, dairy_free
+
+      Why this score:
+        This recipe achieves excellent rise through well-balanced
+        leavening ratios, but the butter-based fat and moderate liquid
+        content create a drier texture compared to oil-based
+        alternatives. The major weakness is the low GF binding agent
+        score of 20/100, indicating this is likely a traditional
+        wheat-based recipe without proper gluten-free adaptations. The
+        result would be a nicely risen loaf with good structure but
+        potentially crumbly texture due to inadequate binding.
+
+  ----------------------------------------------------------
+
+  #4  Vegan Chocolate Chip Banana Bread
+      https://elavegan.com/vegan-chocolate-chip-banana-bread/
+      [banana] [chocolate]
+      Composite  ########............  38/100
+
+        Moisture & Tenderness    ########............  38  (w=0.50)
+        Rise & Dome              ###############.....  75  (w=0.30)
+        Sweetness Balance        ....................  0  (w=0.20)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    1.484  ok
+        fat/flour:       0.000  !!
+        sugar/flour:     0.000  !!
+        leavening/flour: 0.0234 ok
+        fat source:      none
+        flour type:      oat
+        modifiers:       gluten_free, vegan, dairy_free
+
+      Why this score:
+        This recipe has catastrophic constraint violations with zero
+        fat and zero sugar, creating an extremely poor eating
+        experience with dry, flavorless results. The absence of fat
+        eliminates moisture retention and tenderness, while the lack
+        of sugar creates an unpalatable, bitter bread that scores
+        0/100 for sweetness balance. Even with adequate liquid
+        content, the missing essential ingredients make this recipe
+        fundamentally flawed and inedible.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 43.1s  (budget 60s)  [OK]
+  Backend: claude (claude-sonnet-4-20250514)
+==============================================================
