@@ -73,6 +73,7 @@ Scoring is **per-category** — each baked-good type has its own named criteria 
 | `cake` | Moisture & Tenderness, Crumb & Structure, Sweetness Calibration | Custard cakes (cheesecake, flourless) bypass flour-ratio scoring |
 | `yeasted_bread` | Hydration, Enrichment Level, Flavor Complexity† | Baker's % hydration; lean vs enriched style |
 | `pastry` | Fat & Richness, Structure & Balance, Technique & Layers† | Fat/flour is dominant signal; wide range covers shortcrust → croissant |
+| `brownie` | Fudge Factor, Chocolate Intensity†, Sweetness & Crust | High fat/flour and no leavening are correct signals, not defects; Chocolate Intensity covers cocoa type and bloom technique; Blondies use the same criteria with Chocolate Intensity scoring butterscotch/brown butter depth instead |
 | `other` | Overall Balance | Sugar/flour as general proxy |
 
 † LLM-assessed: starts at placeholder 50/100; scored 0–100 in the batched explanation call.
@@ -105,6 +106,7 @@ All ratios are computed from normalized gram weights (King Arthur Baking + USDA 
 | Cookie | fat/flour 0.40–0.75, brown/white sugar 0.5–3.0, leavening/flour 0.005–0.025 |
 | Yeasted bread | liquid/flour 0.55–0.85 (hydration), fat/flour 0.00–0.60 |
 | Pastry | fat/flour 0.40–1.20, liquid/flour 0.15–3.00 |
+| Brownie | fat/flour 1.00–2.50, sugar/flour 2.00–5.00, leavening/flour 0.000–0.015 |
 
 ---
 
@@ -112,11 +114,12 @@ All ratios are computed from normalized gram weights (King Arthur Baking + USDA 
 
 | Category | Includes |
 |---|---|
-| `cookie` | Drop cookies, bar cookies, brownies, shortbread, blondies |
+| `cookie` | Drop cookies, bar cookies, shortbread |
 | `quick_bread` | Banana bread, zucchini bread, muffins, scones, cornbread |
 | `cake` | Layer cakes, bundt cakes, cheesecakes, cupcakes |
 | `yeasted_bread` | Sourdough, focaccia, baguette, dinner rolls, brioche, challah |
 | `pastry` | Croissants, danish, choux (éclairs, profiteroles), tarts, pies |
+| `brownie` | Fudgy brownies, cakey brownies, blondies, marble brownies |
 | `other` | Anything uncategorizable |
 
 ---
@@ -245,6 +248,12 @@ A single rubric (moisture/structure/balance) applied across all categories loses
 ### No LangChain
 
 LangChain template and chain overhead added ~1–2 s per LLM call, incompatible with the 60 s time budget. All LLM calls route through a thin `llm_client.py` wrapper instead.
+
+### Brownie as a first-class category
+
+Brownies and blondies have a ratio signature that is structurally incompatible with both `cookie` and `cake`: fat/flour 1.0–2.5, sugar/flour 2.0–5.0, and intentionally absent leavening. Both values read as severe out-of-range violations under cake or cookie scoring, producing scores in the 16–26/100 range for well-regarded recipes. The fix is a dedicated `brownie` category with its own ratio ranges, scoring criteria, and parser disambiguation notes.
+
+The ratio cache stores computed ratio numbers keyed by URL. On a cache hit, the stored `category` field is ignored in favour of the live parser's output — so adding new categories never requires manual cache invalidation.
 
 ### Sequential DuckDuckGo search
 

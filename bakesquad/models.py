@@ -42,7 +42,7 @@ class FetchedPage(BaseModel):
 
 class QueryPlan(BaseModel):
     """Output of step 1 — query understanding + diversification in a single LLM call."""
-    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "other"]
+    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "brownie", "other"]
     flour_type: str = "ap"           # primary flour: ap, almond, oat, coconut, rice, gf_blend, other
     modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free", "vegan", "paleo"]
     hard_constraints: list[str]      # must be true ("has chocolate", "stays moist for days")
@@ -76,7 +76,7 @@ class RecipeIngredient(BaseModel):
 class ParsedRecipe(BaseModel):
     title: str
     url: str
-    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "other"]
+    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "brownie", "other"]
     flour_type: str = "ap"           # primary flour detected from ingredients
     modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free", "vegan"]
     ingredients: list[RecipeIngredient]
@@ -100,7 +100,7 @@ class NormalizedIngredient(BaseModel):
 
 class RatioResult(BaseModel):
     url: str
-    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "other"]
+    category: Literal["cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "brownie", "other"]
     flour_type: str = "ap"           # primary flour type (propagated from ParsedRecipe)
     modifiers: list[str] = Field(default_factory=list)  # e.g. ["gluten_free"]
 

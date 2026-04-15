@@ -78,6 +78,11 @@ CATEGORY_CRITERIA: dict[str, list[dict]] = {
         {"name": "Structure & Balance","weight": 0.30, "llm": False},
         {"name": "Technique & Layers", "weight": 0.35, "llm": True},
     ],
+    "brownie": [
+        {"name": "Fudge Factor",          "weight": 0.45, "llm": False},
+        {"name": "Chocolate Intensity",   "weight": 0.30, "llm": True},
+        {"name": "Sweetness & Crust",     "weight": 0.25, "llm": False},
+    ],
     "other": [
         {"name": "Overall Balance", "weight": 1.0, "llm": False},
     ],
@@ -123,7 +128,8 @@ def derive_weights(plan: QueryPlan, user_prefs: dict) -> dict[str, float]:
     moisture_signals = {"moist", "moisture", "soft", "fresh", "days", "week",
                         "tender", "fudgy", "dense", "juicy"}
     if any(s in query_text for s in moisture_signals):
-        _boost(weights, ["Moisture & Tenderness", "Chew & Texture", "Hydration"], 0.15)
+        _boost(weights, ["Moisture & Tenderness", "Chew & Texture", "Hydration",
+                         "Fudge Factor"], 0.15)
 
     texture_signals = {"crispy", "chewy", "crunchy", "fluffy", "airy", "rise",
                        "lift", "flaky", "crumb", "open", "shatter"}
@@ -132,9 +138,11 @@ def derive_weights(plan: QueryPlan, user_prefs: dict) -> dict[str, float]:
                          "Technique & Layers"], 0.10)
 
     flavor_signals = {"flavor", "rich", "buttery", "complex", "depth", "tangy",
-                      "ferment", "sourdough", "nutty", "caramel", "brown butter"}
+                      "ferment", "sourdough", "nutty", "caramel", "brown butter",
+                      "chocolate", "cocoa", "dark chocolate"}
     if any(s in query_text for s in flavor_signals):
-        _boost(weights, ["Flavor & Technique", "Flavor Complexity"], 0.10)
+        _boost(weights, ["Flavor & Technique", "Flavor Complexity",
+                         "Chocolate Intensity"], 0.10)
 
     # Normalize
     total = sum(weights.values())
@@ -180,6 +188,8 @@ def score_recipe(
         criteria = _score_yeasted_bread(recipe, ratios, weights, flour_type)
     elif category == "pastry":
         criteria = _score_pastry(recipe, ratios, weights, flour_type)
+    elif category == "brownie":
+        criteria = _score_brownie(recipe, ratios, weights, flour_type)
     else:
         criteria = _score_other(recipe, ratios, weights, flour_type)
 
@@ -685,6 +695,112 @@ def _score_pastry(
     ]
 
 
+def _score_brownie(
+    recipe: ParsedRecipe,
+    ratios: RatioResult,
+    weights: dict[str, float],
+    flour_type: str,
+) -> list[CriterionScore]:
+    ranges = get_ranges("brownie", flour_type)
+    technique_signals = getattr(recipe, "technique_signals", []) or []
+
+    # --- Fudge Factor ---
+    # fat/flour is the primary signal. The range 1.0–2.5 covers fudgy to
+    # very fudgy. Below 1.0 → trending cakey (still valid but not fudgy).
+    # Leavening absence is a positive signal for fudgy style.
+    fudge = 0.0
+    fat_ratio = ratios.fat_to_flour
+    if fat_ratio is not None:
+        lo_fat, hi_fat = ranges.get("fat_to_flour", (1.00, 2.50))
+        if lo_fat <= fat_ratio <= hi_fat:
+            # Score peaks in the 1.5–2.0 sweet spot; slight penalty toward edges
+            mid = (lo_fat + hi_fat) / 2
+            half_width = (hi_fat - lo_fat) / 2
+            dist = abs(fat_ratio - mid) / half_width
+            fudge += 55 * (1.0 - 0.3 * dist)
+        elif fat_ratio < lo_fat:
+            # Under-fat: cakey brownies; partial credit
+            fudge += max(0.0, 55 * (fat_ratio / lo_fat) * 0.7)
+        else:
+            # Over-fat: may be greasy/underbaked
+            excess = (fat_ratio - hi_fat) / hi_fat
+            fudge += max(0.0, 55 * (1 - excess * 1.5))
+    else:
+        fudge += 25  # no data — neutral partial credit
+
+    # Leavening: absent or trace = fudgy (rewarded); more = cakey (neutral)
+    lv = ratios.leavening_to_flour
+    lo_lv, hi_lv = ranges.get("leavening_to_flour", (0.000, 0.015))
+    if lv is not None:
+        if lv <= hi_lv:
+            fudge += 30  # in range (including 0) — good fudgy signal
+        elif lv <= hi_lv * 3:
+            fudge += 15  # slightly cakey — not penalized heavily
+        else:
+            fudge += 5   # notably cakey
+    else:
+        fudge += 15  # not measured — partial credit
+
+    # Egg density: high egg content contributes to fudge factor
+    # Tracked via liquid/flour — eggs are the primary liquid in brownies
+    lf_val = ratios.liquid_to_flour
+    if lf_val is not None:
+        lo_lf, hi_lf = ranges.get("liquid_to_flour", (0.50, 1.50))
+        if lo_lf <= lf_val <= hi_lf:
+            fudge += 15
+        else:
+            fudge += 7
+
+    fudge_parts = []
+    if fat_ratio is not None:
+        fudge_parts.append(f"fat/flour={fat_ratio:.2f}")
+    if lv is not None:
+        lv_label = "no leavening (fudgy)" if lv == 0 else f"leavening/flour={lv:.4f}"
+        fudge_parts.append(lv_label)
+    if lf_val is not None:
+        fudge_parts.append(f"liquid/flour={lf_val:.2f}")
+
+    # --- Chocolate Intensity (LLM-assessed placeholder) ---
+    # Cocoa type (natural vs dutch-process), cocoa/chocolate ratio, bloom technique —
+    # none are accessible from ratios alone. LLM scores 0–100 in add_explanations.
+    # For blondies (has_chocolate=False), LLM should score on depth of butterscotch/
+    # brown butter flavor rather than chocolate.
+    choc_detail = ", ".join(technique_signals) if technique_signals else "awaiting LLM assessment"
+    if not ratios.has_chocolate:
+        choc_detail = "blondie — no chocolate (LLM assesses butterscotch/flavor depth)"
+
+    # --- Sweetness & Crust ---
+    # sugar/flour 2.0–5.0 is the brownie sweet spot. High sugar = shiny crinkle top.
+    # This is not penalized — it's a quality characteristic. Very low sugar → bland,
+    # no crust development.
+    sweetness = 0.0
+    sf = ratios.sugar_to_flour
+    if sf is not None:
+        lo_sf, hi_sf = ranges.get("sugar_to_flour", (2.00, 5.00))
+        if lo_sf <= sf <= hi_sf:
+            sweetness = 100.0
+        elif sf < lo_sf:
+            sweetness = round(max(0.0, 100.0 * (sf / lo_sf)), 1)
+        else:
+            # Above range: still edible but risks being too sweet
+            excess = (sf - hi_sf) / hi_sf
+            sweetness = round(max(0.0, 100.0 * (1 - excess * 0.5)), 1)
+    else:
+        sweetness = 50.0  # no data — neutral
+
+    sweetness_parts = []
+    if sf is not None:
+        sweetness_parts.append(f"sugar/flour={sf:.2f}")
+    if ratios.brown_to_white_sugar is not None:
+        sweetness_parts.append(f"brown/white={ratios.brown_to_white_sugar:.2f}")
+
+    return [
+        CriterionScore(name="Fudge Factor",        score=round(min(100.0, fudge), 1), weight=weights.get("Fudge Factor", 0.45),        details=", ".join(fudge_parts) or "n/a"),
+        CriterionScore(name="Chocolate Intensity",  score=50.0,                         weight=weights.get("Chocolate Intensity", 0.30), details=choc_detail),
+        CriterionScore(name="Sweetness & Crust",    score=sweetness,                    weight=weights.get("Sweetness & Crust", 0.25),  details=", ".join(sweetness_parts) or "n/a"),
+    ]
+
+
 def _score_other(
     recipe: ParsedRecipe,
     ratios: RatioResult,
@@ -822,6 +938,9 @@ def add_explanations(scored: list[ScoredRecipe]) -> None:
         "100=exceptional technique (well-laminated, hollow choux, precise bake). "
         "Flavor & Technique: 0=no technique differentiation, 50=standard, "
         "100=clearly differentiated technique (brown butter, overnight rest, cold ferment). "
+        "Chocolate Intensity: for brownies, 0=weak cocoa flavor, 50=standard, "
+        "100=exceptional (high-quality chocolate, bloomed cocoa, espresso enhancement, natural cocoa). "
+        "For blondies, score butterscotch/brown butter depth instead of chocolate. "
         "A stand mixer is an enabler not a barrier. Include for every recipe that has "
         "LLM-assessed criteria."
     ) if has_llm_criteria else ""

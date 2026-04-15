@@ -25,13 +25,10 @@ categories:
       - cookies
       - biscuit
       - bar
-      - brownie
-      - blondie
       - shortbread
     members:
       - drop cookies
       - bar cookies
-      - brownies
       - shortbread
     loaf_like: false
     scoring_criteria:
@@ -135,6 +132,28 @@ categories:
       - structure_and_balance # liquid/flour, sugar/flour in pastry range
       - technique_and_layers  # LLM-assessed: lamination quality, shatter, hollow choux
     ratio_ranges_key: pastry
+
+  - id: brownie
+    label: Brownie / Blondie
+    synonyms:
+      - brownie
+      - brownies
+      - blondie
+      - blondies
+      - fudge brownie
+      - chocolate brownie
+      - bar brownie
+    members:
+      - fudgy brownies
+      - cakey brownies
+      - blondies
+      - marble brownies
+    loaf_like: false
+    scoring_criteria:
+      - fudge_factor       # fat/flour density; high fat/flour = fudgier, intentional
+      - chocolate_intensity # LLM-assessed: cocoa type, chocolate quality, cocoa/flour ratio
+      - sweetness_and_crust # sugar/flour in brownie range; high sugar = shiny crinkle top
+    ratio_ranges_key: brownie
 
   - id: other
     label: Other

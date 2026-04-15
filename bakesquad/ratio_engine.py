@@ -36,6 +36,12 @@ def compute_ratios(recipe: ParsedRecipe) -> RatioResult:
     cached = cache_get(recipe.url)
     if cached:
         logger.info("Ratio cache HIT: %s", recipe.url)
+        # Override classification fields with the live parser's output — category,
+        # flour_type, and modifiers can change (e.g. after adding a new category)
+        # without the ratio math being stale. Only the ratio numbers are cached.
+        cached["category"] = recipe.category
+        cached["flour_type"] = recipe.flour_type
+        cached["modifiers"] = recipe.modifiers
         result = RatioResult(**{**cached, "from_cache": True})
         return result
 
@@ -166,6 +172,20 @@ def _compute(
         base.fat_to_flour = round(total_fat / flour, 3)
         if total_sugar > 0:
             base.sugar_to_flour = round(total_sugar / flour, 3)
+
+    elif category == "brownie":
+        # Brownies and blondies: fat/flour is the primary fudge-factor signal.
+        # High fat/flour (1.0–2.5) and high sugar/flour (2.0–5.0) are CORRECT.
+        # Leavening is intentionally absent or minimal in fudgy styles; cakey
+        # brownies may use a small amount. Eggs are the primary structure source.
+        effective_liquid = liquid + egg * 0.75 + egg_yolk * 0.5
+        base.fat_to_flour = round(total_fat / flour, 3)
+        base.sugar_to_flour = round(total_sugar / flour, 3)
+        if effective_liquid > 0:
+            base.liquid_to_flour = round(effective_liquid / flour, 3)
+        base.leavening_to_flour = round(total_leavening / flour, 4)
+        if sugar_white > 0:
+            base.brown_to_white_sugar = round(sugar_brown / sugar_white, 3)
 
     else:
         # "other" category — compute what we can
@@ -300,6 +320,34 @@ RATIO_RANGES: dict[str, dict[str, tuple[float, float]]] = {
         "liquid_to_flour": (0.15, 3.00),   # shortcrust (low) to choux (high)
         "fat_to_flour":    (0.40, 1.20),   # shortcrust to laminated croissant
         "sugar_to_flour":  (0.00, 0.50),   # savory tart to sweet danish
+    },
+
+    # ── Brownie / Blondie ─────────────────────────────────────────────────
+    # High fat/flour and sugar/flour are intentional and correct for this style.
+    # The ratio signature is structurally incompatible with cake or cookie ranges,
+    # which is why brownies need their own category.
+    # fat/flour 1.0–2.5: below 1.0 → cakey; above 2.5 → possibly greasy/underbaked
+    # sugar/flour 2.0–5.0: high sugar creates the shiny crinkle top (desirable)
+    # liquid/flour 0.5–1.5: eggs are the primary liquid source; no added water typically
+    # leavening/flour 0.0–0.015: absent = fudgy (preferred); trace = slightly cakey
+    # Sources: BraveTart, Serious Eats brownie science, Alice Medrich's Bittersweet
+    "brownie_ap": {
+        "fat_to_flour":       (1.00, 2.50),
+        "sugar_to_flour":     (2.00, 5.00),
+        "liquid_to_flour":    (0.50, 1.50),
+        "leavening_to_flour": (0.000, 0.015),
+    },
+    "brownie_almond": {
+        "fat_to_flour":       (1.00, 3.00),   # almond flour absorbs more fat
+        "sugar_to_flour":     (1.50, 5.00),
+        "liquid_to_flour":    (0.40, 1.50),
+        "leavening_to_flour": (0.000, 0.020),
+    },
+    "brownie_gf_blend": {
+        "fat_to_flour":       (1.00, 2.60),
+        "sugar_to_flour":     (2.00, 5.00),
+        "liquid_to_flour":    (0.50, 1.60),
+        "leavening_to_flour": (0.000, 0.020),
     },
 
     # ── GF blend (1:1 AP substitute) ─────────────────────────────────────

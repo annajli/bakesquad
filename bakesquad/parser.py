@@ -29,7 +29,11 @@ _SYSTEM_PROMPT = (
     "You are a recipe data extractor. Given partial recipe text (title + ingredients section), "
     "extract the structured recipe data and return ONLY a JSON object with these fields:\n\n"
     '- "title": recipe name (string)\n'
-    '- "category": one of "cookie", "quick_bread", "cake", "other"\n'
+    '- "category": one of "cookie", "quick_bread", "cake", "yeasted_bread", "pastry", "brownie", "other"\n'
+    '  brownie includes: brownies, blondies, fudge brownies, bar brownies\n'
+    '  Use "brownie" for any dense, low-leavening chocolate (or butterscotch) bar baked in a pan.\n'
+    '  Use "cookie" for drop cookies, shortbread, sandwich cookies — NOT brownies or blondies.\n'
+    '  Use "cake" only for layer cakes, bundt cakes, cheesecakes, cupcakes — NOT brownies.\n'
     '- "flour_type": primary flour used — one of: "ap", "almond", "oat", "coconut", "rice", "gf_blend", "other"\n'
     '  Detect from ingredients: almond flour→"almond", oat flour→"oat", coconut flour→"coconut",\n'
     '  rice flour→"rice", any "1:1 gluten-free" or "gluten-free blend"→"gf_blend", default→"ap"\n'

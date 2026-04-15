@@ -1,0 +1,566 @@
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="groq"; python main.py "I'm looking for a fudgey brownie recipe, that doesn't use dutch-processed cocoa."
+WARNING  root  Category override (Step 7 reconciliation): cookie → cake
+WARNING  bakesquad.ratio_engine  Suspiciously low flour (0g) for https://www.sugarfreemom.com/recipes/fudgey-flourless-chocolate-brownies-gluten-dairy-sugar-free/ — likely parse error, skipping ratios.
+WARNING  bakesquad.ratio_engine  Suspiciously low flour (0g) for https://www.veggiegib.com/best-homemade-brownies/ — likely parse error, skipping ratios.
+
+==============================================================
+  BakeSquad  |  Backend: groq (llama-3.1-8b-instant)
+==============================================================
+  Query: "I'm looking for a fudgey brownie recipe, that doesn't use dutch-processed cocoa."
+
+[Step 1: Query Understanding]
+  Category:    cookie
+  Constraints: contains chocolate, no dutch-processed cocoa
+  Preferences: -
+  Queries generated:
+    - fudgey brownie recipe
+    - brownie recipe without dutch-processed cocoa
+  ok  3.4s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  6 candidates selected
+    [0.90] sugarfreemom.com  Fudgey Flourless Chocolate Brownies [Gluten, Dairy & Sugar
+    [0.90] domestocrat.net  Recipe: Super Fudgey Brownies – Domestocrat
+    [0.90] veggiegib.com  Fudgey Best Homemade Brownies Recipe
+    [0.90] thelittlewelshchocolatecompany.com  Fudgey Brownies Recipe - organic chocolate brownies | TLWC
+    [0.90] mdkelleywriter.com  Irresistible Dark Chocolate Fudgey Brownie Recipe — M D
+    [0.50] thecookingfoodie.com  Healthy 3-IngredientBrownies| Gluten-Free... - The Cooking
+  ok  6.5s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  2.0s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  4 recipes parsed  (0 failed)
+  !! OVER BUDGET  26.8s  (budget 15s)
+  [Step 7b] Category override: cookie → cake  (Step 7 majority vote)
+
+[Steps 8-9: Normalization + Ratios]
+  4 ratio results  (0 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  4 recipes scored
+  Generating explanations (1 batched LLM call)...
+  !! OVER BUDGET  19.1s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: cake
+  Must have: contains chocolate, no dutch-processed cocoa
+
+  #1  Fudgey Best Homemade Brownies Recipe
+      https://www.veggiegib.com/best-homemade-brownies/
+      [butter-based] [chocolate]
+      Composite  #############.......  64/100
+
+        Moisture & Tenderness    ##############......  70  (w=0.45)
+        Crumb & Structure        #############.......  65  (w=0.30)
+        Sweetness Calibration    ##########..........  50  (w=0.25)
+
+      Ratios:
+        fat source:      butter
+        modifiers:       dairy_free
+
+      Why this score:
+        Recipe 0 received a high score due to its balanced moisture
+        and tenderness, likely attributed to the use of butter as a
+        fat source, which retains moisture better than oil over
+        multiple days. The brownies also have a good crumb and
+        structure, contributing to their overall score. However, the
+        sweetness calibration could be improved.
+
+  ----------------------------------------------------------
+
+  #2  Fudgey Flourless Chocolate Brownies [Gluten, Dairy & Sugar Free]
+      https://www.sugarfreemom.com/recipes/fudgey-flourless-chocolate-brownies-gluten-dairy-sugar-free/
+      [oil-based] [chocolate]
+      Composite  #########...........  45/100
+
+        Overall Balance          ##########..........  50  (w=1.00)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        fat source:      oil
+        flour type:      gf_blend
+        modifiers:       gluten_free, dairy_free, sugar_free
+
+      Why this score:
+        Recipe 1 scored low due to its poor overall balance, which may
+        be caused by the use of an oil-based fat source, which can
+        lead to a denser and less tender crumb compared to butter.
+        Additionally, the gluten-free binding agent may not be
+        effective, resulting in a poor structure. The lack of sugar
+        also affects the overall flavor and texture.
+
+  ----------------------------------------------------------
+
+  #3  Super Fudgey Brownies – Domestocrat
+      https://domestocrat.net/2013/11/27/recipe-super-fudgey-brownies/
+      [butter-based] [chocolate]
+      Composite  ####................  21/100
+
+        Moisture & Tenderness    #########...........  46  (w=0.45)
+        Crumb & Structure        ....................  0  (w=0.30)
+        Sweetness Calibration    ....................  0  (w=0.25)
+
+      Ratios:
+        liquid/flour:    1.250  ok
+        fat/flour:       1.513  !!
+        sugar/flour:     2.667  !!
+        leavening/flour: 0.0000 !!
+        fat source:      butter
+        modifiers:       dairy_free
+
+      Why this score:
+        Recipe 2 received a low score due to its poor crumb and
+        structure, likely caused by the high liquid-to-flour ratio
+        (1.25) and high fat-to-flour ratio (1.51), which can lead to a
+        dense and crumbly texture. The use of butter as a fat source
+        may also contribute to this issue. Additionally, the lack of
+        leavening agents and high sugar-to-flour ratio (2.67) may
+        affect the overall texture and flavor.
+
+  ----------------------------------------------------------
+
+  #4  Fudgey Brownies Recipe - organic chocolate brownies | TLWCC
+      https://thelittlewelshchocolatecompany.com/blogs/recipes/fudgey-chocolate-brownies
+      [butter-based] [chocolate]
+      Composite  ###.................  16/100
+
+        Moisture & Tenderness    #######.............  33  (w=0.45)
+        Crumb & Structure        ....................  0  (w=0.30)
+        Sweetness Calibration    ....................  0  (w=0.25)
+        GF Binding Agent         ####................  20  (w=0.20)
+
+      Ratios:
+        liquid/flour:    3.000  !!
+        fat/flour:       2.500  !!
+        sugar/flour:     3.000  !!
+        leavening/flour: 0.0000 !!
+        fat source:      butter
+        flour type:      gf_blend
+        modifiers:       gluten_free
+
+      Why this score:
+        Recipe 3 scored low due to its poor crumb and structure,
+        likely caused by the extremely high liquid-to-flour ratio
+        (3.00) and high fat-to-flour ratio (2.50), which can lead to a
+        dense and crumbly texture. The use of butter as a fat source
+        may also contribute to this issue. Additionally, the lack of
+        leavening agents and high sugar-to-flour ratio (3.00) may
+        affect the overall texture and flavor.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 58.0s  (budget 60s)  [OK]
+  Backend: groq (llama-3.1-8b-instant)
+==============================================================
+
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="groq"; python main.py
+
+==============================================================
+  BakeSquad  |  Chat Mode  |  Backend: groq (llama-3.1-8b-instant)
+==============================================================
+  Enter a baking query to get started.
+  Follow up with constraints, questions, or a new request.
+  Type 'quit' to exit.
+
+  Query: I'm looking for a fudge-y brownie recipe, that doesn't use dutch-processed cocoa powder.    
+WARNING  root  Category override (Step 7 reconciliation): cookie → cake
+[Step 1: Query Understanding]
+  Category:    cookie
+  Constraints: contains chocolate, no dutch-processed cocoa
+  Preferences: -
+  Queries generated:
+    - fudge brownie recipe
+    - brownies with natural cocoa powder
+  ok  2.7s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  10 candidates selected
+    [1.00] epicurious.com  Fudgy Cocoa Brownies (One-Bowl, No Mixer) Recipe | Epicuri
+    [0.90] sallysbakingaddiction.com  Seriously Fudgy Homemade Brownies - Sally's Baking
+    [0.90] coracaoconfections.com  Ultimate Fudgy Brownies With Cocoa Powder: Rich, Organic C
+    [0.90] navitasorganics.com  Fudgy Cacao Brownies Recipe - Navitas Organics
+    [0.90] kitchenguide101.com  Easy Cocoa Powder Brownies (No Melted Chocolate Required!)
+    [0.70] urbanbakes.com  Easy One-Bowl Classic Fudge Brownies | URBAN BAKES
+  ok  2.6s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  0.5s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  4 recipes parsed  (0 failed)
+  !! OVER BUDGET  34.0s  (budget 15s)
+  [Step 7b] Category override: cookie → cake  (Step 7 majority vote)
+
+[Steps 8-9: Normalization + Ratios]
+  4 ratio results  (0 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  4 recipes scored
+  Generating explanations (1 batched LLM call)...
+  !! OVER BUDGET  10.8s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: cake
+  Must have: contains chocolate, no dutch-processed cocoa
+
+  #1  Fudgy Cacao Brownies Recipe
+      https://navitasorganics.com/blogs/recipes/fudgy-cacao-brownies-recipe
+      [butter-based] [chocolate]
+      Composite  #########...........  44/100
+
+        Moisture & Tenderness    ############........  58  (w=0.45)
+        Crumb & Structure        ############........  60  (w=0.30)
+        Sweetness Calibration    ....................  0  (w=0.25)
+
+      Ratios:
+        liquid/flour:    1.667  !!
+        fat/flour:       2.522  !!
+        sugar/flour:     4.444  !!
+        leavening/flour: 0.0222 ok
+        fat source:      butter
+        modifiers:       vegan
+
+      Why this score:
+        Recipe 0 received a high score due to its balanced ratios,
+        particularly the high fat/flour ratio (2.52) which retains
+        moisture better than butter over multiple days, contributing
+        to its high Moisture & Tenderness score. However, its high
+        sugar/flour ratio (4.44) may lead to an overly sweet taste,
+        resulting in a 0/100 Sweetness Calibration score. The recipe
+        also has a high liquid/flour ratio (1.67), which may affect
+        its crumb structure.
+
+  ----------------------------------------------------------
+
+  #2  Seriously Fudgy Homemade Brownies
+      https://sallysbakingaddiction.com/seriously-fudgy-homemade-brownies/
+      [butter-based] [chocolate]
+      Composite  #####...............  26/100
+
+        Moisture & Tenderness    ############........  58  (w=0.45)
+        Crumb & Structure        ....................  0  (w=0.30)
+        Sweetness Calibration    ....................  0  (w=0.25)
+
+      Ratios:
+        liquid/flour:    0.938  ok
+        fat/flour:       1.419  !!
+        sugar/flour:     2.778  !!
+        leavening/flour: 0.0000 !!
+        fat source:      butter
+        modifiers:       dairy_free
+
+      Why this score:
+        Recipe 1 received a low score due to its poor Crumb &
+        Structure score, likely caused by its low fat/flour ratio
+        (1.42) which may not provide enough moisture retention.
+        Additionally, its low leavening/flour ratio (0.0000) may
+        result in a dense texture. The recipe's low liquid/flour ratio
+        (0.94) may also contribute to its poor crumb structure.
+
+  ----------------------------------------------------------
+
+  #3  Fudgy Cocoa Brownies (One Bowl, No Mixer)
+      https://www.epicurious.com/recipes/food/views/best-cocoa-brownies
+      [butter-based] [chocolate]
+      Composite  #####...............  26/100
+
+        Moisture & Tenderness    ############........  58  (w=0.45)
+        Crumb & Structure        ....................  0  (w=0.30)
+        Sweetness Calibration    ....................  0  (w=0.25)
+
+      Ratios:
+        liquid/flour:    0.938  ok
+        fat/flour:       1.419  !!
+        sugar/flour:     2.500  !!
+        leavening/flour: 0.0000 !!
+        fat source:      butter
+        modifiers:       vegan, dairy_free
+
+      Why this score:
+        Recipe 2 received a low score due to its poor Crumb &
+        Structure score, similar to Recipe 1. Its low fat/flour ratio
+        (1.42) and low leavening/flour ratio (0.0000) may result in a
+        dense texture. The recipe's low liquid/flour ratio (0.94) may
+        also contribute to its poor crumb structure.
+
+  ----------------------------------------------------------
+
+  #4  Ultimate Fudgy Brownies With Cocoa Powder: Rich, Organic Chocolate ...
+      https://www.coracaoconfections.com/blogs/news/brownie-recipe-with-cocoa-powder
+      [butter-based] [chocolate]
+      Composite  ####................  21/100
+
+        Moisture & Tenderness    #########...........  46  (w=0.45)
+        Crumb & Structure        ....................  0  (w=0.30)
+        Sweetness Calibration    ....................  0  (w=0.25)
+
+      Ratios:
+        liquid/flour:    1.250  ok
+        fat/flour:       1.892  !!
+        sugar/flour:     4.583  !!
+        leavening/flour: 0.0000 !!
+        fat source:      butter
+        modifiers:       dairy_free
+
+      Why this score:
+        Recipe 3 received a low score due to its poor Moisture &
+        Tenderness score, likely caused by its low fat/flour ratio
+        (1.89) which may not provide enough moisture retention.
+        Additionally, its high sugar/flour ratio (4.58) may lead to an
+        overly sweet taste, resulting in a 0/100 Sweetness Calibration
+        score. The recipe also has a low liquid/flour ratio (1.25),
+        which may affect its crumb structure.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 50.8s  (budget 60s)  [OK]
+  Backend: groq (llama-3.1-8b-instant)
+==============================================================
+
+
+  > Brownies should not be classified as cake.   
+  Thinking...
+
+  Filter: constraint applied
+  4 recipes pass  (0 excluded)
+
+  #1  44/100  Fudgy Cacao Brownies Recipe
+       https://navitasorganics.com/blogs/recipes/fudgy-cacao-brownies-recipe
+       [butter] [chocolate]
+
+  #2  26/100  Seriously Fudgy Homemade Brownies
+       https://sallysbakingaddiction.com/seriously-fudgy-homemade-brownies/
+       [butter] [chocolate]
+
+  #3  26/100  Fudgy Cocoa Brownies (One Bowl, No Mixer)
+       https://www.epicurious.com/recipes/food/views/best-cocoa-brownies
+       [butter] [chocolate]
+
+  #4  21/100  Ultimate Fudgy Brownies With Cocoa Powder: Rich, Organic Chocolate ...
+       https://www.coracaoconfections.com/blogs/news/brownie-recipe-with-cocoa-powder
+       [butter] [chocolate]
+
+
+  > Do any of these recipes use espresso powder?
+  Thinking...
+
+  Recipe #4, Ultimate Fudgy Brownies With Cocoa Powder: Rich, Organic Chocolate, uses espresso powder.
+
+
+  > quit
+
+  Goodbye!
+
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="claude"; python main.py
+Traceback (most recent call last):
+  File "C:\Users\annaj\bakesquad\main.py", line 53, in <module>
+    from bakesquad.search.ingestion import IngestionPipeline
+  File "C:\Users\annaj\bakesquad\bakesquad\search\ingestion.py", line 39, in <module>
+    from bakesquad.search.prompts import (
+    ...<3 lines>...
+    )
+  File "C:\Users\annaj\bakesquad\bakesquad\search\prompts.py", line 199
+    system = (
+             ^
+SyntaxError: '(' was never closed
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="claude"; python main.py
+Traceback (most recent call last):
+  File "C:\Users\annaj\bakesquad\main.py", line 53, in <module>
+    from bakesquad.search.ingestion import IngestionPipeline
+  File "C:\Users\annaj\bakesquad\bakesquad\search\ingestion.py", line 39, in <module>
+    from bakesquad.search.prompts import (
+    ...<3 lines>...
+    )
+  File "C:\Users\annaj\bakesquad\bakesquad\search\prompts.py", line 199
+    system = (
+             ^
+SyntaxError: '(' was never closed
+(cs6501) PS C:\Users\annaj\bakesquad> $env:MODEL_BACKEND="claude"; python main.py
+
+==============================================================
+  BakeSquad  |  Chat Mode  |  Backend: claude (claude-sonnet-4-20250514)
+==============================================================
+  Enter a baking query to get started.
+  Follow up with constraints, questions, or a new request.
+  Type 'quit' to exit.
+
+  Query: I'm looking for fudgy, chewy brownies that have rich chocolate flavor, but do not use dutch-processed cocoa powder.
+[Step 1: Query Understanding]
+  Category:    cookie
+  Constraints: contains chocolate, no dutch-processed cocoa powder
+  Preferences: fudgy texture, chewy texture, rich chocolate flavor
+  Queries generated:
+    - fudgy chewy brownies recipe natural cocoa
+    - rich chocolate brownies recipe no dutch process cocoa
+  !! OVER BUDGET  8.2s  (budget 5s)
+
+[Step 2-5: Search + Candidate Selection]
+  8 candidates selected
+    [1.00] epicurious.com  Fudgy Cocoa Brownies (One-Bowl, No Mixer) Recipe | Epicuri
+    [0.80] scientificallysweet.com  Thick Cocoa Brownies - Scientifically Sweet
+    [0.80] cafedelites.com  Fudgy Cocoa Brownies - Cafe Delites
+    [0.80] bakewithzoha.com  Easy Chewy Cocoa Powder Brownies - BAKE WITH ZOHA
+    [0.70] youtube.com  The BestFudgyBrownieYou'll Ever Eat - YouTube
+    [0.70] coracaoconfections.com  Ultimate Fudgy Brownies With Cocoa Powder: Rich, Organic C
+  !! OVER BUDGET  12.5s  (budget 8s)
+
+[Step 6: Page Fetch]  (parallel, 5 s timeout)
+  4/4 pages fetched successfully
+  ok  0.8s  (budget 10s)
+
+[Step 7: LLM Parse]  (parallel, 4 pages)
+  4 recipes parsed  (0 failed)
+  ok  4.7s  (budget 15s)
+
+[Steps 8-9: Normalization + Ratios]
+  4 ratio results  (1 from cache)
+  ok  0.1s  (budget 2s)
+
+[Step 10: Scoring + Explanations]
+  4 recipes scored
+  Generating explanations (1 batched LLM call)...
+  !! OVER BUDGET  14.6s  (budget 8s)
+
+[Step 11: Output]
+
+==============================================================
+  RANKED RESULTS
+==============================================================
+
+  Category: cookie
+  Must have: contains chocolate, no dutch-processed cocoa powder
+  Preferences: fudgy texture, chewy texture, rich chocolate flavor
+
+  #1  Fudgy Cocoa Brownies (One Bowl, No Mixer)
+      https://www.epicurious.com/recipes/food/views/best-cocoa-brownies
+      [butter-based] [chocolate]
+      Composite  #####...............  26/100
+
+        Moisture & Tenderness    ############........  58  (w=0.45)
+        Crumb & Structure        ....................  0  (w=0.30)
+        Sweetness Calibration    ....................  0  (w=0.25)
+
+      Ratios:
+        liquid/flour:    0.938  ok
+        fat/flour:       1.419  !!
+        sugar/flour:     2.500  !!
+        leavening/flour: 0.0000 !!
+        fat source:      butter
+        modifiers:       vegan, dairy_free
+        [ratios from cache]
+
+      Why this score:
+        This recipe achieves moderate moisture scores due to its high
+        fat-to-flour ratio (1.42) and adequate liquid content, which
+        will create a fudgy texture. However, it receives zero points
+        for crumb structure and sweetness calibration, likely due to
+        constraint violations - the sugar-to-flour ratio of 2.50 may
+        exceed acceptable limits for balanced sweetness. The
+        butter-based fat will provide rich flavor but may not retain
+        moisture as well as oil-based alternatives over time.
+
+  ----------------------------------------------------------
+
+  #2  Easy Chewy Cocoa Powder Brownies Recipe
+      https://bakewithzoha.com/easy-chewy-cocoa-powder-brownies/
+      [butter-based] [chocolate]
+      Composite  ....................  0/100
+
+        Overall Balance          ....................  0  (w=1.00)
+
+      Ratios:
+        liquid/flour:    0.937  ok
+        fat/flour:       1.892  ok
+        sugar/flour:     3.331  ok
+        leavening/flour: 0.0250 ok
+        fat source:      butter
+
+      Why this score:
+        This recipe fails completely with a 0/100 composite score due
+        to severe ratio imbalances that violate fundamental baking
+        constraints. The extremely high fat-to-flour ratio (1.89)
+        combined with excessive sugar (3.33 times the flour weight)
+        would create an overly greasy, cloyingly sweet product that
+        lacks structural integrity. The addition of leavening (0.025
+        ratio) in what should be a dense brownie further disrupts the
+        intended fudgy texture.
+
+  ----------------------------------------------------------
+
+  #3  Thick Cocoa Brownies
+      https://scientificallysweet.com/thick-cocoa-brownies/
+      [butter-based] [chocolate]
+      Composite  ....................  0/100
+
+        Overall Balance          ....................  0  (w=1.00)
+
+      Ratios:
+        liquid/flour:    1.250  ok
+        fat/flour:       2.051  ok
+        sugar/flour:     3.593  ok
+        leavening/flour: 0.0000 ok
+        fat source:      butter
+
+      Why this score:
+        This recipe scores zero due to extreme ratio violations that
+        would produce an unbakeable mixture. The sugar-to-flour ratio
+        of 3.59 is excessively high and would prevent proper structure
+        formation, while the fat ratio of 2.05 would create an overly
+        greasy texture. The high liquid-to-flour ratio (1.25) combined
+        with these other imbalances would likely result in a mixture
+        that doesn't set properly during baking.
+
+  ----------------------------------------------------------
+
+  #4  Best Fudgy Cocoa Brownies
+      https://cafedelites.com/best-fudgy-cocoa-brownies/
+      [chocolate]
+      Composite  ....................  0/100
+
+        Overall Balance          ....................  0  (w=1.00)
+
+      Ratios:
+        liquid/flour:    1.250  ok
+        fat/flour:       2.119  ok
+        sugar/flour:     3.750  ok
+        leavening/flour: 0.0000 ok
+        fat source:      mixed
+
+      Why this score:
+        This recipe receives the lowest possible score due to the most
+        extreme ratio violations in the set. The sugar-to-flour ratio
+        of 3.75 is dangerously high and would create an inedibly sweet
+        product that cannot maintain structure, while the fat ratio of
+        2.12 would make the brownies impossibly greasy. The mixed fat
+        type (likely butter and oil combination) cannot compensate for
+        these fundamental formulation flaws that violate basic baking
+        chemistry principles.
+
+  ----------------------------------------------------------
+
+  ok  0.0s  (budget 1s)
+==============================================================
+  Total: 40.9s  (budget 60s)  [OK]
+  Backend: claude (claude-sonnet-4-20250514)
+  Ratio cache: 1/4 hits
+==============================================================

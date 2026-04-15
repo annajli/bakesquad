@@ -47,8 +47,8 @@ def _build_category_block() -> str:
     except Exception:
         return (
             '- "category": the type of baked good — must be EXACTLY one of:'
-            ' cookie, quick_bread, cake, yeasted_bread, pastry, other\n'
-            '  cookie includes: drop cookies, bar cookies, brownies, shortbread\n'
+            ' cookie, quick_bread, cake, yeasted_bread, pastry, brownie, other\n'
+            '  cookie includes: drop cookies, bar cookies, shortbread\n'
             '  quick_bread includes: banana bread, zucchini bread, pumpkin bread, muffins, scones, cornbread\n'
             '  NOTE: any baked "loaf" that is NOT a yeast bread is quick_bread'
             ' (e.g. "banana nut loaf", "zucchini chocolate loaf", "pumpkin loaf" → quick_bread)\n'
@@ -56,6 +56,7 @@ def _build_category_block() -> str:
             '  yeasted_bread includes: sourdough, focaccia, baguette, dinner rolls, pizza dough,'
             ' brioche, challah, sandwich loaves\n'
             '  pastry includes: croissants, danish pastries, choux (eclairs, profiteroles), tarts, pies\n'
+            '  brownie includes: fudgy brownies, cakey brownies, blondies, marble brownies\n'
             '  other: truly uncategorizable baked goods only\n'
         )
 
@@ -158,6 +159,16 @@ def query_plan_prompt(
         '{"category":"cookie","flour_type":"ap","modifiers":[],'
         '"hard_constraints":["contains chocolate"],"soft_preferences":["chewy texture","brown butter flavor"],'
         '"queries":["brown butter chocolate chip cookie recipe","chewy brown butter chocolate chip cookies recipe"],'
+        '"confidence":1.0,"clarification_question":""}\n\n'
+        'Input: "fudgy brownies without dutch-processed cocoa"\n'
+        '{"category":"brownie","flour_type":"ap","modifiers":[],'
+        '"hard_constraints":["contains chocolate","no dutch-processed cocoa"],"soft_preferences":["fudgy texture"],'
+        '"queries":["fudgy brownie recipe natural cocoa","fudgy chocolate brownies no dutch process cocoa"],'
+        '"confidence":1.0,"clarification_question":""}\n\n'
+        'Input: "blondies with brown butter"\n'
+        '{"category":"brownie","flour_type":"ap","modifiers":[],'
+        '"hard_constraints":[],"soft_preferences":["brown butter flavor"],'
+        '"queries":["brown butter blondie recipe","chewy brown butter blondies recipe"],'
         '"confidence":1.0,"clarification_question":""}\n\n'
         'Input: "a rich loaf for gifting"\n'
         '{"category":"quick_bread","flour_type":"ap","modifiers":[],'
