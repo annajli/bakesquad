@@ -73,7 +73,7 @@ Scoring is **per-category** — each baked-good type has its own named criteria 
 | `cake` | Moisture & Tenderness, Crumb & Structure, Sweetness Calibration | Custard cakes (cheesecake, flourless) bypass flour-ratio scoring |
 | `yeasted_bread` | Hydration, Enrichment Level, Flavor Complexity† | Baker's % hydration; lean vs enriched style |
 | `pastry` | Fat & Richness, Structure & Balance, Technique & Layers† | Fat/flour is dominant signal; wide range covers shortcrust → croissant |
-| `brownie` | Fudge Factor, Chocolate Intensity†, Sweetness & Crust | High fat/flour and no leavening are correct signals, not defects; Chocolate Intensity covers cocoa type and bloom technique; Blondies use the same criteria with Chocolate Intensity scoring butterscotch/brown butter depth instead |
+| `brownie` | Fudge Factor, Fat Type & Richness, Sugar Composition | All three are deterministic; butter scores higher than oil (Maillard depth); brown/white sugar split predicts molasses character; blondies score well on all-brown-sugar signal |
 | `other` | Overall Balance | Sugar/flour as general proxy |
 
 † LLM-assessed: starts at placeholder 50/100; scored 0–100 in the batched explanation call.
@@ -154,6 +154,7 @@ Create a `.env` file:
 ```env
 ANTHROPIC_API_KEY=your_anthropic_key_here
 GROQ_API_KEY=your_groq_key_here        # optional
+OPENAI_API_KEY=your_openai_key_here    # optional
 ```
 
 ### 3. Run the API server
@@ -176,6 +177,7 @@ MODEL_BACKEND=claude python main.py "sourdough with open crumb" --recency year
 | `MODEL_BACKEND` | Model | Notes |
 |---|---|---|
 | `claude` | `claude-sonnet-4-20250514` | Best quality; recommended |
+| `openai` | `gpt-4o-mini` (default) | Good quality; override with `OPENAI_MODEL` env var |
 | `groq` | `llama-3.1-8b-instant` | Free tier; fast; good for development |
 | `ollama` | `qwen3:8b` (local) | No cost; requires Ollama running locally |
 

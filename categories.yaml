@@ -150,9 +150,9 @@ categories:
       - marble brownies
     loaf_like: false
     scoring_criteria:
-      - fudge_factor       # fat/flour density; high fat/flour = fudgier, intentional
-      - chocolate_intensity # LLM-assessed: cocoa type, chocolate quality, cocoa/flour ratio
-      - sweetness_and_crust # sugar/flour in brownie range; high sugar = shiny crinkle top
+      - fudge_factor        # fat/flour density + leavening absence; high = fudgier
+      - fat_type_and_richness # butter > mixed > oil; Maillard depth vs moisture
+      - sugar_composition   # brown/white sugar ratio; all-brown = molasses depth
     ratio_ranges_key: brownie
 
   - id: other

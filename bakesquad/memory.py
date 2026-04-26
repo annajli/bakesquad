@@ -74,6 +74,7 @@ def init_db() -> None:
             CREATE TABLE IF NOT EXISTS liked_recipes (
                 url         TEXT PRIMARY KEY,
                 title       TEXT,
+                category    TEXT DEFAULT 'other',
                 recipe_json TEXT NOT NULL,
                 rating      INTEGER DEFAULT 0,
                 notes       TEXT DEFAULT '',
@@ -96,10 +97,11 @@ def init_db() -> None:
                 created_at  TEXT NOT NULL
             );
         """)
-        # Additive column migrations for liked_recipes — safe to re-run
+        # Additive column migrations — safe to re-run
         for col_sql in (
             "ALTER TABLE liked_recipes ADD COLUMN user_rating INTEGER DEFAULT 0",
             "ALTER TABLE liked_recipes ADD COLUMN tried_date  TEXT DEFAULT NULL",
+            "ALTER TABLE liked_recipes ADD COLUMN category    TEXT DEFAULT 'other'",
         ):
             try:
                 conn.execute(col_sql)
@@ -142,26 +144,68 @@ def cache_put(url: str, category: str, ratios: dict) -> None:
 # Liked recipe store
 # ---------------------------------------------------------------------------
 
-def save_liked_recipe(url: str, title: str, recipe_dict: dict, rating: int = 0, notes: str = "") -> None:
+def save_liked_recipe(
+    url: str,
+    title: str,
+    recipe_dict: dict,
+    category: str = "other",
+    rating: int = 0,
+    notes: str = "",
+) -> None:
     with _get_conn() as conn:
         conn.execute(
             """
-            INSERT INTO liked_recipes (url, title, recipe_json, rating, notes, liked_at)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO liked_recipes (url, title, category, recipe_json, rating, notes, liked_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(url) DO UPDATE SET
-                title = excluded.title,
+                title       = excluded.title,
+                category    = excluded.category,
                 recipe_json = excluded.recipe_json,
-                rating = excluded.rating,
-                notes = excluded.notes,
-                liked_at = excluded.liked_at
+                rating      = excluded.rating,
+                notes       = excluded.notes,
+                liked_at    = excluded.liked_at
             """,
-            (url, title, json.dumps(recipe_dict), rating, notes, datetime.utcnow().isoformat()),
+            (url, title, category, json.dumps(recipe_dict), rating, notes, datetime.utcnow().isoformat()),
         )
 
 
-def get_liked_recipes() -> list[dict]:
+def delete_liked_recipe(url: str) -> None:
     with _get_conn() as conn:
-        rows = conn.execute("SELECT * FROM liked_recipes ORDER BY liked_at DESC").fetchall()
+        conn.execute("DELETE FROM liked_recipes WHERE url = ?", (url,))
+
+
+_SORT_COLUMNS = {
+    "date_desc": "liked_at DESC",
+    "date_asc":  "liked_at ASC",
+    "title_asc": "LOWER(title) ASC",
+    "title_desc": "LOWER(title) DESC",
+}
+
+
+def get_liked_recipes(
+    sort: str = "date_desc",
+    category_filter: Optional[str] = None,
+    search: Optional[str] = None,
+) -> list[dict]:
+    order = _SORT_COLUMNS.get(sort, "liked_at DESC")
+    sql = "SELECT * FROM liked_recipes"
+    params: list = []
+    conditions: list[str] = []
+
+    if category_filter:
+        conditions.append("category = ?")
+        params.append(category_filter)
+    if search:
+        conditions.append("(LOWER(title) LIKE ? OR LOWER(notes) LIKE ?)")
+        term = f"%{search.lower()}%"
+        params.extend([term, term])
+
+    if conditions:
+        sql += " WHERE " + " AND ".join(conditions)
+    sql += f" ORDER BY {order}"
+
+    with _get_conn() as conn:
+        rows = conn.execute(sql, params).fetchall()
     return [dict(r) for r in rows]
 
 

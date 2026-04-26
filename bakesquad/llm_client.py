@@ -27,17 +27,19 @@ _MODELS: dict[str, str] = {
     "ollama": os.environ.get("OLLAMA_MODEL", "qwen3.5"),
     "groq": os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant"),
     "claude": "claude-sonnet-4-20250514",
+    "openai": os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
 }
 
 _TIME_BUDGETS: dict[str, int] = {
     "ollama": 180,   # 3 minutes — consumer hardware can't match API speed
     "groq": 60,
     "claude": 60,
+    "openai": 60,
 }
 
 if BACKEND not in _MODELS:
     raise ValueError(
-        f"Unknown MODEL_BACKEND={BACKEND!r}. Choose from: ollama, groq, claude"
+        f"Unknown MODEL_BACKEND={BACKEND!r}. Choose from: ollama, groq, claude, openai"
     )
 
 # ---------------------------------------------------------------------------
@@ -51,7 +53,7 @@ def _init_client() -> Any:
     if _client is not None:
         return _client
 
-    if BACKEND in ("ollama", "groq"):
+    if BACKEND in ("ollama", "groq", "openai"):
         from openai import OpenAI
 
         if BACKEND == "ollama":
@@ -68,7 +70,7 @@ def _init_client() -> Any:
                     base_url="http://localhost:11434/v1",
                     api_key="ollama",
                 )
-        else:
+        elif BACKEND == "groq":
             api_key = os.environ.get("GROQ_API_KEY")
             if not api_key:
                 raise EnvironmentError(
@@ -78,6 +80,13 @@ def _init_client() -> Any:
                 base_url="https://api.groq.com/openai/v1",
                 api_key=api_key,
             )
+        else:  # openai
+            api_key = os.environ.get("OPENAI_API_KEY")
+            if not api_key:
+                raise EnvironmentError(
+                    "OPENAI_API_KEY env var is required when MODEL_BACKEND=openai"
+                )
+            _client = OpenAI(api_key=api_key)
     elif BACKEND == "claude":
         import anthropic
 
@@ -108,7 +117,7 @@ def chat(
 
     for attempt in range(3):
         try:
-            if BACKEND in ("ollama", "groq"):
+            if BACKEND in ("ollama", "groq", "openai"):
                 resp = client.chat.completions.create(
                     model=model,
                     messages=[

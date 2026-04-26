@@ -4,3 +4,4 @@ info_search.py
 # Evaluation run outputs (timestamped, reproducible — keep datasets + harness)
 evaluation/results/
 !evaluation/results/baseline_pre_category_scoring.md
+presentation/
